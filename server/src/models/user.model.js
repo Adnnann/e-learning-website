@@ -10,13 +10,6 @@ const emailValidator = [
   }),
 ];
 
-const nicknameValidator = [
-  validate({
-    validator: "isAlphanumeric",
-    message: "Only letters and numbers are allowed in nickname",
-  }),
-];
-
 const UserSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -31,13 +24,6 @@ const UserSchema = new mongoose.Schema({
     trim: true,
     maxlength: [20, "Last name must be less than 20 characters"],
     match: [/^[A-Za-z\s]+$/, "Only letters are allowed in last name"],
-  },
-  nickname: {
-    type: String,
-    unique: "Nickname already exists.",
-    required: "Nickname is required",
-    trim: true,
-    validate: nicknameValidator,
   },
   email: {
     type: String,
@@ -57,20 +43,17 @@ const UserSchema = new mongoose.Schema({
   salt: String,
 });
 
-UserSchema.virtual("password").set((password) => {
-  // eslint-disable-next-line no-sequences
+UserSchema.virtual("password").set(function (password) {
   (this._password = password),
-    // eslint-disable-next-line no-sequences
     (this.salt = this.makeSalt()),
-    // eslint-disable-next-line no-sequences
     (this.hashed_password = this.encryptPassword(password));
 });
 
 UserSchema.methods = {
-  authenticate(plainText) {
+  authenticate: function (plainText) {
     return this.encryptPassword(plainText) === this.hashed_password;
   },
-  encryptPassword(password) {
+  encryptPassword: function (password) {
     if (!password) return "";
     try {
       return crypto
@@ -81,15 +64,15 @@ UserSchema.methods = {
       return err;
     }
   },
-  makeSalt() {
-    return `${Math.round(new Date().valueOf() * Math.random())}`;
+  makeSalt: function () {
+    return Math.round(new Date().valueOf() * Math.random()) + "";
   },
 };
 
 UserSchema.path("hashed_password").validate(function (v) {
-  if (this._password && this._password.length < 6) {
-    this.invalidate("password", "Password must be at least 6 characters");
+  if (this._password && this._password.length < 8) {
+    this.invalidate("password", "Password must be at least 8 characters");
   }
 }, null);
-UserSchema.plugin(mongooseUniqueValidator);
+
 export default mongoose.model("User", UserSchema);

@@ -3,7 +3,9 @@ import User from "../models/user.model";
 import errorHandler from "./helpers/dbErrorHandlers";
 
 const create = (req, res, next) => {
+  console.log(req);
   const user = new User(req.body);
+  console.log(user);
   user.save((err, result) => {
     if (err) {
       res.send({ error: errorHandler.getErrorMessage(err) });
