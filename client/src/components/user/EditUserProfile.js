@@ -6,21 +6,19 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
-import { CardMedia, Grid, makeStyles } from "@material-ui/core";
+import { Grid, makeStyles } from "@material-ui/core";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchUserData,
   updateUserData,
   getUpdatedUserData,
-  getUserData,
-  loggedUserToDisplay,
   cleanUpdatedUserData,
-  userToken,
   getUserToken,
   getLoggedUserData,
-} from "../features/eLearningSlice";
+  uploadUserImage,
+  getUploadUserImageStatus,
+} from "../../features/eLearningSlice";
 import { useNavigate, useParams } from "react-router";
-import userImagePlaceholder from "../assets/userImgPlaceholder.png";
+import userImagePlaceholder from "../../assets/userImgPlaceholder.png";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -75,6 +73,8 @@ const EditProfile = () => {
   const loggedUser = useSelector(getLoggedUserData);
   const token = useSelector(getUserToken);
   const updatedUserData = useSelector(getUpdatedUserData);
+  const uploadUserImageStatus = useSelector(getUploadUserImageStatus);
+
   const navigate = useNavigate();
   const [values, setValues] = useState({
     firstName: "",
@@ -86,17 +86,6 @@ const EditProfile = () => {
   const params = useParams();
 
   useEffect(() => {
-    dispatch(fetchUserData(params.userId));
-    //check if user token exists.
-    dispatch(userToken());
-    //In case user tried to visit url /protected without token, redirect
-    //to signin page
-    if (
-      token === "Request failed with status code 500" ||
-      token === "Request failed with status code 401"
-    ) {
-      navigate("/");
-    }
     setValues({
       firstName: loggedUser.user.firstName,
       lastName: loggedUser.user.lastName,
@@ -107,23 +96,22 @@ const EditProfile = () => {
       dispatch(cleanUpdatedUserData());
       navigate("/dashboard");
     }
-  }, [
-    params.userId,
-    updatedUserData.message,
-    dispatch,
-    loggedUser.user.firstName,
-  ]);
+  }, [updatedUserData.message, dispatch, loggedUser.user.firstName]);
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
 
   const clickSubmit = () => {
+    console.log(token.message);
     const user = {
-      params: params.userId,
-      firstName: values.firstName || undefined,
-      lastName: values.lastName || undefined,
-      email: values.email || undefined,
+      params: loggedUser.user._id,
+      data: {
+        firstName: values.firstName || undefined,
+        lastName: values.lastName || undefined,
+        email: values.email || undefined,
+        token: token.message,
+      },
     };
     dispatch(updateUserData(user));
   };
@@ -132,10 +120,34 @@ const EditProfile = () => {
     navigate("/dashboard");
   };
 
+  const uploadPhoto = () => {
+    document.getElementById("userImage").click();
+  };
+
+  const handleUpload = (event) => {
+    let formData = new FormData();
+
+    //all files will be named image{allRecipes.lenght+1}.jpg
+    formData.append(
+      "userImage",
+      event.target.files[0],
+      `user_image_${loggedUser.user._id}-${Date.now()}.${
+        event.target.files[0].name.split(".")[1]
+      }`
+    );
+    dispatch(uploadUserImage(formData));
+  };
+
   return (
     <>
       {loggedUser.user.firstName ? (
         <Card className={classes.card}>
+          <input
+            type="file"
+            style={{ display: "none" }}
+            id="userImage"
+            onChange={handleUpload}
+          />
           <Grid container justifyContent="center">
             <Grid item xs={12} md={8} lg={8} xl={8}>
               <CardContent>
@@ -200,16 +212,28 @@ const EditProfile = () => {
             </Grid>
             <Grid item xs={12} md={2} lg={2} xl={2}>
               <img
-                src={userImagePlaceholder}
+                src={
+                  loggedUser.user.userImage
+                    ? loggedUser.user.userImage
+                    : userImagePlaceholder
+                }
                 className={classes.userImagePlaceholder}
                 alt="Placeholder"
               ></img>
+
+              {uploadUserImageStatus?.error ? (
+                <Typography component="p" color="error">
+                  {uploadUserImageStatus.error}
+                </Typography>
+              ) : null}
+
               <br />
               <br />
               <Button
                 variant="contained"
                 color="primary"
                 className={classes.uploadPhoto}
+                onClick={uploadPhoto}
               >
                 Upload photo
               </Button>

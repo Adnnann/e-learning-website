@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import {
   getSigninUserFormStatus,
   getSignupUserFormStatus,
-} from "../features/eLearningSlice";
+} from "../../features/eLearningSlice";
 import Login from "./Login";
 import Signup from "./Signup";
 

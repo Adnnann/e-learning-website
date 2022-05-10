@@ -1,11 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 import _ from "lodash";
 import User from "../models/user.model";
 import errorHandler from "./helpers/dbErrorHandlers";
 
 const create = (req, res, next) => {
-  console.log(req);
   const user = new User(req.body);
-  console.log(user);
   user.save((err, result) => {
     if (err) {
       res.send({ error: errorHandler.getErrorMessage(err) });
@@ -30,17 +29,47 @@ const update = (req, res, next) => {
     if (err) {
       return res.send({ error: errorHandler.getErrorMessage(err) });
     }
-    res.send({ message: "Data updated" });
+    res.send({
+      message: "Data updated",
+      data: user,
+      token: req.cookies.userJwtToken,
+    });
   });
 };
 
-const remove = (req, res, next) => {
+const remove = async (req, res, next) => {
+  const userProfile = await User.findOne({ _id: req.profile._id });
+
+  if (!userProfile.authenticate(req.body.password)) {
+    return res.send({ error: "Incorrect old password" });
+  }
+
   const user = req.profile;
-  user.remove((err) => {
+  await User.findOneAndUpdate({ _id: req.profile._id }, { active: false });
+};
+
+const updateUserPassword = async (req, res, next) => {
+  let user = req.profile;
+
+  user = _.extend(user, req.body);
+
+  const userProfile = await User.findOne({ _id: req.profile._id });
+
+  if (!userProfile.authenticate(req.body.password)) {
+    return res.send({ error: "Incorrect old password" });
+  }
+  user.hashed_password = null;
+  user.password = req.body.newPassword;
+
+  user.updated = Date.now();
+  user.save((err) => {
     if (err) {
-      return res.status(400).send({ error: errorHandler.getErrorMessage(err) });
+      return res.send({ error: errorHandler.getErrorMessage(err) });
     }
-    res.status(200).send({ message: "Account closed" });
+    return res.send({
+      message: "Data updated",
+      data: user,
+    });
   });
 };
 
@@ -59,5 +88,6 @@ export default {
   read,
   update,
   remove,
+  updateUserPassword,
   userByID,
 };

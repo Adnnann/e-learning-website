@@ -24,6 +24,10 @@ router
   .put(userCtrl.update)
   .delete(userCtrl.remove);
 
+router
+  .route("/api/users/updateUserPassword/:userId")
+  .put(userCtrl.updateUserPassword);
+
 router.param("userId", userCtrl.userByID);
 
 export default router;

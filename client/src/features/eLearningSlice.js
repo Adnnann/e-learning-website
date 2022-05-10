@@ -16,7 +16,7 @@ export const signupUser = createAsyncThunk(
 );
 
 export const signinUser = createAsyncThunk(
-  "users/logedUser",
+  "users/loggedUser",
   async (userData) => {
     return await axios
       .post("/auth/signin", userData, {
@@ -63,9 +63,9 @@ export const updateUserData = createAsyncThunk(
       .put(
         `/api/users/${user.params}`,
         {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          nickname: user.nickname,
+          firstName: user.data.firstName,
+          lastName: user.data.lastName,
+          email: user.data.email,
         },
         {
           headers: {
@@ -78,12 +78,12 @@ export const updateUserData = createAsyncThunk(
       .catch((error) => error);
   }
 );
-export const passwordCheck = createAsyncThunk(
-  "users/passwordCheck",
-  async (userData) => {
+export const updateUserPassword = createAsyncThunk(
+  "eLearning/updatePassword",
+  async (user) => {
     return await axios
-      .post("/auth/signin", userData, {
-        headers: {
+      .put(`api/users/updateUserPassword/${user.param}`, user.data, {
+        header: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
@@ -94,9 +94,9 @@ export const passwordCheck = createAsyncThunk(
 );
 
 export const closeAccount = createAsyncThunk(
-  "users/closeAccount",
-  async (params) => {
-    const response = await axios.delete(`/api/users/${params}`, {
+  "users/closeAccountStatus",
+  async (user) => {
+    const response = await axios.delete(`/api/users/${user.param}`, user, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -105,26 +105,7 @@ export const closeAccount = createAsyncThunk(
     return response.data;
   }
 );
-export const updateUserPassword = createAsyncThunk(
-  "users/updateUserPassword",
-  async (user) => {
-    return await axios
-      .put(
-        `/api/users/${user.params}`,
-        { password: user.password },
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-
-export const fetchUserTransactions = createAsyncThunk(
+export const fetchUserCourses = createAsyncThunk(
   "users/transactions",
   async () => {
     return await axios
@@ -134,8 +115,8 @@ export const fetchUserTransactions = createAsyncThunk(
   }
 );
 
-export const createTransaction = createAsyncThunk(
-  "users/addUserTransaction",
+export const createCourse = createAsyncThunk(
+  "users/addUserCourse",
   async (transaction) => {
     return await axios
       .post(`/api/transaction`, transaction, {
@@ -148,35 +129,25 @@ export const createTransaction = createAsyncThunk(
       .catch((error) => error);
   }
 );
-export const updateUserTransaction = createAsyncThunk(
-  "users/updateUserTransaction",
-  async (transaction) => {
+export const updateUserCourse = createAsyncThunk(
+  "users/updateUserCourse",
+  async (course) => {
     return await axios
-      .put(
-        `/api/transaction/${transaction.params}`,
-        {
-          title: transaction.title,
-          amountInBAM: transaction.amountInBAM,
-          amountInEUR: transaction.amountInEUR,
-          amountInUSD: transaction.amountInUSD,
-          currency: transaction.currency,
+      .put(`/api/transaction/${course.param}`, course.data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      )
+      })
       .then((response) => response.data)
       .catch((error) => error);
   }
 );
 
-export const deleteTransaction = createAsyncThunk(
-  "users/deleteTransaction",
-  async (params) => {
-    const response = await axios.delete(`/api/transaction/${params}`, {
+export const deleteCourse = createAsyncThunk(
+  "users/deleteCourse",
+  async (param) => {
+    const response = await axios.delete(`/api/transaction/${param}`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -186,52 +157,54 @@ export const deleteTransaction = createAsyncThunk(
   }
 );
 
-export const fetchUserTransactionData = createAsyncThunk(
+export const fetchUserCourseData = createAsyncThunk(
   "users/transactionData",
-  async (params) => {
+  async (param) => {
     return await axios
-      .get(`/api/transaction/${params}`)
+      .get(`/api/transaction/${param}`)
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+//upload image
+export const uploadUserImage = createAsyncThunk(
+  "library/uploadImage",
+  async (file) => {
+    return await axios
+      .post("/uploadImage", file)
       .then((response) => response.data)
       .catch((error) => error);
   }
 );
 
 const initialState = {
+  // user data
   singinUserForm: false,
   singupUserForm: false,
   signedupUser: {},
   editUserForm: false,
   editUserPasswordForm: false,
-
+  uploadImage: {},
+  updatePassword: {},
+  closeAccountForm: false,
+  closeAccountModal: false,
   userData: {},
   updatedUserData: {},
-
   loggedUser: {},
   signedOut: {},
   userToken: {},
   userDataToDisplay: {},
-  closeAccount: {},
+  closeAccountStatus: {},
   passwordCheck: {},
   deleteAccountModal: true,
-  //TRANACTIONS
-  userTransactions: {},
+  // courses
+  userCourses: {},
   dashboardData: [],
-  addTransaction: {},
-  filter: { income: "income", expense: "expense" },
-  currencyExchangeRate: 1,
-  currency: "BAM",
-  groupingVar: "day",
-  updatedUserTransaction: {},
-  deleteTransaction: {},
-  userTransactionData: {},
-  deleteId: "",
-  openDeleteModal: false,
-  transactionsOverviewLevel: "Daily",
-  //STATISTICS
-  filterVarForCharts: "",
-  groupingVarForCharts: "day",
-  chartType: "pie",
-  statisticsOverviewLevel: "Week",
+  addCourse: {},
+  filter: { duration: "", level: "", title: "" },
+  updatedUserCourse: {},
+  deleteCourse: {},
+  userCourseData: {},
 };
 
 const eLearningSlice = createSlice({
@@ -250,7 +223,15 @@ const eLearningSlice = createSlice({
     setEditUserPasswordForm: (state, action) => {
       state.editUserPasswordForm = action.payload;
     },
-
+    clearUpdatePassword: (state, action) => {
+      state.updatePassword = {};
+    },
+    setCloseAccountForm: (state, action) => {
+      state.closeAccountForm = action.payload;
+    },
+    setCloseAccountModal: (state, action) => {
+      state.closeAccountModal = action.payload;
+    },
     cleanRegisteredUserData: (state, action) => {
       state.registeredUser = {};
     },
@@ -266,43 +247,19 @@ const eLearningSlice = createSlice({
     dashboardData: (state, action) => {
       state.dashboardData = [...state.dashboardData, action.payload];
     },
-    cleanTransactionData: (state, action) => {
-      state.addTransaction = {};
+    cleanCourseData: (state, action) => {
+      state.addCourse = {};
     },
-    cleanTransactionUpdatedData: (state, action) => {
-      state.updatedUserTransaction = {};
+    cleanCourseUpdatedData: (state, action) => {
+      state.updatedUserCourse = {};
     },
     setFilter: (state, action) => {
       state.filter = action.payload;
     },
-    setCurrency: (state, action) => {
-      state.currency = action.payload;
+    cleanDeleteCourseData: (state, payload) => {
+      state.deleteCourse = {};
     },
-    setCurrencyExchangeRate: (state, action) => {
-      state.currencyExchangeRate = action.payload;
-    },
-    setGroupingVar: (state, action) => {
-      state.groupingVar = action.payload;
-    },
-    setDeleteId: (state, action) => {
-      state.deleteId = action.payload;
-    },
-    setOpenDeleteModal: (state, action) => {
-      state.openDeleteModal = action.payload;
-    },
-    cleanDeleteTransactionData: (state, payload) => {
-      state.deleteTransaction = {};
-    },
-    setFilterVarForCharts: (state, action) => {
-      state.filterVarForCharts = action.payload;
-    },
-    setGroupingVarForCharts: (state, action) => {
-      state.groupingVarForCharts = action.payload;
-    },
-    setChartType: (state, action) => {
-      state.chartType = action.payload;
-    },
-    setTransactionsOverviewLevel: (state, action) => {
+    setCoursesOverviewLevel: (state, action) => {
       state.transactionsOverviewLevel = action.payload;
     },
     setStatisticsOverviewLevel: (state, action) => {
@@ -331,32 +288,47 @@ const eLearningSlice = createSlice({
       return { ...state, userData: payload };
     },
     [updateUserData.fulfilled]: (state, { payload }) => {
-      return { ...state, updatedUserData: payload };
+      return {
+        ...state,
+        updatedUserData: payload,
+        loggedUser: {
+          token: payload.token,
+          user: payload.data,
+        },
+      };
     },
     [closeAccount.fulfilled]: (state, { payload }) => {
-      return { ...state, closeAccount: payload };
-    },
-    [passwordCheck.fulfilled]: (state, { payload }) => {
-      return { ...state, passwordCheck: payload };
+      return { ...state, closeAccountStatus: payload };
     },
     [updateUserPassword.fulfilled]: (state, { payload }) => {
       return { ...state, updatedUserData: payload };
     },
     // Courses
-    [fetchUserTransactions.fulfilled]: (state, { payload }) => {
-      return { ...state, userTransactions: payload };
+    [fetchUserCourses.fulfilled]: (state, { payload }) => {
+      return { ...state, userCourses: payload };
     },
-    [createTransaction.fulfilled]: (state, { payload }) => {
-      return { ...state, addTransaction: payload };
+    [createCourse.fulfilled]: (state, { payload }) => {
+      return { ...state, addCourse: payload };
     },
-    [updateUserTransaction.fulfilled]: (state, { payload }) => {
-      return { ...state, updatedUserTransaction: payload };
+    [updateUserCourse.fulfilled]: (state, { payload }) => {
+      return { ...state, updatedUserCourse: payload };
     },
-    [fetchUserTransactionData.fulfilled]: (state, { payload }) => {
-      return { ...state, userTransactionData: payload };
+    [fetchUserCourseData.fulfilled]: (state, { payload }) => {
+      return { ...state, userCourseData: payload };
     },
-    [deleteTransaction.fulfilled]: (state, { payload }) => {
-      return { ...state, deleteTransaction: payload };
+    [deleteCourse.fulfilled]: (state, { payload }) => {
+      return { ...state, deleteCourse: payload };
+    },
+    [uploadUserImage.fulfilled]: (state, { payload }) => {
+      if (payload.imageUrl) {
+        void (state.loggedUser.user.userImage = payload.imageUrl);
+        void (state.uploadImage = null);
+      } else {
+        return { ...state, uploadImage: payload };
+      }
+    },
+    [updateUserPassword.fulfilled]: (state, { payload }) => {
+      return { ...state, updatePassword: payload };
     },
   },
 });
@@ -370,69 +342,57 @@ export const getLoggedUserData = (state) => state.eLearning.loggedUser;
 export const getEditUserFormStatus = (state) => state.eLearning.editUserForm;
 export const getEditUserPasswordFormStatus = (state) =>
   state.eLearning.editUserPasswordForm;
-
+export const getUploadUserImageStatus = (state) => state.eLearning.uploadImage;
+export const getUpdateUserPasswordStatus = (state) =>
+  state.eLearning.updatePassword;
+export const getCloseAccountFormStatus = (state) =>
+  state.eLearning.closeAccountForm;
+export const getCloseAccountModalStatus = (state) =>
+  state.eLearning.closeAccountModal;
 export const getUserToken = (state) => state.eLearning.userToken;
 export const getErrors = (state) => state.eLearning.showErrors;
 export const getUserData = (state) => state.eLearning.userData;
 export const getUpdatedUserData = (state) => state.eLearning.updatedUserData;
-export const getCloseAccountData = (state) => state.eLearning.closeAccount;
+export const getCloseAccountStatus = (state) =>
+  state.eLearning.closeAccountStatus;
 export const getPasswordCheckData = (state) => state.eLearning.passwordCheck;
 export const getUserDataToDisplay = (state) =>
   state.eLearning.userDataToDisplay;
 export const getDeleteAccountModal = (state) =>
-  state.eLearning.deleteAccountModal;
+  state.eLearning.closeAccountModal;
 ///
-export const getUserTransactions = (state) => state.eLearning.userTransactions;
+export const getUserCourses = (state) => state.eLearning.userCourses;
 export const getDashboardData = (state) => state.eLearning.dashboardData;
-export const getTransactionData = (state) => state.eLearning.addTransaction;
+export const getCourseData = (state) => state.eLearning.addCourse;
 export const getFilter = (state) => state.eLearning.filter;
-export const getCurrencyExchangeRate = (state) =>
-  state.eLearning.currencyExchangeRate;
-export const getCurrency = (state) => state.eLearning.currency;
-export const getGroupingVar = (state) => state.eLearning.groupingVar;
-export const getUpdatedUserTransaction = (state) =>
-  state.eLearning.updatedUserTransaction;
-export const getUserTransactionData = (state) =>
-  state.eLearning.userTransactionData;
+
+export const getUpdatedUserCourse = (state) =>
+  state.eLearning.updatedUserCourse;
+export const getUserCourseData = (state) => state.eLearning.userCourseData;
 export const getDeleteId = (state) => state.eLearning.deleteId;
 export const getOpenDeleteModal = (state) => state.eLearning.openDeleteModal;
-export const getDeleteAPIMessage = (state) => state.eLearning.deleteTransaction;
-export const getTransactionsOverviewLevel = (state) =>
+export const getDeleteCourseMessage = (state) => state.eLearning.deleteCourse;
+export const getCoursesOverviewLevel = (state) =>
   state.eLearning.transactionsOverviewLevel;
-
-///
-export const getFilterVarForCharts = (state) =>
-  state.eLearning.filterVarForCharts;
-export const getGroupingVarForCharts = (state) =>
-  state.eLearning.groupingVarForCharts;
-export const getChartType = (state) => state.eLearning.chartType;
-export const getStatisticsOverviewLevel = (state) =>
-  state.eLearning.statisticsOverviewLevel;
 
 export const {
   setSigninUserForm,
   setSignupUserForm,
   setEditUserProfileForm,
   setEditUserPasswordForm,
-
-  userDataToDisplay,
+  clearUpdatePassword,
+  setCloseAccountForm,
+  setCloseAccountModal,
   cleanRegisteredUserData,
   cleanUpdatedUserData,
   cleanPasswordCheckData,
   dashboardData,
-  cleanTransactionData,
+  cleanCourseData,
   setFilter,
-  setCurrency,
-  setCurrencyExchangeRate,
-  setGroupingVar,
-  cleanTransactionUpdatedData,
-  setDeleteId,
+  cleanCourseUpdatedData,
   setOpenDeleteModal,
-  cleanDeleteTransactionData,
-  setFilterVarForCharts,
-  setGroupingVarForCharts,
-  setChartType,
-  setTransactionsOverviewLevel,
+  cleanDeleteCourseData,
+  setCoursesOverviewLevel,
   setStatisticsOverviewLevel,
   setDeleteAccountModal,
   cleanStore,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -14,17 +14,11 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  getUser,
-  createUser,
-  cleanRegisteredsignedUser,
-  getCloseAccountData,
-  cleanStore,
   setSignupUserForm,
   setSigninUserForm,
   signupUser,
   getSignedUser,
-} from "../features/eLearningSlice";
-import { useNavigate } from "react-router";
+} from "../../features/eLearningSlice";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -81,8 +75,6 @@ const Signup = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const signedUser = useSelector(getSignedUser);
-  const navigate = useNavigate();
-  const closeAccountData = useSelector(getCloseAccountData);
 
   const [values, setValues] = useState({
     firstName: "",
@@ -230,7 +222,7 @@ const Signup = () => {
         <DialogTitle>New Account</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            New account successfuly created.
+            New account successfully created.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -6,7 +6,7 @@ import passport from "passport";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
-import transactionRoutes from "./routes/transaction.routes";
+import userImageRoutes from "./routes/userImage.routes";
 
 const app = express();
 
@@ -20,7 +20,9 @@ app.use(cookieParser());
 
 app.use("/", authRoutes);
 app.use("/", userRoutes);
-app.use("/", transactionRoutes);
+app.use("/", userImageRoutes);
+
+app.use("/images", express.static("images"));
 
 app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {

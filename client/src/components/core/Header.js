@@ -2,23 +2,18 @@ import React from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import {
-  signoutUser,
-  getUserSigninData,
-  cleanStore,
-  getUserDataToDisplay,
   setSigninUserForm,
   setSignupUserForm,
   getLoggedUserData,
-} from "../features/eLearningSlice";
+} from "../../features/eLearningSlice";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
 import { Grid, makeStyles, Typography } from "@material-ui/core";
 import Item from "@mui/material/Grid";
 import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
 import Button from "@mui/material/Button";
 import { useState } from "react";
-import Search from "./Search";
+import Search from "../utils/Search";
 
 const useStyles = makeStyles((theme) => ({
   logo: {
@@ -75,6 +70,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "20px",
     [theme.breakpoints.up("md")]: {
       marginTop: "120px",
+      marginLeft: "60px",
     },
     [theme.breakpoints.up("lg")]: {
       marginLeft: "50px",

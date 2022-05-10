@@ -5,7 +5,6 @@ import {
   faGear,
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
-import { ClassNames } from "@emotion/react";
 import { ButtonGroup, makeStyles, Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,7 +12,7 @@ import {
   getLoggedUserData,
   setEditUserProfileForm,
   signoutUser,
-} from "../features/eLearningSlice";
+} from "../../features/eLearningSlice";
 import { Button } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 

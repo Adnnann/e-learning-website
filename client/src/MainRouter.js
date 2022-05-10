@@ -17,15 +17,16 @@ import React from "react";
 // import Statistics from "./components/statistics/Statistics";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
-import Header from "./components/Header";
-import Login from "./components/Login";
-import LoginOrSignup from "./components/LoginOrSignup";
+import Dashboard from "./components/dashboard/Dashboard";
+import DeleteAccountModal from "./components/user/DeleteAccountModal";
+import Header from "./components/core/Header";
+import LoginOrSignup from "./components/user/LoginOrSignup";
 
 function MainRouter() {
   return (
     <Router>
       <Header />
+
       <Routes>
         <Route path="/" element={<LoginOrSignup />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>

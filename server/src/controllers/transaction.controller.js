@@ -1,22 +1,22 @@
 import _ from "lodash";
 import jwtDecode from "jwt-decode";
-import Transaction from "../models/transactions.model";
+import Course from "../models/courses.model";
 import dbErrorHandlers from "./helpers/dbErrorHandlers";
 
-const createTransaction = (req, res) => {
-  const transaction = new Transaction(req.body);
-  transaction.save((err) => {
+const createCourse = (req, res) => {
+  const course = new Course(req.body);
+  course.save((err) => {
     if (err) {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
-    return res.send({ message: "Transaction successfuly created" });
+    return res.send({ message: "Course successfuly created" });
   });
 };
-const getTransactions = (req, res) => {
+const getCourses = (req, res) => {
   // get id to enable filtering of data
   const userId = jwtDecode(req.cookies.userJwtToken)._id;
   // filter data - get transactions for last three days
-  Transaction.find({})
+  Course.find({})
     .where("userId")
     .equals(userId)
     // sort data in descending order
@@ -29,15 +29,15 @@ const getTransactions = (req, res) => {
     });
 };
 
-const getTransaction = (req, res) => {
+const getCourse = (req, res) => {
   res.status(200).json(req.profile);
 };
-const updateTransaction = (req, res, next) => {
-  let transaction = req.profile;
-  transaction = _.extend(transaction, req.body);
+const updateCourse = (req, res, next) => {
+  let course = req.profile;
+  course = _.extend(course, req.body);
 
-  transaction.updated = Date.now();
-  transaction.save((err) => {
+  course.updated = Date.now();
+  course.save((err) => {
     if (err) {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
@@ -45,31 +45,31 @@ const updateTransaction = (req, res, next) => {
   });
 };
 
-const removeTransaction = (req, res, next) => {
-  const transaction = req.profile;
-  transaction.remove((err) => {
+const removeCourse = (req, res, next) => {
+  const course = req.profile;
+  course.remove((err) => {
     if (err) {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
-    res.send({ message: "Transaction deleted" });
+    res.send({ message: "Course deleted" });
   });
 };
 
 const transactionByID = (req, res, next, id) => {
-  Transaction.findById(id).exec((err, transaction) => {
-    if (err || !transaction) {
+  Course.findById(id).exec((err, course) => {
+    if (err || !course) {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
-    req.profile = transaction;
+    req.profile = course;
     next();
   });
 };
 
 export default {
-  createTransaction,
-  getTransactions,
-  updateTransaction,
-  removeTransaction,
-  getTransaction,
+  createCourse,
+  getCourses,
+  updateCourse,
+  removeCourse,
+  getCourse,
   transactionByID,
 };

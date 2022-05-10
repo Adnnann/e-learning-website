@@ -5,12 +5,13 @@ import config from "../config/config";
 
 const signin = (req, res) => {
   User.findOne({ email: req.body.email }, (err, user) => {
-    if (err || !user) {
+    if (err || !user || user.active === false) {
       return res.send({ error: "User not found" });
     }
     if (!user.authenticate(req.body.password)) {
       return res.send({ error: "Email and password do not match" });
     }
+
     const token = jwt.sign(
       { _id: user._id, email: user.email, name: user.name },
       config.secret
@@ -25,8 +26,8 @@ const signin = (req, res) => {
         _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
-        nickname: user.nickname,
         email: user.email,
+        userImage: user.userImage,
       },
     });
   });

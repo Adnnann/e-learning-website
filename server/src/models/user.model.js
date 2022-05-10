@@ -1,7 +1,6 @@
-import mongoose from "mongoose";
-import crypto from "crypto";
-import mongooseUniqueValidator from "mongoose-beautiful-unique-validation";
-import validate from "mongoose-validator";
+const mongoose = require("mongoose");
+const crypto = require("crypto");
+const validate = require("mongoose-validator");
 
 const emailValidator = [
   validate({
@@ -35,10 +34,25 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  userImage: {
+    type: String,
+    default: "",
+  },
   updated: Date,
   hashed_password: {
     type: String,
     required: "Password is required",
+  },
+  numberOfProjects: {
+    type: Number,
+    default: 0,
+  },
+  role: {
+    type: String,
+  },
+  active: {
+    type: Boolean,
+    default: false,
   },
   salt: String,
 });
@@ -50,10 +64,10 @@ UserSchema.virtual("password").set(function (password) {
 });
 
 UserSchema.methods = {
-  authenticate: function (plainText) {
+  authenticate(plainText) {
     return this.encryptPassword(plainText) === this.hashed_password;
   },
-  encryptPassword: function (password) {
+  encryptPassword(password) {
     if (!password) return "";
     try {
       return crypto
@@ -64,8 +78,8 @@ UserSchema.methods = {
       return err;
     }
   },
-  makeSalt: function () {
-    return Math.round(new Date().valueOf() * Math.random()) + "";
+  makeSalt() {
+    return `${Math.round(new Date().valueOf() * Math.random())}`;
   },
 };
 
@@ -75,4 +89,5 @@ UserSchema.path("hashed_password").validate(function (v) {
   }
 }, null);
 
-export default mongoose.model("User", UserSchema);
+const User = mongoose.model("User", UserSchema);
+module.exports = User;

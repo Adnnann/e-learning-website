@@ -17,7 +17,7 @@ import {
   setSigninUserForm,
   setSignupUserForm,
   getLoggedUserData,
-} from "../features/eLearningSlice";
+} from "../../features/eLearningSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { useEffect } from "react";

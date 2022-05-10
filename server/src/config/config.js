@@ -11,4 +11,4 @@ const config = {
     `mongodb+srv://aovcina:${password}@cluster0.hbhrs.mongodb.net/${database}?retryWrites=true&w=majority`,
 };
 
-export default config;
+module.exports = config;
