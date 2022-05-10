@@ -1,6 +1,8 @@
 /* eslint-disable no-underscore-dangle */
+import e from "express";
 import _ from "lodash";
 import User from "../models/user.model";
+import dbErrorHandlers from "./helpers/dbErrorHandlers";
 import errorHandler from "./helpers/dbErrorHandlers";
 
 const create = (req, res, next) => {
@@ -18,6 +20,16 @@ const read = (req, res) => {
   req.profile.hashed_password = undefined;
   req.profile.salt = undefined;
   res.status(200).json(req.profile);
+};
+
+const getAllUsers = (req, res) => {
+  User.find({}, (error, user) => {
+    if (error) {
+      res.send({ error: dbErrorHandlers(error) });
+    } else {
+      res.send({ users: user });
+    }
+  });
 };
 
 const update = (req, res, next) => {
@@ -85,6 +97,7 @@ const userByID = (req, res, next, id) => {
 
 export default {
   create,
+  getAllUsers,
   read,
   update,
   remove,

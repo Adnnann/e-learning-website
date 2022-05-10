@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import jwt from "jsonwebtoken";
 import expressJwt from "express-jwt";
 import User from "../models/user.model";
@@ -13,7 +14,12 @@ const signin = (req, res) => {
     }
 
     const token = jwt.sign(
-      { _id: user._id, email: user.email, name: user.name },
+      {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
       config.secret
     );
     res.cookie("userJwtToken", token, {
@@ -27,6 +33,7 @@ const signin = (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        role: user.role,
         userImage: user.userImage,
       },
     });
@@ -50,4 +57,9 @@ const hasAuthorization = (req, res, next) => {
   next();
 };
 
-export default { signin, signout, hasAuthorization, requireSignin };
+export default {
+  signin,
+  signout,
+  hasAuthorization,
+  requireSignin,
+};

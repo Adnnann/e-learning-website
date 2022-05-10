@@ -19,9 +19,9 @@ import {
   Typography,
   Icon,
   Grid,
-  makeStyles,
 } from "@material-ui/core/";
 import userImagePlaceholder from "../../assets/userImgPlaceholder.png";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {

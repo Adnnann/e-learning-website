@@ -13,11 +13,11 @@ import {
   TextField,
   Typography,
   Icon,
-  makeStyles,
   Card,
   CardActions,
   CardContent,
 } from "@material-ui/core/";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {

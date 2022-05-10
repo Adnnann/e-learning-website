@@ -7,17 +7,13 @@ import {
   cleanSignupMessage,
 } from "../../features/eLearningSlice";
 import { useDispatch } from "react-redux";
-import {
-  Grid,
-  makeStyles,
-  Typography,
-  AppBar,
-  Toolbar,
-} from "@material-ui/core";
+import { Grid, Typography, AppBar, Toolbar } from "@material-ui/core";
 import Item from "@mui/material/Grid";
 import { Box, Button } from "@mui/material";
 import { useSelector } from "react-redux";
 import Search from "../utils/Search";
+import { useNavigate } from "react-router-dom";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   logo: {
@@ -85,6 +81,7 @@ const useStyles = makeStyles((theme) => ({
 const Header = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const loggedUser = useSelector(getLoggedUserData);
 
   const login = () => {
@@ -110,6 +107,7 @@ const Header = () => {
                 className={classes.logo}
                 alt="Expense tracker"
                 src="https://www.elearning-journal.com/wp-content/uploads/2019/08/news_07082019_11.jpg"
+                onClick={() => navigate("/dashboard")}
               />
             </Item>
           </Grid>

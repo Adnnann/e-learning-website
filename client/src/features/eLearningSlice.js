@@ -106,10 +106,10 @@ export const closeAccount = createAsyncThunk(
   }
 );
 export const fetchUserCourses = createAsyncThunk(
-  "users/transactions",
+  "/eLearning/userCourses",
   async () => {
     return await axios
-      .get(`/api/transaction`)
+      .get(`/api/courses`)
       .then((response) => response.data)
       .catch((error) => error);
   }
@@ -177,6 +177,17 @@ export const uploadUserImage = createAsyncThunk(
   }
 );
 
+// admin
+export const fetchAllUsers = createAsyncThunk(
+  "eLearning/allUsers",
+  async (param) => {
+    return await axios
+      .get(`/admin/users`)
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+
 const initialState = {
   // user data
   singinUserForm: false,
@@ -197,6 +208,8 @@ const initialState = {
   closeAccountStatus: {},
   passwordCheck: {},
   deleteAccountModal: true,
+  // admin
+  allUsers: {},
   // courses
   userCourses: {},
   dashboardData: [],
@@ -333,6 +346,9 @@ const eLearningSlice = createSlice({
     [updateUserPassword.fulfilled]: (state, { payload }) => {
       return { ...state, updatePassword: payload };
     },
+    [fetchAllUsers.fulfilled]: (state, { payload }) => {
+      return { ...state, allUsers: payload };
+    },
   },
 });
 
@@ -377,6 +393,9 @@ export const getOpenDeleteModal = (state) => state.eLearning.openDeleteModal;
 export const getDeleteCourseMessage = (state) => state.eLearning.deleteCourse;
 export const getCoursesOverviewLevel = (state) =>
   state.eLearning.transactionsOverviewLevel;
+
+// admin
+export const getAllUsers = (state) => state.eLearning.allUsers;
 
 export const {
   setSigninUserForm,

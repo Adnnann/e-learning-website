@@ -10,6 +10,7 @@ import {
   setSignupUserForm,
   getLoggedUserData,
   cleanLoginMessage,
+  fetchUserCourses,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -20,8 +21,8 @@ import {
   Typography,
   Icon,
   Grid,
-  makeStyles,
 } from "@material-ui/core/";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -72,7 +73,6 @@ const Login = () => {
   const loggedUserData = useSelector(getLoggedUserData);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = useSelector(getUserToken);
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -82,6 +82,7 @@ const Login = () => {
   useEffect(() => {
     if (loggedUserData?.token) {
       dispatch(userToken());
+      dispatch(fetchUserCourses());
       navigate("/dashboard");
     }
   }, [loggedUserData]);

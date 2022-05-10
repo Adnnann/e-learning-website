@@ -16,13 +16,15 @@ import {
   Typography,
   Icon,
   Grid,
-  makeStyles,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Checkbox,
+  useMediaQuery,
 } from "@material-ui/core/";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -69,10 +71,30 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
     marginBottom: theme.spacing(1),
     marginRight: "0",
+    [theme.breakpoints.only("xs")]: {
+      marginLeft: "30px",
+    },
   },
   signin: {
     margin: "auto",
     marginBottom: theme.spacing(1),
+  },
+  signUpForMentorAccount: {
+    color: "green",
+  },
+  largeScreens: {
+    [theme.breakpoints.only("xs")]: {
+      display: "none",
+    },
+  },
+  smallScreens: {
+    [theme.breakpoints.up("md")]: {
+      display: "none",
+    },
+  },
+  mentorAccount: {
+    fontSize: "14px",
+    fontWeight: "bold",
   },
 }));
 const Signup = () => {
@@ -80,27 +102,48 @@ const Signup = () => {
   const dispatch = useDispatch();
   const signedUser = useSelector(getSignedUser);
 
+  const iPadAirScreen = useMediaQuery("(width:820px)");
+  const iPadMiniScreen = useMediaQuery("(width:768px)");
+  const surfaceDuo = useMediaQuery("(width:912px)");
+
   const [values, setValues] = useState({
     firstName: "",
     lastName: "",
     password: "",
     email: "",
+    role: "student",
     confirmationPassword: "",
     open: false,
     error: "",
   });
 
   const handleChange = (name) => (event) => {
+    if (name === "mentorAccount") {
+      return setValues({
+        ...values,
+        role: values.role === "mentor" ? "student" : "mentor",
+      });
+    }
+
     setValues({ ...values, [name]: event.target.value });
+  };
+
+  const formatUserData = (str) => {
+    return (
+      str.charAt(0).toUpperCase() + str.substr(1, str.length).toLowerCase()
+    );
   };
 
   const clickSubmit = () => {
     const user = {
-      firstName: values.firstName || undefined,
-      lastName: values.lastName || undefined,
+      firstName: formatUserData(values.firstName) || undefined,
+      lastName: formatUserData(values.lastName) || undefined,
       email: values.email || undefined,
       password: values.password || undefined,
+      role: values.role,
     };
+
+    console.log(user);
 
     if (!values.confirmationPassword || values.confirmationPassword === "") {
       setValues({ ...values, error: "Please repeat your password" });
@@ -207,7 +250,7 @@ const Signup = () => {
           </Button>
         </CardActions>
 
-        <CardActions>
+        <CardActions className={classes.largeScreens}>
           <Typography component="p" className={classes.hasAccount}>
             Already have an account?
           </Typography>
@@ -221,6 +264,31 @@ const Signup = () => {
             LOGIN
           </Typography>
         </CardActions>
+
+        {!iPadAirScreen && !iPadMiniScreen && !surfaceDuo ? (
+          <>
+            <CardActions className={classes.smallScreens}>
+              <Typography component="p" className={classes.hasAccount}>
+                Already have an account?
+              </Typography>
+            </CardActions>
+
+            <CardActions className={classes.smallScreens}>
+              <Typography
+                component="p"
+                color="primary"
+                className={classes.signin}
+                onClick={redirectToSignin}
+              >
+                LOGIN
+              </Typography>
+            </CardActions>
+          </>
+        ) : null}
+
+        <span className={classes.mentorAccount}>
+          Mentor account <Checkbox onChange={handleChange("mentorAccount")} />
+        </span>
       </Card>
 
       <Dialog open={signedUser?.message ? true : false}>

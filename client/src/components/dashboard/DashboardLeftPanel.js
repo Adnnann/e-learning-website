@@ -1,5 +1,6 @@
 import {
   cleanStore,
+  fetchAllUsers,
   getLoggedUserData,
   setEditUserProfileForm,
   signoutUser,
@@ -11,9 +12,14 @@ import {
   faHouse,
   faGear,
   faRightFromBracket,
+  faUserGroup,
+  faCube,
 } from "@fortawesome/free-solid-svg-icons";
-import { ButtonGroup, makeStyles, Typography, Button } from "@material-ui/core";
+import { ButtonGroup, Typography, Button } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
+import ButtonGroupWithIcons from "./LeftSidePanelButtons";
+import EditProfile from "../user/EditUserProfile";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   userIcon: {
@@ -39,10 +45,52 @@ const DashboardLeftPanel = () => {
 
   const loggedUser = useSelector(getLoggedUserData);
 
+  const redirectToDashboard = () => {
+    navigate("/dashboard");
+  };
+
+  const displayAllUsers = () => {
+    dispatch(fetchAllUsers());
+    navigate("/admin/users");
+    //dispatch(setEditUserProfileForm(true));
+  };
+
+  const displayAllCourses = () => {
+    //dispatch(setEditUserProfileForm(true));
+  };
+
+  const editUser = () => {
+    dispatch(setEditUserProfileForm(true));
+  };
+
   const signout = () => {
     dispatch(signoutUser());
     dispatch(cleanStore());
     navigate("/");
+  };
+
+  const adminButtonsAndIcons = {
+    clickEvents: [
+      redirectToDashboard,
+      displayAllUsers,
+      displayAllCourses,
+      editUser,
+      signout,
+    ],
+    buttons: ["Dashboard", "Users", "Courses", "Edit Profile", "Logout"],
+    icons: [faHouse, faUserGroup, faCube, faGear, faRightFromBracket],
+  };
+
+  const userButtonsAndIcons = {
+    clickEvents: [redirectToDashboard, editUser, signout],
+    buttons: ["Dashboard", "Edit Profile", "Logout"],
+    icons: [faHouse, faGear, faRightFromBracket],
+  };
+
+  const formatUserData = (str) => {
+    return (
+      str.charAt(0).toUpperCase() + str.substr(1, str.length).toLowerCase()
+    );
   };
 
   return (
@@ -52,55 +100,43 @@ const DashboardLeftPanel = () => {
         className={classes.userIcon}
         color="primary"
       />
-      <Typography
-        className={classes.username}
-      >{`${loggedUser.user.firstName} ${loggedUser.user.lastName}`}</Typography>
-      <ButtonGroup orientation="vertical">
-        <Button
-          color="primary"
-          className={classes.buttons}
-          startIcon={
-            <FontAwesomeIcon icon={faHouse} style={{ fontSize: "24px" }} />
-          }
-        >
-          Dashboard
-        </Button>
-        <Button
-          color="primary"
-          className={classes.buttons}
-          startIcon={
-            <FontAwesomeIcon icon={faGear} style={{ fontSize: "24px" }} />
-          }
-          onClick={() => dispatch(setEditUserProfileForm(true))}
-        >
-          Edit Profile
-        </Button>
-        <Button
-          color="primary"
-          className={classes.buttons}
-          onClick={signout}
-          startIcon={
-            <FontAwesomeIcon
-              icon={faRightFromBracket}
-              style={{ fontSize: "24px" }}
-            />
-          }
-        >
-          Logout
-        </Button>
-      </ButtonGroup>
+      <Typography className={classes.username}>
+        {`${formatUserData(loggedUser.user.firstName)} ${formatUserData(
+          loggedUser.user.lastName
+        )}`}
+      </Typography>
+
+      <ButtonGroupWithIcons
+        buttons={
+          loggedUser.user.role === "admin"
+            ? adminButtonsAndIcons.buttons
+            : userButtonsAndIcons.buttons
+        }
+        clickEvents={
+          loggedUser.user.role === "admin"
+            ? adminButtonsAndIcons.clickEvents
+            : userButtonsAndIcons.clickEvents
+        }
+        icons={
+          loggedUser.user.role === "admin"
+            ? adminButtonsAndIcons.icons
+            : userButtonsAndIcons.icons
+        }
+      />
 
       <Typography variant="h6" className={classes.userInfo}>
         Completed
         <br />
         courses
         <br />
-        {0}
+        {loggedUser.user.numberOfCompletedCourses}
       </Typography>
       <Typography variant="h6" className={classes.userInfo}>
         in progress
         <br />
-        {0}
+        {loggedUser.user?.enrolledInCourses
+          ? loggedUser.user?.enrolledInCourses.length
+          : "0"}
       </Typography>
     </>
   );

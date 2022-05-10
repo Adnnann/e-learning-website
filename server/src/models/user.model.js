@@ -43,7 +43,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: "Password is required",
   },
-  numberOfProjects: {
+  numberOfCompletedCourses: {
     type: Number,
     default: 0,
   },
@@ -53,6 +53,9 @@ const UserSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: false,
+  },
+  enrolledInCourses: {
+    type: Array,
   },
   salt: String,
 });

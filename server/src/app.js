@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import userImageRoutes from "./routes/userImage.routes";
+import courseRoutes from "./routes/course.routes";
+import adminRoutes from "./routes/admin.routes";
 
 const app = express();
 
@@ -21,6 +23,8 @@ app.use(cookieParser());
 app.use("/", authRoutes);
 app.use("/", userRoutes);
 app.use("/", userImageRoutes);
+app.use("/", courseRoutes);
+app.use("/", adminRoutes);
 
 app.use("/images", express.static("images"));
 

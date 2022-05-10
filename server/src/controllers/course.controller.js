@@ -14,7 +14,9 @@ const createCourse = (req, res) => {
 };
 const getCourses = (req, res) => {
   // get id to enable filtering of data
-  const userId = jwtDecode(req.cookies.userJwtToken)._id;
+  const user = jwtDecode(req.cookies.userJwtToken);
+
+  console.log(user);
   // filter data - get transactions for last three days
   Course.find({})
     .where("userId")
@@ -55,7 +57,7 @@ const removeCourse = (req, res, next) => {
   });
 };
 
-const transactionByID = (req, res, next, id) => {
+const courseByID = (req, res, next, id) => {
   Course.findById(id).exec((err, course) => {
     if (err || !course) {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
@@ -71,5 +73,5 @@ export default {
   updateCourse,
   removeCourse,
   getCourse,
-  transactionByID,
+  courseByID,
 };

@@ -21,6 +21,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import DeleteAccountModal from "./components/user/DeleteAccountModal";
 import Header from "./components/core/Header";
 import LoginOrSignup from "./components/user/LoginOrSignup";
+import Users from "./components/admin/users";
 
 function MainRouter() {
   return (
@@ -30,6 +31,7 @@ function MainRouter() {
       <Routes>
         <Route path="/" element={<LoginOrSignup />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/admin/users" element={<Users />}></Route>
       </Routes>
     </Router>
   );

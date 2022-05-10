@@ -15,6 +15,7 @@ import {
   Box,
 } from "@material-ui/core/";
 import Modal from "@mui/material/Modal";
+import { makeStyles } from "@mui/styles";
 
 const style = {
   position: "absolute",
