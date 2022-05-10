@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Icon from "@material-ui/core/Icon";
-import { Grid, makeStyles } from "@material-ui/core";
+import { useNavigate, useParams } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import {
   updateUserData,
@@ -17,7 +10,17 @@ import {
   uploadUserImage,
   getUploadUserImageStatus,
 } from "../../features/eLearningSlice";
-import { useNavigate, useParams } from "react-router";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  Button,
+  TextField,
+  Typography,
+  Icon,
+  Grid,
+  makeStyles,
+} from "@material-ui/core/";
 import userImagePlaceholder from "../../assets/userImgPlaceholder.png";
 
 const useStyles = makeStyles((theme) => ({

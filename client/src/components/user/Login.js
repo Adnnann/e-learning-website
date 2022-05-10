@@ -1,26 +1,27 @@
 import React, { useState } from "react";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Icon from "@material-ui/core/Icon";
-import { Grid, makeStyles } from "@material-ui/core";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
 import {
   signinUser,
-  getUserSigninData,
   userToken,
   getUserToken,
-  fetchUserTransactions,
-  userDataToDisplay,
   setSigninUserForm,
   setSignupUserForm,
   getLoggedUserData,
+  cleanLoginMessage,
 } from "../../features/eLearningSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router";
-import { useEffect } from "react";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  Button,
+  TextField,
+  Typography,
+  Icon,
+  Grid,
+  makeStyles,
+} from "@material-ui/core/";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -102,6 +103,7 @@ const Login = () => {
   const redirectToSignup = () => {
     dispatch(setSigninUserForm(false));
     dispatch(setSignupUserForm(true));
+    dispatch(cleanLoginMessage());
   };
 
   return (

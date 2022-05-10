@@ -1,19 +1,19 @@
-import { Grid } from "@material-ui/core";
-import DashboardLeftPanel from "./DashboardLeftPanel";
-import DashboardRightPanel from "./DashboardRightPanel";
-import { makeStyles } from "@mui/styles";
 import { useSelector } from "react-redux";
-import EditProfile from "../user/EditUserProfile";
 import {
   getCloseAccountFormStatus,
   getEditUserFormStatus,
   getEditUserPasswordFormStatus,
 } from "../../features/eLearningSlice";
+import { makeStyles } from "@mui/styles";
+import { Grid } from "@material-ui/core";
 import EditUserPassword from "../user/EditUserPassword";
 import { useMediaQuery } from "@mui/material";
 import CloseAccountForm from "../user/DeleteAccountForm";
 import DeleteAccountModal from "../user/DeleteAccountModal";
 import EditUserDataButtons from "./DashboardButtons";
+import EditProfile from "../user/EditUserProfile";
+import DashboardLeftPanel from "./DashboardLeftPanel";
+import DashboardRightPanel from "./DashboardRightPanel";
 
 const useStyles = makeStyles((theme) => ({
   largeScreens: {

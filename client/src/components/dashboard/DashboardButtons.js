@@ -1,7 +1,6 @@
-import { Button, ButtonGroup } from "@material-ui/core";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DropdownButtons from "../utils/DropdownButtons";
+import { useDispatch } from "react-redux";
 import {
   cleanStore,
   setCloseAccountModal,
@@ -9,8 +8,9 @@ import {
   setEditUserProfileForm,
   signoutUser,
 } from "../../features/eLearningSlice";
-import { useState } from "react";
 import { makeStyles } from "@mui/styles";
+import { Button, ButtonGroup } from "@material-ui/core/";
+import DropdownButtons from "../utils/DropdownButtons";
 
 const useStyles = makeStyles((theme) => ({
   notSmallScreens: {

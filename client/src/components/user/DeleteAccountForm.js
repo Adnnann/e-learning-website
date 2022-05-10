@@ -1,21 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Icon from "@material-ui/core/Icon";
-import { makeStyles } from "@material-ui/core";
+import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  Button,
+  TextField,
+  Typography,
+  Icon,
+  makeStyles,
+} from "@material-ui/core/";
 import {
   getLoggedUserData,
   closeAccount,
   cleanStore,
   getCloseAccountStatus,
 } from "../../features/eLearningSlice";
-import { useNavigate } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   card: {

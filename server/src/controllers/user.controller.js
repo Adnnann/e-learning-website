@@ -5,6 +5,8 @@ import errorHandler from "./helpers/dbErrorHandlers";
 
 const create = (req, res, next) => {
   const user = new User(req.body);
+
+  user.active = true;
   user.save((err, result) => {
     if (err) {
       res.send({ error: errorHandler.getErrorMessage(err) });

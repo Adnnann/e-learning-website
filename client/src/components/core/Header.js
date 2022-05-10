@@ -1,18 +1,22 @@
 import React from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
 import {
   setSigninUserForm,
   setSignupUserForm,
   getLoggedUserData,
+  cleanLoginMessage,
+  cleanSignupMessage,
 } from "../../features/eLearningSlice";
 import { useDispatch } from "react-redux";
-import { Grid, makeStyles, Typography } from "@material-ui/core";
+import {
+  Grid,
+  makeStyles,
+  Typography,
+  AppBar,
+  Toolbar,
+} from "@material-ui/core";
 import Item from "@mui/material/Grid";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useSelector } from "react-redux";
-import Button from "@mui/material/Button";
-import { useState } from "react";
 import Search from "../utils/Search";
 
 const useStyles = makeStyles((theme) => ({
@@ -82,16 +86,17 @@ const Header = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const loggedUser = useSelector(getLoggedUserData);
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
 
   const login = () => {
     dispatch(setSignupUserForm(false));
     dispatch(setSigninUserForm(true));
+    dispatch(cleanSignupMessage());
   };
 
   const signup = () => {
     dispatch(setSigninUserForm(false));
     dispatch(setSignupUserForm(true));
+    dispatch(cleanLoginMessage());
   };
 
   return (

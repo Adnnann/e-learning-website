@@ -1,7 +1,5 @@
-import { Stack } from "@mui/material";
-import Alert from "@mui/material/Alert";
+import { Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { useMediaQuery } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   userDashboardMessage: {

@@ -1,3 +1,10 @@
+import {
+  cleanStore,
+  getLoggedUserData,
+  setEditUserProfileForm,
+  signoutUser,
+} from "../../features/eLearningSlice";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -5,16 +12,8 @@ import {
   faGear,
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
-import { ButtonGroup, makeStyles, Typography } from "@material-ui/core";
+import { ButtonGroup, makeStyles, Typography, Button } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  cleanStore,
-  getLoggedUserData,
-  setEditUserProfileForm,
-  signoutUser,
-} from "../../features/eLearningSlice";
-import { Button } from "@material-ui/core";
-import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   userIcon: {

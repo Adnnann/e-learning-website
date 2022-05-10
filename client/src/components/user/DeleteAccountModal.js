@@ -1,8 +1,3 @@
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getCloseAccountModalStatus,
@@ -11,8 +6,15 @@ import {
   setEditUserPasswordForm,
   setEditUserProfileForm,
 } from "../../features/eLearningSlice";
+import {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+  Box,
+} from "@material-ui/core/";
 import Modal from "@mui/material/Modal";
-import { Box } from "@material-ui/core";
 
 const style = {
   position: "absolute",

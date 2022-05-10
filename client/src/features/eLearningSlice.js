@@ -232,8 +232,11 @@ const eLearningSlice = createSlice({
     setCloseAccountModal: (state, action) => {
       state.closeAccountModal = action.payload;
     },
-    cleanRegisteredUserData: (state, action) => {
-      state.registeredUser = {};
+    cleanSignupMessage: (state, action) => {
+      state.signedupUser = {};
+    },
+    cleanLoginMessage: (state, action) => {
+      state.loggedUser = {};
     },
     cleanUpdatedUserData: (state, action) => {
       state.updatedUserData = {};
@@ -396,6 +399,8 @@ export const {
   setStatisticsOverviewLevel,
   setDeleteAccountModal,
   cleanStore,
+  cleanLoginMessage,
+  cleanSignupMessage,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;
