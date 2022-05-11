@@ -1,6 +1,7 @@
 import {
   cleanStore,
-  fetchAllUsers,
+  fetchCourses,
+  fetchUsers,
   getLoggedUserData,
   setEditUserProfileForm,
   signoutUser,
@@ -15,10 +16,9 @@ import {
   faUserGroup,
   faCube,
 } from "@fortawesome/free-solid-svg-icons";
-import { ButtonGroup, Typography, Button } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import ButtonGroupWithIcons from "./LeftSidePanelButtons";
-import EditProfile from "../user/EditUserProfile";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -50,13 +50,28 @@ const DashboardLeftPanel = () => {
   };
 
   const displayAllUsers = () => {
-    dispatch(fetchAllUsers());
+    const users = {
+      firstItem: 0,
+      lastItem: 11,
+    };
+    dispatch(fetchUsers(users));
     navigate("/admin/users");
-    //dispatch(setEditUserProfileForm(true));
   };
 
   const displayAllCourses = () => {
-    //dispatch(setEditUserProfileForm(true));
+    const courses = {
+      firstItem: 0,
+      lastItem: 11,
+    };
+
+    const users = {
+      firstItem: 0,
+      lastItem: 11,
+    };
+
+    dispatch(fetchUsers(users));
+    dispatch(fetchCourses(courses));
+    navigate("/admin/courses");
   };
 
   const editUser = () => {

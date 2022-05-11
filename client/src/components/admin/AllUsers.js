@@ -1,21 +1,26 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { Tooltip } from "@mui/material";
 import TableComponents from "../utils/Table";
 import {
-  getAllUsers,
   getLoggedUserData,
-  setFilter,
+  getUsers,
+  getUsersDisplayPage,
+  setUsersDisplayPage,
+  fetchUsers,
 } from "../../features/eLearningSlice";
 import Checkbox from "@mui/material/Checkbox";
 import { Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
+import PaginationComponent from "../utils/Pagination";
 
-const Users = () => {
-  const users = useSelector(getAllUsers);
+const AllUsers = () => {
+  const dispatch = useDispatch();
+  const users = useSelector(getUsers);
+  const page = useSelector(getUsersDisplayPage);
   const loggedUser = useSelector(getLoggedUserData);
   const rows = [];
 
@@ -68,9 +73,9 @@ const Users = () => {
   };
 
   const createRows = () => {
-    if (users?.users) {
+    if (users?.data) {
       _.chain(
-        Object.values(users.users).filter(
+        Object.values(users.data).filter(
           (item) => item.firstName !== loggedUser.user.firstName
         )
       )
@@ -111,12 +116,44 @@ const Users = () => {
             </span>
           );
 
+          const sixthCol = (
+            <span>
+              <Tooltip title="Edit book">
+                <EditOutlinedIcon
+                  fontSize="small"
+                  //onClick={() => edit(item.Id, item.Name)}
+                />
+              </Tooltip>
+
+              <Tooltip title="Delete book" style={{ marginLeft: "20px" }}>
+                <DeleteOutlineOutlinedIcon
+                  //onClick={() => dispatch(deleteAuthor(item._id))}
+                  fontSize="small"
+                />
+              </Tooltip>
+            </span>
+          );
+
           rows.push(
             createColumns(firstCol, secondCol, thirdCol, fourthCol, fifthCol)
           );
         })
         .value();
     }
+  };
+
+  const handlePagination = (event, value) => {
+    const users = {
+      firstItem: value * 12 - 11,
+      lastItem: value * 12,
+    };
+
+    dispatch(setUsersDisplayPage(value));
+    dispatch(fetchUsers(users));
+    //to dispatch and filter in mongoose all values between
+    //value * 12 - 11, value * 12
+    // and
+    //value * 12 - (value * 12 - 11)
   };
 
   const handleChange = (name) => (event) => {
@@ -145,19 +182,23 @@ const Users = () => {
         </Grid>
       </Grid>
       <Grid item xs={12} md={9} lg={9} xl={9} style={{ marginTop: "10px" }}>
-        {users?.users ? (
-          <TableComponents
-            rows={rows}
-            columns={columns}
-            createData={createColumns}
-            createRows={createRows}
-          />
-        ) : (
-          "Loading..."
-        )}
+        <TableComponents
+          rows={rows}
+          columns={columns}
+          createData={createColumns}
+          createRows={createRows}
+        />
       </Grid>
+      {users?.totalNumOfCourses && Math.ceil(users.totalNumOfCourses) > 1 ? (
+        <PaginationComponent
+          page={page}
+          handleChange={handlePagination}
+          numberOfPages={Math.ceil(users.totalNumOfCourses / 12)}
+          numberOfItems={Object.keys(users.data).length}
+        />
+      ) : null}
     </Grid>
   );
 };
 
-export default Users;
+export default AllUsers;

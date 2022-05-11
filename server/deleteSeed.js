@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Courses = require("./src/models/courses.model");
 const Users = require("./src/models/user.model");
-const Images = require("./src/models/image.model");
 const config = require("./src/config/config");
 
 mongoose
@@ -12,7 +11,6 @@ mongoose
 const deleteSeed = async () => {
   await Users.deleteMany({});
   await Courses.deleteMany({});
-  await Images.deleteMany({});
 };
 
 deleteSeed()

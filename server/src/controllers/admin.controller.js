@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-import e from "express";
 import _ from "lodash";
 import User from "../models/user.model";
+import Course from "../models/courses.model";
 import dbErrorHandlers from "./helpers/dbErrorHandlers";
 import errorHandler from "./helpers/dbErrorHandlers";
 
@@ -11,7 +11,7 @@ const create = (req, res, next) => {
     if (err) {
       res.send({ error: errorHandler.getErrorMessage(err) });
     } else {
-      res.send({ message: "Successfuly created a new user." });
+      res.send({ message: "Successfully created a new user." });
     }
   });
 };
@@ -20,16 +20,6 @@ const read = (req, res) => {
   req.profile.hashed_password = undefined;
   req.profile.salt = undefined;
   res.status(200).json(req.profile);
-};
-
-const getAllUsers = (req, res) => {
-  User.find({}, (error, user) => {
-    if (error) {
-      res.send({ error: dbErrorHandlers(error) });
-    } else {
-      res.send({ users: user });
-    }
-  });
 };
 
 const update = (req, res, next) => {
@@ -95,12 +85,45 @@ const userByID = (req, res, next, id) => {
   });
 };
 
+const getCourses = (req, res) => {
+  Course.find({}, (error, course) => {
+    let courses = [];
+    if (Math.ceil(course.length / 12 - req.body.page) === 0) {
+      courses = course.slice(
+        (Math.ceil(course.length / 12) - 1) * 12,
+        course.length
+      );
+    } else {
+      courses = course.slice(req.body.firstValue, req.body.lastValue);
+    }
+
+    if (error) {
+      res.send({ error: dbErrorHandlers(error) });
+    } else {
+      res.send({ data: courses, totalNumOfCourses: course.length });
+    }
+  });
+};
+
+const getUsers = (req, res) => {
+  User.find({}, (error, user) => {
+    const users = user.slice(req.body.firstValue, req.body.lastValue);
+
+    if (error) {
+      res.send({ error: dbErrorHandlers(error) });
+    } else {
+      res.send({ data: users, totalNumOfCourses: user.length });
+    }
+  });
+};
+
 export default {
   create,
-  getAllUsers,
+  getUsers,
   read,
   update,
   remove,
   updateUserPassword,
+  getCourses,
   userByID,
 };

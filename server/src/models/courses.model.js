@@ -12,6 +12,9 @@ const CoursesSchema = new mongoose.Schema({
     ],
     maxlength: [55, "Last name must be less than 55 characters"],
   },
+  description: {
+    type: String,
+  },
   level: {
     type: String,
   },

@@ -6,7 +6,11 @@ import config from "../config/config";
 
 const signin = (req, res) => {
   User.findOne({ email: req.body.email }, (err, user) => {
-    if (err || !user || user.active === false) {
+    if (user && user.active === false) {
+      console.log(user.active);
+      return res.send({ error: "You account has not been activated yet." });
+    }
+    if (err || !user) {
       return res.send({ error: "User not found" });
     }
     if (!user.authenticate(req.body.password)) {

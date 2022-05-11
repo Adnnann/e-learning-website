@@ -9,6 +9,7 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   table: {
+    overflowX: "none",
     [theme.breakpoints.only("xs")]: {
       maxHeight: "400px",
     },
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
       height: "500px",
     },
     [theme.breakpoints.only("xl")]: {
-      height: "700px",
+      height: "500px",
     },
   },
 }));

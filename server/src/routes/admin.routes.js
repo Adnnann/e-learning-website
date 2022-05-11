@@ -16,7 +16,8 @@ router.get(
   }
 );
 
-router.route("/admin/users").get(adminCtrl.getAllUsers);
+router.route("/admin/courses").post(adminCtrl.getCourses);
+router.route("/admin/users").post(adminCtrl.getUsers);
 //.post(userCtrl.create);
 
 // router

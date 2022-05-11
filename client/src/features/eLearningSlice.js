@@ -188,6 +188,30 @@ export const fetchAllUsers = createAsyncThunk(
   }
 );
 
+export const fetchCourses = createAsyncThunk(
+  "eLearning/courses",
+  async (courses) => {
+    return await axios
+      .post(`/admin/courses`, {
+        page: courses.page,
+        firstValue: courses.firstItem,
+        lastValue: courses.lastItem,
+      })
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+
+export const fetchUsers = createAsyncThunk("eLearning/users", async (users) => {
+  return await axios
+    .post(`/admin/users`, {
+      firstValue: users.firstItem,
+      lastValue: users.lastItem,
+    })
+    .then((response) => response.data)
+    .catch((error) => error);
+});
+
 const initialState = {
   // user data
   singinUserForm: false,
@@ -210,6 +234,11 @@ const initialState = {
   deleteAccountModal: true,
   // admin
   allUsers: {},
+  usersDisplayPage: 1,
+  allCourses: {},
+  coursesDisplayPage: 1,
+  courses: {},
+  users: {},
   // courses
   userCourses: {},
   dashboardData: [],
@@ -284,6 +313,12 @@ const eLearningSlice = createSlice({
     setDeleteAccountModal: (state, action) => {
       state.deleteAccountModal = action.payload;
     },
+    setUsersDisplayPage: (state, action) => {
+      state.usersDisplayPage = action.payload;
+    },
+    setCoursesDisplayPage: (state, action) => {
+      state.coursesDisplayPage = action.payload;
+    },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
   },
@@ -346,8 +381,16 @@ const eLearningSlice = createSlice({
     [updateUserPassword.fulfilled]: (state, { payload }) => {
       return { ...state, updatePassword: payload };
     },
+    // admin
     [fetchAllUsers.fulfilled]: (state, { payload }) => {
       return { ...state, allUsers: payload };
+    },
+
+    [fetchCourses.fulfilled]: (state, { payload }) => {
+      return { ...state, courses: payload };
+    },
+    [fetchUsers.fulfilled]: (state, { payload }) => {
+      return { ...state, users: payload };
     },
   },
 });
@@ -384,6 +427,9 @@ export const getUserCourses = (state) => state.eLearning.userCourses;
 export const getDashboardData = (state) => state.eLearning.dashboardData;
 export const getCourseData = (state) => state.eLearning.addCourse;
 export const getFilter = (state) => state.eLearning.filter;
+export const getUsersDisplayPage = (state) => state.eLearning.usersDisplayPage;
+export const getCoursesDisplayPage = (state) =>
+  state.eLearning.coursesDisplayPage;
 
 export const getUpdatedUserCourse = (state) =>
   state.eLearning.updatedUserCourse;
@@ -395,7 +441,8 @@ export const getCoursesOverviewLevel = (state) =>
   state.eLearning.transactionsOverviewLevel;
 
 // admin
-export const getAllUsers = (state) => state.eLearning.allUsers;
+export const getUsers = (state) => state.eLearning.users;
+export const getCourses = (state) => state.eLearning.courses;
 
 export const {
   setSigninUserForm,
@@ -420,6 +467,9 @@ export const {
   cleanStore,
   cleanLoginMessage,
   cleanSignupMessage,
+  //admin
+  setUsersDisplayPage,
+  setCoursesDisplayPage,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;
