@@ -45,7 +45,7 @@ const TableComponent = ({ columns, createData, createRows, rows }) => {
             <TableRow>
               {columns.map((column) => (
                 <TableCell
-                  key={Math.random() * 100}
+                  key={Math.floor(Math.random() * 1000)}
                   align={column.align}
                   style={{ minWidth: column.minWidth, backgroundColor: "grey" }}
                 >
@@ -63,13 +63,13 @@ const TableComponent = ({ columns, createData, createRows, rows }) => {
                     height: "90px",
                     wordBreak: "break",
                   }}
-                  key={index}
+                  key={Math.floor(Math.random() * 10000)}
                 >
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (
                       <TableCell
-                        key={Math.random() * 10}
+                        key={Math.floor(Math.random() * 100000)}
                         align={column.align}
                         style={{ wordBreak: "break-all" }}
                       >

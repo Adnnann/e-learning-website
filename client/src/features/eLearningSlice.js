@@ -116,10 +116,10 @@ export const fetchUserCourses = createAsyncThunk(
 );
 
 export const createCourse = createAsyncThunk(
-  "users/addUserCourse",
-  async (transaction) => {
+  "eLearning/createCourse",
+  async (course) => {
     return await axios
-      .post(`/api/transaction`, transaction, {
+      .post(`/api/courses`, course, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -129,11 +129,11 @@ export const createCourse = createAsyncThunk(
       .catch((error) => error);
   }
 );
-export const updateUserCourse = createAsyncThunk(
-  "users/updateUserCourse",
+export const updateCourse = createAsyncThunk(
+  "eLearning/updateCourse",
   async (course) => {
     return await axios
-      .put(`/api/transaction/${course.param}`, course.data, {
+      .put(`/api/course/${course.param}`, course.data, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -144,10 +144,37 @@ export const updateUserCourse = createAsyncThunk(
   }
 );
 
-export const deleteCourse = createAsyncThunk(
-  "users/deleteCourse",
+export const updateUser = createAsyncThunk(
+  "eLearning/updateUser",
+  async (user) => {
+    return await axios
+      .put(`/api/transaction/${user.param}`, user.data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+export const removeCourse = createAsyncThunk(
+  "eLearning/deleteCourse",
   async (param) => {
-    const response = await axios.delete(`/api/transaction/${param}`, {
+    const response = await axios.post(`/admin/course/${param}`, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  }
+);
+
+export const removeUser = createAsyncThunk(
+  "eLearning/deleteUser",
+  async (param) => {
+    const response = await axios.post(`/admin/user/${param}`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -167,7 +194,7 @@ export const fetchUserCourseData = createAsyncThunk(
   }
 );
 //upload image
-export const uploadUserImage = createAsyncThunk(
+export const uploadImage = createAsyncThunk(
   "library/uploadImage",
   async (file) => {
     return await axios
@@ -180,9 +207,26 @@ export const uploadUserImage = createAsyncThunk(
 // admin
 export const fetchAllUsers = createAsyncThunk(
   "eLearning/allUsers",
-  async (param) => {
+  async () => {
     return await axios
       .get(`/admin/users`)
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+
+export const fetchFilteredCourses = createAsyncThunk(
+  "eLearning/courses",
+  async (courses) => {
+    return await axios
+      .post(`/admin/courses`, {
+        filterTerm: courses.filterTerm,
+        filterLevel: courses.filterLevel || undefined,
+        filterDuration: courses.filterDuration || undefined,
+        page: courses.page,
+        firstValue: courses.firstItem,
+        lastValue: courses.lastItem,
+      })
       .then((response) => response.data)
       .catch((error) => error);
   }
@@ -193,6 +237,9 @@ export const fetchCourses = createAsyncThunk(
   async (courses) => {
     return await axios
       .post(`/admin/courses`, {
+        filterTerm: courses.filterTerm,
+        filterLevel: courses.filterLevel || undefined,
+        filterDuration: courses.filterDuration || undefined,
         page: courses.page,
         firstValue: courses.firstItem,
         lastValue: courses.lastItem,
@@ -224,7 +271,7 @@ const initialState = {
   closeAccountForm: false,
   closeAccountModal: false,
   userData: {},
-  updatedUserData: {},
+  updateUser: {},
   loggedUser: {},
   signedOut: {},
   userToken: {},
@@ -232,6 +279,7 @@ const initialState = {
   closeAccountStatus: {},
   passwordCheck: {},
   deleteAccountModal: true,
+  deleteUser: {},
   // admin
   allUsers: {},
   usersDisplayPage: 1,
@@ -239,14 +287,18 @@ const initialState = {
   coursesDisplayPage: 1,
   courses: {},
   users: {},
+  updateCourse: {},
   // courses
   userCourses: {},
   dashboardData: [],
   addCourse: {},
-  filter: { duration: "", level: "", title: "" },
+  filterTerm: "",
   updatedUserCourse: {},
   deleteCourse: {},
   userCourseData: {},
+  courseToEdit: {},
+  userToEdit: {},
+  addCourse: {},
 };
 
 const eLearningSlice = createSlice({
@@ -280,8 +332,8 @@ const eLearningSlice = createSlice({
     cleanLoginMessage: (state, action) => {
       state.loggedUser = {};
     },
-    cleanUpdatedUserData: (state, action) => {
-      state.updatedUserData = {};
+    cleanUpdatedUserDataStatus: (state, action) => {
+      state.updateUser = {};
     },
     cleanPasswordCheckData: (state, action) => {
       state.passwordCheck = {};
@@ -295,13 +347,16 @@ const eLearningSlice = createSlice({
     cleanCourseData: (state, action) => {
       state.addCourse = {};
     },
-    cleanCourseUpdatedData: (state, action) => {
-      state.updatedUserCourse = {};
+    cleanUserUpdateMessage: (state, action) => {
+      state.updateUser = {};
+    },
+    cleanCourseUpdatedMessage: (state, action) => {
+      state.updateCourse = {};
     },
     setFilter: (state, action) => {
-      state.filter = action.payload;
+      state.filterTerm = action.payload;
     },
-    cleanDeleteCourseData: (state, payload) => {
+    cleanDeleteCourseMessage: (state, payload) => {
       state.deleteCourse = {};
     },
     setCoursesOverviewLevel: (state, action) => {
@@ -318,6 +373,22 @@ const eLearningSlice = createSlice({
     },
     setCoursesDisplayPage: (state, action) => {
       state.coursesDisplayPage = action.payload;
+    },
+    setCourseToEdit: (state, action) => {
+      state.courseToEdit = Object.values(state.courses.data).filter(
+        (item) => item._id === action.payload
+      )[0];
+    },
+    setUserToEdit: (state, action) => {
+      state.userToEdit = Object.values(state.users.data).filter(
+        (item) => item._id === action.payload
+      )[0];
+    },
+    cleanUploadImageStatus: (state, action) => {
+      state.uploadImage = {};
+    },
+    cleanAddCourseMessage: (state, action) => {
+      state.addCourse = {};
     },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
@@ -339,9 +410,16 @@ const eLearningSlice = createSlice({
       return { ...state, userData: payload };
     },
     [updateUserData.fulfilled]: (state, { payload }) => {
+      if (payload.error) {
+        return {
+          ...state,
+          updateUser: payload,
+        };
+      }
+
       return {
         ...state,
-        updatedUserData: payload,
+        updateUser: payload,
         loggedUser: {
           token: payload.token,
           user: payload.data,
@@ -361,16 +439,23 @@ const eLearningSlice = createSlice({
     [createCourse.fulfilled]: (state, { payload }) => {
       return { ...state, addCourse: payload };
     },
-    [updateUserCourse.fulfilled]: (state, { payload }) => {
-      return { ...state, updatedUserCourse: payload };
+    [updateUser.fulfilled]: (state, { payload }) => {
+      return { ...state, updatedUser: payload };
+    },
+    [updateCourse.fulfilled]: (state, { payload }) => {
+      return { ...state, updateCourse: payload };
     },
     [fetchUserCourseData.fulfilled]: (state, { payload }) => {
       return { ...state, userCourseData: payload };
     },
-    [deleteCourse.fulfilled]: (state, { payload }) => {
+    [removeCourse.fulfilled]: (state, { payload }) => {
       return { ...state, deleteCourse: payload };
     },
-    [uploadUserImage.fulfilled]: (state, { payload }) => {
+    [uploadImage.fulfilled]: (state, { payload }) => {
+      if (payload.imageUrl.includes("course")) {
+        return { ...state, uploadImage: payload };
+      }
+
       if (payload.imageUrl) {
         void (state.loggedUser.user.userImage = payload.imageUrl);
         void (state.uploadImage = null);
@@ -414,7 +499,7 @@ export const getCloseAccountModalStatus = (state) =>
 export const getUserToken = (state) => state.eLearning.userToken;
 export const getErrors = (state) => state.eLearning.showErrors;
 export const getUserData = (state) => state.eLearning.userData;
-export const getUpdatedUserData = (state) => state.eLearning.updatedUserData;
+export const getUpdateUserStatus = (state) => state.eLearning.updateUser;
 export const getCloseAccountStatus = (state) =>
   state.eLearning.closeAccountStatus;
 export const getPasswordCheckData = (state) => state.eLearning.passwordCheck;
@@ -422,23 +507,26 @@ export const getUserDataToDisplay = (state) =>
   state.eLearning.userDataToDisplay;
 export const getDeleteAccountModal = (state) =>
   state.eLearning.closeAccountModal;
+export const getUserToEdit = (state) => state.eLearning.userToEdit;
 ///
 export const getUserCourses = (state) => state.eLearning.userCourses;
 export const getDashboardData = (state) => state.eLearning.dashboardData;
 export const getCourseData = (state) => state.eLearning.addCourse;
-export const getFilter = (state) => state.eLearning.filter;
+export const getFilter = (state) => state.eLearning.filterTerm;
 export const getUsersDisplayPage = (state) => state.eLearning.usersDisplayPage;
 export const getCoursesDisplayPage = (state) =>
   state.eLearning.coursesDisplayPage;
+export const getUpdateCourseStatus = (state) => state.eLearning.updateCourse;
+export const getDeleteUserMessage = (state) => state.eLearning.deleteUser;
 
-export const getUpdatedUserCourse = (state) =>
-  state.eLearning.updatedUserCourse;
 export const getUserCourseData = (state) => state.eLearning.userCourseData;
 export const getDeleteId = (state) => state.eLearning.deleteId;
 export const getOpenDeleteModal = (state) => state.eLearning.openDeleteModal;
 export const getDeleteCourseMessage = (state) => state.eLearning.deleteCourse;
 export const getCoursesOverviewLevel = (state) =>
   state.eLearning.transactionsOverviewLevel;
+export const getCourseToEdit = (state) => state.eLearning.courseToEdit;
+export const getCreateCourseMessage = (state) => state.eLearning.addCourse;
 
 // admin
 export const getUsers = (state) => state.eLearning.users;
@@ -467,9 +555,16 @@ export const {
   cleanStore,
   cleanLoginMessage,
   cleanSignupMessage,
+  cleanUploadImageStatus,
+  cleanAddCourseMessage,
   //admin
   setUsersDisplayPage,
   setCoursesDisplayPage,
+  cleanDeleteCourseMessage,
+  cleanCourseUpdatedMessage,
+  cleanUserUpdateMessage,
+  setCourseToEdit,
+  setUserToEdit,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

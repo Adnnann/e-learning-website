@@ -1,19 +1,19 @@
 import { Select, MenuItem } from "@mui/material";
 
-const SelectComponent = ({ handleChange, selectedValue, array, disabled }) => {
+const SelectComponent = ({
+  handleChange,
+  selectedValue,
+  array,
+  disabled,
+  className,
+}) => {
   return (
     <Select
       fullWidth
       onChange={handleChange}
       value={selectedValue}
       disabled={disabled}
-      style={{
-        minWidth: "0px",
-        marginTop: "10px",
-        borderStyle: "solid",
-        borderColor: "grey",
-        borderWidth: "1px",
-      }}
+      className={className}
     >
       {array.map((item, index) => {
         return (

@@ -1,9 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import _ from "lodash";
+import { crossOriginResourcePolicy } from "helmet";
 import User from "../models/user.model";
 import Course from "../models/courses.model";
 import dbErrorHandlers from "./helpers/dbErrorHandlers";
 import errorHandler from "./helpers/dbErrorHandlers";
+import courseController from "./course.controller";
 
 const create = (req, res, next) => {
   const user = new User(req.body);
@@ -20,23 +22,6 @@ const read = (req, res) => {
   req.profile.hashed_password = undefined;
   req.profile.salt = undefined;
   res.status(200).json(req.profile);
-};
-
-const update = (req, res, next) => {
-  let user = req.profile;
-  user = _.extend(user, req.body);
-
-  user.updated = Date.now();
-  user.save((err) => {
-    if (err) {
-      return res.send({ error: errorHandler.getErrorMessage(err) });
-    }
-    res.send({
-      message: "Data updated",
-      data: user,
-      token: req.cookies.userJwtToken,
-    });
-  });
 };
 
 const remove = async (req, res, next) => {
@@ -86,13 +71,47 @@ const userByID = (req, res, next, id) => {
 };
 
 const getCourses = (req, res) => {
-  Course.find({}, (error, course) => {
+  Course.find({ status: "active" }, (error, course) => {
+    Object.values(req.users);
     let courses = [];
+
+    course.map((item, index) => {
+      const mentorName = `${
+        Object.values(req.users).filter(
+          (user) => user._id.toString() === item.mentorId
+        )[0].firstName
+      } ${
+        Object.values(req.users).filter(
+          (user) => user._id.toString() === item.mentorId
+        )[0].lastName
+      }`;
+      course[index].mentorId = mentorName;
+    });
+
+    if (req.body.filterTerm) {
+      courses = course.filter((item) =>
+        item.title.toLowerCase().includes(req.body.filterTerm.toLowerCase())
+      );
+
+      // course.map((item, index) => {
+      //   users[index];
+      // });
+
+      return res.send({ data: courses, totalNumOfCourses: courses.length });
+    }
     if (Math.ceil(course.length / 12 - req.body.page) === 0) {
       courses = course.slice(
         (Math.ceil(course.length / 12) - 1) * 12,
         course.length
       );
+    } else if (req.body.filterLevel) {
+      courses = course
+        .filter((item) => item.level.includes(req.body.filterLevel))
+        .slice(req.body.firstValue, req.body.lastValue);
+    } else if (req.body.filterDuration) {
+      courses = course
+        .filter((item) => item.duration.includes(req.body.filterDuration))
+        .slice(req.body.firstValue, req.body.lastValue);
     } else {
       courses = course.slice(req.body.firstValue, req.body.lastValue);
     }
@@ -100,7 +119,16 @@ const getCourses = (req, res) => {
     if (error) {
       res.send({ error: dbErrorHandlers(error) });
     } else {
-      res.send({ data: courses, totalNumOfCourses: course.length });
+      res.send({
+        data: courses,
+        totalNumOfCourses: req.body.filterLevel
+          ? course.filter((item) => item.level.includes(req.body.filterLevel))
+          : req.body.filterDuration
+          ? course.filter((item) =>
+              item.duration.includes(req.body.filterDuration)
+            ).length
+          : course.length,
+      });
     }
   });
 };
@@ -117,13 +145,41 @@ const getUsers = (req, res) => {
   });
 };
 
+const getAllUsers = (req, res, next) => {
+  User.find({}).exec((err, user) => {
+    req.users = user;
+    next();
+  });
+};
+
+const courseByID = (req, res, next, id) => {
+  Course.findById(id).exec((err, course) => {
+    if (err || !course) {
+      return res.json({ error: "Course not found!" });
+    }
+    req.course = course;
+    next();
+  });
+};
+
+const removeCourse = async (req, res) => {
+  const user = await Course.findByIdAndUpdate(
+    { _id: req.course._id },
+    { status: "inactive" }
+  );
+
+  if (user) {
+    res.send({ message: "Course removed" });
+  }
+};
+
 export default {
   create,
   getUsers,
   read,
-  update,
-  remove,
+  removeCourse,
   updateUserPassword,
   getCourses,
-  userByID,
+  getAllUsers,
+  courseByID,
 };

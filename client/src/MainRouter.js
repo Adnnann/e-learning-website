@@ -18,11 +18,13 @@ import React from "react";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/dashboard/Dashboard";
-import DeleteAccountModal from "./components/user/DeleteAccountModal";
 import Header from "./components/core/Header";
 import LoginOrSignup from "./components/user/LoginOrSignup";
 import AllUsers from "./components/admin/AllUsers";
 import AllCourses from "./components/admin/AllCourses";
+import EditCourse from "./components/courses/EditCourse";
+import EditProfile from "./components/user/EditUserProfile";
+import AddCourse from "./components/courses/AddCourse";
 
 function MainRouter() {
   return (
@@ -32,8 +34,11 @@ function MainRouter() {
       <Routes>
         <Route path="/" element={<LoginOrSignup />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
-        <Route path="/admin/users" element={<AllUsers />}></Route>
-        <Route path="/admin/courses" element={<AllCourses />}></Route>
+        <Route path="/users" element={<AllUsers />}></Route>
+        <Route path="/courses" element={<AllCourses />}></Route>
+        <Route path="/editCourse" element={<EditCourse />}></Route>
+        <Route path="/editProfile" element={<EditProfile />}></Route>
+        <Route path="/addCourse" element={<AddCourse />}></Route>
       </Routes>
     </Router>
   );

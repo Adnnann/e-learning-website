@@ -10,7 +10,6 @@ import {
   TextField,
   Typography,
   Icon,
-  makeStyles,
 } from "@material-ui/core/";
 import {
   getLoggedUserData,
@@ -18,6 +17,7 @@ import {
   cleanStore,
   getCloseAccountStatus,
 } from "../../features/eLearningSlice";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {

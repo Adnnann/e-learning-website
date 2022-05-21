@@ -37,6 +37,7 @@ const users = [
     email: "paragon@paragon.ba",
     password: "Paragon202!",
     role: "admin",
+    active: true,
   },
   {
     firstName: "Mak",
@@ -73,9 +74,9 @@ const duration = [
   "0 - 3 Hours",
   "3 - 6 Hours",
   "6 - 12 Hours",
-  "1 - 2 days",
-  "2 - 5 days",
-  "5 - 15 days",
+  "1 - 2 Days",
+  "2 - 5 Days",
+  "5 - 15 Days",
 ];
 
 mongoose
@@ -90,12 +91,22 @@ const createUsers = async () => {
   for (let i = 0; i < 101; i++) {
     courses.push({
       mentorId: user[Math.floor(Math.random() * user.length)]._id,
-      title: `Sed gravida velit vitae ${i}`,
+      title:
+        i === 0
+          ? `Aed gravida velit vitae ${i}`
+          : i === 1
+          ? `Bed gravida velit vitae ${i}`
+          : i === 2
+          ? `Ced gravida velit vitae ${i}`
+          : i === 3
+          ? `Ded gravida velit vitae ${i}`
+          : `Sed gravida velit vitae ${i}`,
       level: levels[Math.floor(Math.random() * levels.length)],
       courseImage: `/images/image${i + 1}.jpg`,
       duration: duration[Math.floor(Math.random() * duration.length)],
       description:
         "Sed gravida velit vitae condimentum posuere. Donec libero mauris, tempor ac luctus ut.",
+      status: "active",
     });
   }
   await Courses.insertMany(courses);

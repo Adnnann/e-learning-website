@@ -32,22 +32,26 @@ const CoursesSchema = new mongoose.Schema({
     type: String,
     required: "Course must have an mentor",
   },
+  status: {
+    type: String,
+    default: "active",
+  },
   enrolledStudents: {
     type: Array,
   },
   updated: Date,
 });
 
-// CoursesSchema.path("title").validate(async (title) => {
-//   const course = await this.constructor.findOne({ title });
-//   if (course) {
-//     if (this.id === course.id) {
-//       return true;
-//     }
-//     return false;
-//   }
-//   return true;
-// }, "Course title must be unique!");
+CoursesSchema.path("title").validate(async function (title) {
+  const course = await this.constructor.findOne({ title });
+  if (course) {
+    if (this.id === course.id) {
+      return true;
+    }
+    return false;
+  }
+  return true;
+}, "Course title must be unique!");
 
 const Course = mongoose.model("Courses", CoursesSchema);
 module.exports = Course;

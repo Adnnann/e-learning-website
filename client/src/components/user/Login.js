@@ -82,7 +82,10 @@ const Login = () => {
   useEffect(() => {
     if (loggedUserData?.token) {
       dispatch(userToken());
-      dispatch(fetchUserCourses());
+      if (loggedUserData.user.role !== "admin") {
+        dispatch(fetchUserCourses());
+      }
+
       navigate("/dashboard");
     }
   }, [loggedUserData]);

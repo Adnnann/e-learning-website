@@ -16,7 +16,6 @@ const getCourses = (req, res) => {
   // get id to enable filtering of data
   const user = jwtDecode(req.cookies.userJwtToken);
 
-  console.log(user);
   // filter data - get transactions for last three days
   Course.find({})
     .where("userId")
@@ -35,15 +34,14 @@ const getCourse = (req, res) => {
   res.status(200).json(req.profile);
 };
 const updateCourse = (req, res, next) => {
-  let course = req.profile;
+  let course = req.course;
   course = _.extend(course, req.body);
-
   course.updated = Date.now();
   course.save((err) => {
     if (err) {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
-    res.send({ message: "Data updated" });
+    return res.send({ message: "Data updated" });
   });
 };
 
@@ -62,7 +60,7 @@ const courseByID = (req, res, next, id) => {
     if (err || !course) {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
-    req.profile = course;
+    req.course = course;
     next();
   });
 };

@@ -1,33 +1,72 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { Tooltip } from "@mui/material";
+import { Tooltip, Button } from "@mui/material";
 import TableComponents from "../utils/Table";
 import {
   fetchCourses,
-  getAllCourses,
   getCourses,
   getCoursesDisplayPage,
-  getLoggedUserData,
-  getUsers,
+  getDeleteCourseMessage,
   setCoursesDisplayPage,
+  cleanDeleteCourseMessage,
+  removeCourse,
+  setCourseToEdit,
 } from "../../features/eLearningSlice";
 import { Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
 import PaginationComponent from "../utils/Pagination";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+  selectFields: {
+    height: "60px",
+    borderStyle: "solid",
+    borderColor: "grey",
+    borderWidth: "1px",
+    marginLeft: "2px",
+  },
+  tooltips: {
+    marginLeft: "20px",
+  },
+  addCourseButton: {
+    width: "220px",
+    minHeight: "60px",
+  },
+}));
 
 const AllCourses = () => {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const courses = useSelector(getCourses);
   const page = useSelector(getCoursesDisplayPage);
-  const users = useSelector(getUsers);
-  const loggedUser = useSelector(getLoggedUserData);
+  const deleteCourseStatus = useSelector(getDeleteCourseMessage);
+  const navigate = useNavigate();
+
   const rows = [];
+
+  useEffect(() => {
+    if (deleteCourseStatus?.message) {
+      const courses = {
+        page: page,
+        firstItem: page * 12 - 11,
+        lastItem: page * 12,
+      };
+      dispatch(fetchCourses(courses));
+      dispatch(cleanDeleteCourseMessage());
+    }
+  }, [deleteCourseStatus]);
 
   const handlePagination = (event, value) => {
     const courses = {
+      filterValue: filters.filterByLevel
+        ? filters.filterLevel
+        : filters.filterByDuration
+        ? filters.filterDuration
+        : undefined,
       page: value,
       firstItem: value * 12 - 11,
       lastItem: value * 12,
@@ -35,10 +74,6 @@ const AllCourses = () => {
 
     dispatch(setCoursesDisplayPage(value));
     dispatch(fetchCourses(courses));
-    //to dispatch and filter in mongoose all values between
-    //value * 12 - 11, value * 12
-    // and
-    //value * 12 - (value * 12 - 11)
   };
 
   const [filters, setFilters] = useState({
@@ -118,14 +153,14 @@ const AllCourses = () => {
         .orderBy(
           [
             filters.filterByTitle
-              ? (course) => course.level.toLowerCase()
+              ? (course) => course.title.toLowerCase()
               : filters.filterByMentorName
-              ? (course) => course.level.toLowerCase()
+              ? (course) => course.mentorId.toLowerCase()
               : null,
           ],
           [
             filters.filterByTitle
-              ? filters.filterByTitle === "A-Z"
+              ? filters.filterTitle === "A-Z"
                 ? "asc"
                 : "desc"
               : filters.filterByMentorName
@@ -138,19 +173,7 @@ const AllCourses = () => {
 
         .map((item) => {
           const firstCol = <div>{item.title}</div>;
-          const secondCol = (
-            <div>
-              {`${
-                Object.values(users.data).filter(
-                  (user) => user._id === item.mentorId
-                )[0].firstName
-              } ${
-                Object.values(users.data).filter(
-                  (user) => user._id === item.mentorId
-                )[0].lastName
-              }`}
-            </div>
-          );
+          const secondCol = <div>{item.mentorId}</div>;
           const thirdCol = (
             <div>
               {item.description.split(".").map((item) => {
@@ -167,16 +190,16 @@ const AllCourses = () => {
           const fifthCol = <div>{item.duration}</div>;
           const sixthCol = (
             <span>
-              <Tooltip title="Edit book">
+              <Tooltip title="Edit course">
                 <EditOutlinedIcon
                   fontSize="small"
-                  //onClick={() => edit(item.Id, item.Name)}
+                  onClick={() => edit(item._id)}
                 />
               </Tooltip>
 
-              <Tooltip title="Delete book" style={{ marginLeft: "20px" }}>
+              <Tooltip title="Delete course" className={classes.tooltips}>
                 <DeleteOutlineOutlinedIcon
-                  //onClick={() => dispatch(deleteAuthor(item._id))}
+                  onClick={() => dispatch(removeCourse(item._id))}
                   fontSize="small"
                 />
               </Tooltip>
@@ -199,34 +222,14 @@ const AllCourses = () => {
   };
 
   const handleChange = (name) => (event) => {
-    if (name === "filterTitle") {
-      setFilters({
-        ...filters,
-        [name]: event.target.value,
-        filterByTitle: true,
-        filterByMentorName: false,
-        filterByDuration: false,
-        filterByLevel: false,
-      });
-    } else if (name === "filterMentorName") {
-      setFilters({
-        ...filters,
-        [name]: event.target.value,
-        filterByTitle: false,
-        filterByMentorName: true,
-        filterByDuration: false,
-        filterByLevel: false,
-      });
-    } else if (name === "filterLevel") {
-      if (event.target.value === "All levels") {
-        return setFilters({
-          ...filters,
-          filterByTitle: false,
-          filterByMentorName: false,
-          filterByDuration: false,
-          filterByLevel: false,
-        });
-      }
+    if (event.target.value === "All levels") {
+      const courses = {
+        filterLevel: undefined,
+        filterDuration: undefined,
+        page: 1,
+        firstItem: 0,
+        lastItem: 11,
+      };
 
       setFilters({
         ...filters,
@@ -234,15 +237,63 @@ const AllCourses = () => {
         filterByTitle: false,
         filterByMentorName: false,
         filterByDuration: false,
-        filterByLevel: true,
+        filterByLevel: false,
       });
-    } else {
-      console.log(event.target.value);
+
+      dispatch(fetchCourses(courses));
+    } else if (name === "filterTitle") {
+      setFilters({
+        ...filters,
+        [name]: event.target.value,
+        filterByTitle: true,
+        filterByMentorName: false,
+      });
+    } else if (name === "filterMentorName") {
       setFilters({
         ...filters,
         [name]: event.target.value,
         filterByTitle: false,
-        filterByMentorName: false,
+        filterByMentorName: true,
+      });
+    } else if (name === "filterLevel") {
+      const courses = {
+        filterLevel: event.target.value,
+        filterDuration:
+          filters.filterDuration !== "" ? filters.filterDuration : undefined,
+        page: 1,
+        firstItem: 0,
+        lastItem: 11,
+      };
+
+      dispatch(setCoursesDisplayPage(1));
+      dispatch(fetchCourses(courses));
+
+      setFilters({
+        ...filters,
+        [name]: event.target.value,
+        filterByDuration: false,
+        filterByLevel: true,
+      });
+    } else {
+      const courses = {
+        filterLevel:
+          filters.filterLevel === "All levels"
+            ? undefined
+            : filters.filterLevel !== ""
+            ? filters.filterLevel
+            : undefined,
+        filterDuration: event.target.value,
+        page: 1,
+        firstItem: 0,
+        lastItem: 11,
+      };
+
+      dispatch(setCoursesDisplayPage(1));
+      dispatch(fetchCourses(courses));
+
+      setFilters({
+        ...filters,
+        [name]: event.target.value,
         filterByDuration: true,
         filterByLevel: false,
       });
@@ -279,46 +330,65 @@ const AllCourses = () => {
     ],
   ];
 
-  return (
-    <Grid container justifyContent={"center"} style={{ overflow: "hidden" }}>
-      {Object.values(filterItems).map((item, index) => {
-        return (
-          <Grid
-            item
-            xs={12}
-            md={2}
-            lg={2}
-            xl={1}
-            style={{ marginTop: "10px", marginLeft: "10px" }}
-          >
-            {filterByTitles[index]}
-            <SelectComponent
-              array={filterItems[index]}
-              selectedValue={filters[filterBy[index]]}
-              handleChange={handleChange(filterBy[index])}
-            />
-          </Grid>
-        );
-      })}
+  const edit = (id) => {
+    dispatch(setCourseToEdit(id));
+    navigate("/editCourse");
+  };
 
-      <Grid item xs={12} md={9} lg={9} xl={9} style={{ marginTop: "10px" }}>
-        <TableComponents
-          rows={rows}
-          columns={columns}
-          createData={createColumns}
-          createRows={createRows}
-        />
+  return (
+    <>
+      <Grid
+        container
+        justifyContent={"center"}
+        spacing={2}
+        style={{ overflow: "hidden" }}
+      >
+        <Grid item xs={12} md={12} lg={12} xl={12}>
+          <Button
+            variant="contained"
+            className={classes.addCourseButton}
+            sx={{ marginTop: "20px", textTransform: "none" }}
+            onClick={() => navigate("/addCourse")}
+          >
+            Add courses
+          </Button>
+        </Grid>
+
+        {Object.values(filterItems).map((item, index) => {
+          return (
+            <Grid key={Math.random() + 1} item xs={12} md={2} lg={2} xl={2}>
+              {filterByTitles[index]}
+              <SelectComponent
+                className={classes.selectFields}
+                array={filterItems[index]}
+                selectedValue={filters[filterBy[index]]}
+                handleChange={handleChange(filterBy[index])}
+              />
+            </Grid>
+          );
+        })}
+
+        <Grid item xs={12} md={10} lg={10} xl={9}>
+          <TableComponents
+            rows={rows}
+            columns={columns}
+            createData={createColumns}
+            createRows={createRows}
+          />
+        </Grid>
       </Grid>
-      {courses?.totalNumOfCourses &&
-      Math.ceil(courses.totalNumOfCourses) > 1 ? (
-        <PaginationComponent
-          page={page}
-          handleChange={handlePagination}
-          numberOfPages={Math.ceil(courses.totalNumOfCourses / 12)}
-          numberOfItems={Object.keys(courses.data).length}
-        />
-      ) : null}
-    </Grid>
+      <Grid container justifyContent={"center"}>
+        {courses?.totalNumOfCourses &&
+        Math.ceil(courses.totalNumOfCourses) > 1 ? (
+          <PaginationComponent
+            page={page}
+            handleChange={handlePagination}
+            numberOfPages={Math.ceil(courses.totalNumOfCourses / 12)}
+            numberOfItems={Object.keys(courses.data).length}
+          />
+        ) : null}
+      </Grid>
+    </>
   );
 };
 

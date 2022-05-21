@@ -16,8 +16,14 @@ router.get(
   }
 );
 
-router.route("/admin/courses").post(adminCtrl.getCourses);
+router
+  .route("/admin/courses")
+  .post(adminCtrl.getAllUsers, adminCtrl.getCourses);
+
 router.route("/admin/users").post(adminCtrl.getUsers);
+
+router.route("/admin/course/:courseId").post(adminCtrl.removeCourse);
+
 //.post(userCtrl.create);
 
 // router
@@ -30,6 +36,6 @@ router.route("/admin/users").post(adminCtrl.getUsers);
 //   .route("/api/users/updateUserPassword/:userId")
 //   .put(userCtrl.updateUserPassword);
 
-// router.param("userId", userCtrl.userByID);
+router.param("courseId", adminCtrl.courseByID);
 
 export default router;

@@ -55,7 +55,7 @@ const DashboardLeftPanel = () => {
       lastItem: 11,
     };
     dispatch(fetchUsers(users));
-    navigate("/admin/users");
+    navigate("/users");
   };
 
   const displayAllCourses = () => {
@@ -71,7 +71,7 @@ const DashboardLeftPanel = () => {
 
     dispatch(fetchUsers(users));
     dispatch(fetchCourses(courses));
-    navigate("/admin/courses");
+    navigate("/courses");
   };
 
   const editUser = () => {

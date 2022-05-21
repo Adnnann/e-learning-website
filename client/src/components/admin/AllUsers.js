@@ -11,13 +11,16 @@ import {
   getUsersDisplayPage,
   setUsersDisplayPage,
   fetchUsers,
+  setUserToEdit,
 } from "../../features/eLearningSlice";
 import Checkbox from "@mui/material/Checkbox";
 import { Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
 import PaginationComponent from "../utils/Pagination";
+import { useNavigate } from "react-router-dom";
 
 const AllUsers = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const users = useSelector(getUsers);
   const page = useSelector(getUsersDisplayPage);
@@ -25,11 +28,12 @@ const AllUsers = () => {
   const rows = [];
 
   const [filters, setFilters] = useState({
-    firstNameFilterStatus: true,
-    lastNameFilterStatus: false,
-    firstNameSortBy: "",
-    lastNameSortBy: "A-Z",
-    firstNameFilter: "A-Z",
+    sortByFirstname: false,
+    sortByLastname: false,
+    filterByStatus: true,
+    sortFirstname: "",
+    sortLastname: "",
+    filterStatus: "All",
   });
 
   const columns = [
@@ -75,13 +79,39 @@ const AllUsers = () => {
   const createRows = () => {
     if (users?.data) {
       _.chain(
-        Object.values(users.data).filter(
-          (item) => item.firstName !== loggedUser.user.firstName
-        )
+        Object.values(users.data)
+          .filter((item) => item.firstName !== loggedUser.user.firstName)
+
+          .filter((item) =>
+            filters.filterStatus === "All"
+              ? item.role === "mentor" || item.role === "student"
+              : filters.filterStatus === "isMentor"
+              ? item.role === "mentor"
+              : filters.filterStatus === "isStudent"
+              ? item.role === "student"
+              : null
+          )
       )
+
         .orderBy(
-          [(user) => user.firstName.toLowerCase()],
-          [filters.firstNameSortBy]
+          [
+            filters.sortByFirstname
+              ? (user) => user.firstName.toLowerCase()
+              : filters.sortByLastname
+              ? (user) => user.lastName.toLowerCase()
+              : null,
+          ],
+          [
+            filters.sortByFirstname
+              ? filters.sortFirstname === "A-Z"
+                ? "asc"
+                : "desc"
+              : filters.sortByLastname
+              ? filters.sortLastname === "A-Z"
+                ? "asc"
+                : "desc"
+              : null,
+          ]
         )
 
         .map((item) => {
@@ -100,32 +130,14 @@ const AllUsers = () => {
           );
           const fifthCol = (
             <span>
-              <Tooltip title="Edit book">
+              <Tooltip title="Edit user data">
                 <EditOutlinedIcon
                   fontSize="small"
-                  //onClick={() => edit(item.Id, item.Name)}
+                  onClick={() => edit(item._id)}
                 />
               </Tooltip>
 
-              <Tooltip title="Delete book" style={{ marginLeft: "20px" }}>
-                <DeleteOutlineOutlinedIcon
-                  //onClick={() => dispatch(deleteAuthor(item._id))}
-                  fontSize="small"
-                />
-              </Tooltip>
-            </span>
-          );
-
-          const sixthCol = (
-            <span>
-              <Tooltip title="Edit book">
-                <EditOutlinedIcon
-                  fontSize="small"
-                  //onClick={() => edit(item.Id, item.Name)}
-                />
-              </Tooltip>
-
-              <Tooltip title="Delete book" style={{ marginLeft: "20px" }}>
+              <Tooltip title="Delete user" style={{ marginLeft: "20px" }}>
                 <DeleteOutlineOutlinedIcon
                   //onClick={() => dispatch(deleteAuthor(item._id))}
                   fontSize="small"
@@ -142,6 +154,11 @@ const AllUsers = () => {
     }
   };
 
+  const edit = (id) => {
+    dispatch(setUserToEdit(id));
+    navigate("/editProfile");
+  };
+
   const handlePagination = (event, value) => {
     const users = {
       firstItem: value * 12 - 11,
@@ -150,54 +167,91 @@ const AllUsers = () => {
 
     dispatch(setUsersDisplayPage(value));
     dispatch(fetchUsers(users));
-    //to dispatch and filter in mongoose all values between
-    //value * 12 - 11, value * 12
-    // and
-    //value * 12 - (value * 12 - 11)
   };
 
   const handleChange = (name) => (event) => {
+    console.log(name);
     console.log(event.target.value);
-    if (name === "firstNameFilter") {
+    if (name === "sortFirstname") {
       setFilters({
         ...filters,
         [name]: event.target.value,
-        firstNameFilterStatus: true,
-        firstNameSortBy: event.target.value === "A-Z" ? "asc" : "desc",
+        sortByFirstname: true,
+        sortByLastname: false,
+      });
+    } else if (name === "sortLastname") {
+      setFilters({
+        ...filters,
+        [name]: event.target.value,
+        sortByFirstname: false,
+        sortByLastname: true,
+      });
+    } else if (name === "filterStatus") {
+      setFilters({
+        ...filters,
+        [name]: event.target.value,
       });
     }
   };
 
-  const orderBy = ["A-Z", "Z-A"];
+  const filterItems = [
+    ["A-Z", "Z-A"],
+    ["A-Z", "Z-A"],
+    ["All", "isMentor", "isStudent"],
+  ];
+
+  const filterByTitles = [
+    "Sort By Firstmame",
+    "Sort By Lastname",
+    "Filter By Status",
+  ];
+
+  const filterBy = ["sortFirstname", "sortLastname", "filterStatus"];
 
   return (
-    <Grid container justifyContent={"center"}>
-      <Grid item xs={12} md={9} lg={9} xl={9} style={{ marginTop: "10px" }}>
-        <Grid item xs={12} md={2} lg={2} xl={2} style={{ marginTop: "10px" }}>
-          <SelectComponent
-            array={orderBy}
-            selectedValue={filters.firstNameFilter}
-            handleChange={handleChange("firstNameFilter")}
+    <>
+      <Grid container justifyContent={"center"} style={{ overflow: "hidden" }}>
+        {Object.values(filterItems).map((item, index) => {
+          return (
+            <Grid
+              key={Math.random() + 1}
+              item
+              xs={12}
+              md={2}
+              lg={2}
+              xl={2}
+              style={{ marginTop: "10px", marginLeft: "10px" }}
+            >
+              {filterByTitles[index]}
+              <SelectComponent
+                array={filterItems[index]}
+                selectedValue={filters[filterBy[index]]}
+                handleChange={handleChange(filterBy[index])}
+              />
+            </Grid>
+          );
+        })}
+
+        <Grid item xs={12} md={10} lg={10} xl={9} style={{ marginTop: "10px" }}>
+          <TableComponents
+            rows={rows}
+            columns={columns}
+            createData={createColumns}
+            createRows={createRows}
           />
         </Grid>
       </Grid>
-      <Grid item xs={12} md={9} lg={9} xl={9} style={{ marginTop: "10px" }}>
-        <TableComponents
-          rows={rows}
-          columns={columns}
-          createData={createColumns}
-          createRows={createRows}
-        />
+      <Grid container justifyContent={"center"}>
+        {users?.totalNumOfCourses && Math.ceil(users.totalNumOfCourses) > 1 ? (
+          <PaginationComponent
+            page={page}
+            handleChange={handlePagination}
+            numberOfPages={Math.ceil(users.totalNumOfCourses / 12)}
+            numberOfItems={Object.keys(users.data).length}
+          />
+        ) : null}
       </Grid>
-      {users?.totalNumOfCourses && Math.ceil(users.totalNumOfCourses) > 1 ? (
-        <PaginationComponent
-          page={page}
-          handleChange={handlePagination}
-          numberOfPages={Math.ceil(users.totalNumOfCourses / 12)}
-          numberOfItems={Object.keys(users.data).length}
-        />
-      ) : null}
-    </Grid>
+    </>
   );
 };
 

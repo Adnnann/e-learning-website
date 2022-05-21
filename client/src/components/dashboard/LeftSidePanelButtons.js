@@ -27,6 +27,7 @@ const ButtonGroupWithIcons = ({ buttons, icons, clickEvents }) => {
       {buttons.map((item, index) => {
         return (
           <Button
+            key={index}
             onClick={clickEvents[index]}
             color="primary"
             className={classes.buttons}

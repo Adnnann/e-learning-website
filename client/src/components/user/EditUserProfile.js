@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import {
   updateUserData,
-  getUpdatedUserData,
-  cleanUpdatedUserData,
   getUserToken,
   getLoggedUserData,
-  uploadUserImage,
+  uploadImage,
   getUploadUserImageStatus,
+  getUpdateUserStatus,
+  cleanUserUpdateMessage,
+  getUserToEdit,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -22,6 +23,7 @@ import {
 } from "@material-ui/core/";
 import userImagePlaceholder from "../../assets/userImgPlaceholder.png";
 import { makeStyles } from "@mui/styles";
+import { ButtonGroup } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -47,12 +49,12 @@ const useStyles = makeStyles((theme) => ({
   },
   save: {
     marginBottom: theme.spacing(2),
-    minWidth: 110,
+    minWidth: "120px",
+    marginRight: theme.spacing(2),
   },
   cancel: {
-    marginLeft: "10px",
     marginBottom: theme.spacing(2),
-    minWidth: 110,
+    minWidth: "120px",
   },
   haveaccount: {
     margin: "auto",
@@ -75,8 +77,9 @@ const EditProfile = () => {
   const dispatch = useDispatch();
   const loggedUser = useSelector(getLoggedUserData);
   const token = useSelector(getUserToken);
-  const updatedUserData = useSelector(getUpdatedUserData);
+  const updateUserStatus = useSelector(getUpdateUserStatus);
   const uploadUserImageStatus = useSelector(getUploadUserImageStatus);
+  const userToEdit = useSelector(getUserToEdit);
 
   const navigate = useNavigate();
   const [values, setValues] = useState({
@@ -85,28 +88,24 @@ const EditProfile = () => {
     email: "",
     error: "",
   });
-
-  const params = useParams();
-
   useEffect(() => {
     setValues({
-      firstName: loggedUser.user.firstName,
-      lastName: loggedUser.user.lastName,
-      email: loggedUser.user.email,
+      firstName: loggedUser.user.firstName || userToEdit.firstName,
+      lastName: loggedUser.user.lastName || userToEdit.lastName,
+      email: loggedUser.user.email || userToEdit.email,
     });
 
-    if (updatedUserData?.message) {
-      dispatch(cleanUpdatedUserData());
+    if (updateUserStatus?.message) {
+      dispatch(cleanUserUpdateMessage());
       navigate("/dashboard");
     }
-  }, [updatedUserData.message, dispatch, loggedUser.user.firstName]);
+  }, [updateUserStatus, dispatch, loggedUser.user.firstName]);
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
 
   const clickSubmit = () => {
-    console.log(token.message);
     const user = {
       params: loggedUser.user._id,
       data: {
@@ -138,7 +137,7 @@ const EditProfile = () => {
         event.target.files[0].name.split(".")[1]
       }`
     );
-    dispatch(uploadUserImage(formData));
+    dispatch(uploadImage(formData));
   };
 
   return (
@@ -183,33 +182,36 @@ const EditProfile = () => {
                 <br />
                 <br />
 
-                {updatedUserData?.error && (
+                {updateUserStatus?.error && (
                   <Typography component="p" color="error">
                     <Icon color="error" className={classes.error}></Icon>
-                    {updatedUserData.error}
+                    {updateUserStatus.error}
                   </Typography>
                 )}
               </CardContent>
 
               <CardActions>
                 <div style={{ margin: "0 auto" }}>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    onClick={clickSubmit}
-                    className={classes.save}
-                  >
-                    Save
-                  </Button>
+                  <ButtonGroup>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      onClick={clickSubmit}
+                      className={classes.save}
+                      style={{ marginRight: "60px" }}
+                    >
+                      Save
+                    </Button>
 
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    className={classes.cancel}
-                    onClick={cancel}
-                  >
-                    Cancel
-                  </Button>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      className={classes.cancel}
+                      onClick={cancel}
+                    >
+                      Cancel
+                    </Button>
+                  </ButtonGroup>
                 </div>
               </CardActions>
             </Grid>
