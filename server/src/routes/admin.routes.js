@@ -24,18 +24,9 @@ router.route("/admin/users").post(adminCtrl.getUsers);
 
 router.route("/admin/course/:courseId").post(adminCtrl.removeCourse);
 
-//.post(userCtrl.create);
-
-// router
-//   .route("/api/users/:userId")
-//   .get(userCtrl.read)
-//   .put(userCtrl.update)
-//   .delete(userCtrl.remove);
-
-// router
-//   .route("/api/users/updateUserPassword/:userId")
-//   .put(userCtrl.updateUserPassword);
+router.route("/admin/users/:userId").put(adminCtrl.activateUserAccount);
 
 router.param("courseId", adminCtrl.courseByID);
+router.param("userId", adminCtrl.userByID);
 
 export default router;

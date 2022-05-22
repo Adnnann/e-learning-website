@@ -1,6 +1,6 @@
-import FormGenerator from "../utils/FormGenerator";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   uploadImage,
   fetchCourses,
@@ -11,18 +11,11 @@ import {
   getCreateCourseMessage,
   createCourse,
 } from "../../features/eLearningSlice";
-import {
-  Alert,
-  Button,
-  ButtonGroup,
-  Card,
-  CardMedia,
-  Grid,
-} from "@mui/material";
+import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
-import { useNavigate } from "react-router-dom";
-import { makeStyles } from "@mui/styles";
+import TextFieldsGenerator from "../utils/TextFieldsGenerator";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -128,13 +121,14 @@ const AddCourse = () => {
     "5 - 15 Days",
   ];
 
-  console.log(loggedUser);
+  const labels = ["Title", "Description"];
+
   const clickSubmit = () => {
     const course = {
       mentorId: loggedUser.user._id,
       ...values,
     };
-    console.log(course);
+
     dispatch(createCourse(course));
   };
 
@@ -189,11 +183,12 @@ const AddCourse = () => {
 
       <Grid container justifyContent={"center"} spacing={2}>
         <Grid item xs={12} md={6} lg={6} xl={6}>
-          <FormGenerator
+          <TextFieldsGenerator
             array={courseDataToEdit}
             handleChange={handleChange}
             values={values}
             value={courseDataToEdit}
+            labels={labels}
           />
           Level
           <SelectComponent

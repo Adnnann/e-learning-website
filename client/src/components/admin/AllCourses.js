@@ -2,10 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { Tooltip, Button } from "@mui/material";
-import TableComponents from "../utils/Table";
+
 import {
   fetchCourses,
   getCourses,
@@ -16,7 +13,10 @@ import {
   removeCourse,
   setCourseToEdit,
 } from "../../features/eLearningSlice";
-import { Grid } from "@mui/material";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import { Tooltip, Button, useMediaQuery, Grid } from "@mui/material";
+import TableComponents from "../utils/Table";
 import SelectComponent from "../utils/SelectComponent";
 import PaginationComponent from "../utils/Pagination";
 import { makeStyles } from "@mui/styles";
@@ -33,8 +33,8 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "20px",
   },
   addCourseButton: {
-    width: "220px",
-    minHeight: "60px",
+    paddingRight: "10px",
+    paddingTop: "20px",
   },
 }));
 
@@ -47,6 +47,10 @@ const AllCourses = () => {
   const navigate = useNavigate();
 
   const rows = [];
+
+  const iPadAirScreen = useMediaQuery("(width:820px)");
+  const iPadMiniScreen = useMediaQuery("(width:768px)");
+  const surfaceDuo = useMediaQuery("(width:912px)");
 
   useEffect(() => {
     if (deleteCourseStatus?.message) {
@@ -336,46 +340,43 @@ const AllCourses = () => {
   };
 
   return (
-    <>
+    <Grid
+      container
+      justifyContent={"center"}
+      spacing={2}
+      style={{ overflow: "hidden" }}
+    >
       <Grid
         container
-        justifyContent={"center"}
-        spacing={2}
-        style={{ overflow: "hidden" }}
+        justifyContent={"flex-end"}
+        style={{ paddingRight: "10px" }}
+        className={classes.addCourseButton}
       >
-        <Grid item xs={12} md={12} lg={12} xl={12}>
-          <Button
-            variant="contained"
-            className={classes.addCourseButton}
-            sx={{ marginTop: "20px", textTransform: "none" }}
-            onClick={() => navigate("/addCourse")}
-          >
-            Add courses
-          </Button>
-        </Grid>
+        <Button variant="contained" onClick={() => navigate("/addCourse")}>
+          Add courses
+        </Button>
+      </Grid>
+      {Object.values(filterItems).map((item, index) => {
+        return (
+          <Grid key={Math.random() + 1} item xs={12} md={3} lg={2} xl={2}>
+            {filterByTitles[index]}
+            <SelectComponent
+              className={classes.selectFields}
+              array={filterItems[index]}
+              selectedValue={filters[filterBy[index]]}
+              handleChange={handleChange(filterBy[index])}
+            />
+          </Grid>
+        );
+      })}
 
-        {Object.values(filterItems).map((item, index) => {
-          return (
-            <Grid key={Math.random() + 1} item xs={12} md={2} lg={2} xl={2}>
-              {filterByTitles[index]}
-              <SelectComponent
-                className={classes.selectFields}
-                array={filterItems[index]}
-                selectedValue={filters[filterBy[index]]}
-                handleChange={handleChange(filterBy[index])}
-              />
-            </Grid>
-          );
-        })}
-
-        <Grid item xs={12} md={10} lg={10} xl={9}>
-          <TableComponents
-            rows={rows}
-            columns={columns}
-            createData={createColumns}
-            createRows={createRows}
-          />
-        </Grid>
+      <Grid item xs={12} md={10} lg={10} xl={9}>
+        <TableComponents
+          rows={rows}
+          columns={columns}
+          createData={createColumns}
+          createRows={createRows}
+        />
       </Grid>
       <Grid container justifyContent={"center"}>
         {courses?.totalNumOfCourses &&
@@ -388,7 +389,7 @@ const AllCourses = () => {
           />
         ) : null}
       </Grid>
-    </>
+    </Grid>
   );
 };
 

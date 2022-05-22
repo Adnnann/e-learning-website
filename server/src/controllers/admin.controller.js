@@ -59,17 +59,6 @@ const updateUserPassword = async (req, res, next) => {
     });
   });
 };
-
-const userByID = (req, res, next, id) => {
-  User.findById(id).exec((err, user) => {
-    if (err || !user) {
-      return res.json({ error: "User not found!" });
-    }
-    req.profile = user;
-    next();
-  });
-};
-
 const getCourses = (req, res) => {
   Course.find({ status: "active" }, (error, course) => {
     Object.values(req.users);
@@ -152,6 +141,30 @@ const getAllUsers = (req, res, next) => {
   });
 };
 
+const removeCourse = async (req, res) => {
+  const user = await Course.findByIdAndUpdate(
+    { _id: req.course._id },
+    { status: "inactive" }
+  );
+
+  if (user) {
+    return res.send({ message: "Course removed" });
+  }
+};
+
+const activateUserAccount = async (req, res, next) => {
+  let user = await User.findById({ _id: req.profile._id });
+  user = _.extend(user, req.body);
+  user.active = !user.active;
+
+  user.save((err, user) => {
+    if (err) {
+      return res.send({ error: errorHandler.getErrorMessage(err) });
+    }
+    return res.send({ message: "Profile activated" });
+  });
+};
+
 const courseByID = (req, res, next, id) => {
   Course.findById(id).exec((err, course) => {
     if (err || !course) {
@@ -162,15 +175,14 @@ const courseByID = (req, res, next, id) => {
   });
 };
 
-const removeCourse = async (req, res) => {
-  const user = await Course.findByIdAndUpdate(
-    { _id: req.course._id },
-    { status: "inactive" }
-  );
-
-  if (user) {
-    res.send({ message: "Course removed" });
-  }
+const userByID = (req, res, next, id) => {
+  User.findById(id).exec((err, user) => {
+    if (err || !user) {
+      return res.json({ error: "User not found!" });
+    }
+    req.profile = user;
+    next();
+  });
 };
 
 export default {
@@ -181,5 +193,7 @@ export default {
   updateUserPassword,
   getCourses,
   getAllUsers,
+  activateUserAccount,
   courseByID,
+  userByID,
 };

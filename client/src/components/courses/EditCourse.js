@@ -19,7 +19,7 @@ import {
   CardMedia,
   Grid,
 } from "@mui/material";
-import FormGenerator from "../utils/FormGenerator";
+import TextFieldsGenerator from "../utils/TextFieldsGenerator";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
 import { useNavigate } from "react-router-dom";
@@ -132,6 +132,9 @@ const EditCourse = () => {
     "5 - 15 Days",
   ];
 
+  const labels = ["Title", "Description"];
+  const types = ["text", "text"];
+
   const clickSubmit = () => {
     const course = {
       param: courseToEdit._id,
@@ -195,11 +198,13 @@ const EditCourse = () => {
 
       <Grid container justifyContent={"center"} spacing={2}>
         <Grid item xs={12} md={6} lg={6} xl={6}>
-          <FormGenerator
+          <TextFieldsGenerator
             array={courseDataToEdit}
             handleChange={handleChange}
             values={values}
             value={courseDataToEdit}
+            labels={labels}
+            types={types}
           />
           Level
           <SelectComponent

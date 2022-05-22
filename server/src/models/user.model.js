@@ -27,8 +27,9 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: "Email already exists.",
-    required: "Email is required",
     validate: emailValidator,
+
+    required: "Email is required",
   },
   created: {
     type: Date,
@@ -91,6 +92,17 @@ UserSchema.path("hashed_password").validate(function (v) {
     this.invalidate("password", "Password must be at least 8 characters");
   }
 }, null);
+
+UserSchema.path("email").validate(async function (email) {
+  const user = await this.constructor.findOne({ email });
+  if (user) {
+    if (this.id === user.id) {
+      return true;
+    }
+    return false;
+  }
+  return true;
+}, "Email already exists!");
 
 const User = mongoose.model("User", UserSchema);
 module.exports = User;

@@ -25,6 +25,7 @@ import {
   useMediaQuery,
 } from "@material-ui/core/";
 import { makeStyles } from "@mui/styles";
+import TextFieldsGenerator from "../utils/TextFieldsGenerator";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
     paddingBottom: theme.spacing(2),
     [theme.breakpoints.only("xs")]: {
-      maxWidth: 260,
+      maxWidth: 300,
       padding: theme.spacing(2),
       margin: "0 auto",
       marginTop: theme.spacing(2),
@@ -96,6 +97,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "14px",
     fontWeight: "bold",
   },
+  textFields: {
+    minWidth: "320px",
+  },
 }));
 const Signup = () => {
   const classes = useStyles();
@@ -118,14 +122,29 @@ const Signup = () => {
   });
 
   const handleChange = (name) => (event) => {
+    let course = {};
+
     if (name === "mentorAccount") {
+      course = {
+        role: event.target.value === "mentor" ? "student" : "mentor",
+      };
+
       return setValues({
         ...values,
-        role: values.role === "mentor" ? "student" : "mentor",
+        ...course,
       });
     }
+    console.log(values);
+    course = {
+      [name]: event.target.value,
+    };
 
-    setValues({ ...values, [name]: event.target.value });
+    console.log(course);
+
+    setValues({
+      ...values,
+      ...course,
+    });
   };
 
   const formatUserData = (str) => {
@@ -142,8 +161,6 @@ const Signup = () => {
       password: values.password || undefined,
       role: values.role,
     };
-
-    console.log(user);
 
     if (!values.confirmationPassword || values.confirmationPassword === "") {
       setValues({ ...values, error: "Please repeat your password" });
@@ -163,132 +180,108 @@ const Signup = () => {
     dispatch(cleanSignupMessage());
   };
 
+  const signupData = [
+    "firstName",
+    "lastName",
+    "email",
+    "password",
+    "confirmationPassword",
+  ];
+
+  const labels = [
+    "Firstname",
+    "Lastname",
+    "Email",
+    "Password",
+    "Confirmation Password",
+  ];
+
+  const types = ["text", "text", "text", "password", "password"];
+
   return (
-    <Grid container justifyContent="center">
+    <>
       <Card className={classes.card}>
-        <CardContent>
-          <Typography variant="h6" className={classes.title}>
-            Sign Up
-          </Typography>
+        <Grid container justifyContent="center">
+          <CardContent>
+            <h1>Sign Up</h1>
+            <Grid item xs={12} md={12} lg={12} xl={12}>
+              <TextFieldsGenerator
+                array={signupData}
+                handleChange={handleChange}
+                values={values}
+                value={signupData}
+                labels={labels}
+                className={classes.textFields}
+                types={types}
+              />
 
-          <TextField
-            id="firstName"
-            placeholder="First Name"
-            className={classes.textField}
-            value={values.firstName}
-            onChange={handleChange("firstName")}
-            margin="normal"
-          />
-          <br />
-
-          <TextField
-            id="lastName"
-            placeholder="Last Name"
-            className={classes.textField}
-            value={values.lastName}
-            onChange={handleChange("lastName")}
-            margin="normal"
-          />
-          <br />
-
-          <TextField
-            id="email"
-            type="email"
-            placeholder="Email"
-            className={classes.textField}
-            value={values.email}
-            onChange={handleChange("email")}
-            margin="normal"
-          />
-          <br />
-
-          <TextField
-            id="password"
-            type="password"
-            placeholder="Password"
-            className={classes.textField}
-            value={values.password}
-            onChange={handleChange("password")}
-            margin="normal"
-          />
-
-          <TextField
-            id="confirmationPassword"
-            type="password"
-            placeholder="Confirmation Password"
-            className={classes.textField}
-            value={values.confirmationPassword}
-            onChange={handleChange("confirmationPassword")}
-            margin="normal"
-          />
-          <br />
-          <br />
-
-          {values.error ? (
-            <Typography component="p" color="error">
-              <Icon color="error" className={classes.error}></Icon>
-              {values.error}
-            </Typography>
-          ) : (
-            signedUser?.error && (
-              <Typography component="p" color="error">
-                <Icon color="error" className={classes.error}></Icon>
-                {signedUser.error}
-              </Typography>
-            )
-          )}
-        </CardContent>
-
-        <CardActions>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={clickSubmit}
-            className={classes.submit}
-          >
-            Submit
-          </Button>
-        </CardActions>
-
-        <CardActions className={classes.largeScreens}>
-          <Typography component="p" className={classes.hasAccount}>
-            Already have an account?
-          </Typography>
-
-          <Typography
-            component="p"
-            color="primary"
-            className={classes.signin}
-            onClick={redirectToSignin}
-          >
-            LOGIN
-          </Typography>
-        </CardActions>
-
-        {!iPadAirScreen && !iPadMiniScreen && !surfaceDuo ? (
-          <>
-            <CardActions className={classes.smallScreens}>
-              <Typography component="p" className={classes.hasAccount}>
-                Already have an account?
-              </Typography>
-            </CardActions>
-
-            <CardActions className={classes.smallScreens}>
-              <Typography
-                component="p"
+              {values.error ? (
+                <Typography component="p" color="error">
+                  <Icon color="error" className={classes.error}></Icon>
+                  {values.error}
+                </Typography>
+              ) : (
+                signedUser?.error && (
+                  <Typography component="p" color="error">
+                    <Icon color="error" className={classes.error}></Icon>
+                    {signedUser.error}
+                  </Typography>
+                )
+              )}
+            </Grid>
+          </CardContent>
+          <Grid item xs={12} md={12} lg={12} xl={12}>
+            <CardActions>
+              <Button
                 color="primary"
-                className={classes.signin}
-                onClick={redirectToSignin}
+                variant="contained"
+                onClick={clickSubmit}
+                className={classes.submit}
               >
-                LOGIN
-              </Typography>
+                Submit
+              </Button>
             </CardActions>
-          </>
-        ) : null}
+          </Grid>
 
-        <span className={classes.mentorAccount}>
+          <CardActions className={classes.largeScreens}>
+            <Typography component="p" className={classes.hasAccount}>
+              Already have an account?
+            </Typography>
+
+            <Typography
+              component="p"
+              color="primary"
+              className={classes.signin}
+              onClick={redirectToSignin}
+            >
+              LOGIN
+            </Typography>
+          </CardActions>
+          {!iPadAirScreen && !iPadMiniScreen && !surfaceDuo ? (
+            <>
+              <CardActions className={classes.smallScreens}>
+                <Typography component="p" className={classes.hasAccount}>
+                  Already have an account?
+                </Typography>
+              </CardActions>
+
+              <CardActions className={classes.smallScreens}>
+                <Typography
+                  component="p"
+                  color="primary"
+                  className={classes.signin}
+                  onClick={redirectToSignin}
+                >
+                  LOGIN
+                </Typography>
+                <br />
+              </CardActions>
+            </>
+          ) : null}
+        </Grid>
+        <div>
           Mentor account <Checkbox onChange={handleChange("mentorAccount")} />
-        </span>
+        </div>
       </Card>
 
       <Dialog open={signedUser?.message ? true : false}>
@@ -308,7 +301,7 @@ const Signup = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Grid>
+    </>
   );
 };
 

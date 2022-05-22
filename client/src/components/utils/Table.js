@@ -17,10 +17,10 @@ const useStyles = makeStyles((theme) => ({
       maxHeight: "300px",
     },
     [theme.breakpoints.only("lg")]: {
-      height: "500px",
+      maxHeight: "500px",
     },
     [theme.breakpoints.only("xl")]: {
-      height: "500px",
+      maxHeight: "500px",
     },
   },
 }));

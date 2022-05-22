@@ -12,20 +12,52 @@ import {
   setUsersDisplayPage,
   fetchUsers,
   setUserToEdit,
+  activateAccount,
+  getActivateAccountMessage,
+  cleanActivateAccountMessage,
 } from "../../features/eLearningSlice";
 import Checkbox from "@mui/material/Checkbox";
 import { Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
 import PaginationComponent from "../utils/Pagination";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+  selectFields: {
+    height: "60px",
+    borderStyle: "solid",
+    borderColor: "grey",
+    borderWidth: "1px",
+    marginLeft: "2px",
+  },
+  tooltips: {
+    marginLeft: "20px",
+  },
+}));
 
 const AllUsers = () => {
+  const classes = useStyles();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const users = useSelector(getUsers);
   const page = useSelector(getUsersDisplayPage);
   const loggedUser = useSelector(getLoggedUserData);
+  const activateAccountMessage = useSelector(getActivateAccountMessage);
   const rows = [];
+
+  useEffect(() => {
+    if (activateAccountMessage?.message) {
+      const users = {
+        firstValue: 1,
+        lastValue: 12,
+      };
+
+      dispatch(fetchUsers(users));
+      dispatch(cleanActivateAccountMessage());
+    }
+  }, [activateAccountMessage]);
 
   const [filters, setFilters] = useState({
     sortByFirstname: false,
@@ -40,7 +72,7 @@ const AllUsers = () => {
     {
       id: "firstName",
       label: "First Name",
-      minWidth: 90,
+      minWidth: 120,
       align: "center",
     },
     {
@@ -59,14 +91,14 @@ const AllUsers = () => {
     {
       id: "role",
       label: "Role",
-      minWidth: 120,
+      minWidth: 100,
       align: "left",
       format: (value) => value.toLocaleString("en-US"),
     },
     {
       id: "edit",
       label: null,
-      minWidth: 100,
+      minWidth: 60,
       align: "left",
       format: (value) => value.toLocaleString("en-US"),
     },
@@ -120,7 +152,12 @@ const AllUsers = () => {
           const thirdCol = <div>{item.email}</div>;
           const fourthCol = (
             <span>
-              <Checkbox />
+              <Tooltip title="Activate or deactivate account">
+                <Checkbox
+                  onChange={() => activateUserAccount(item._id)}
+                  checked={item.active ? true : false}
+                />
+              </Tooltip>
               {item.role === "mentor"
                 ? "isMentor"
                 : item.role === "student"
@@ -129,21 +166,12 @@ const AllUsers = () => {
             </span>
           );
           const fifthCol = (
-            <span>
-              <Tooltip title="Edit user data">
-                <EditOutlinedIcon
-                  fontSize="small"
-                  onClick={() => edit(item._id)}
-                />
-              </Tooltip>
-
-              <Tooltip title="Delete user" style={{ marginLeft: "20px" }}>
-                <DeleteOutlineOutlinedIcon
-                  //onClick={() => dispatch(deleteAuthor(item._id))}
-                  fontSize="small"
-                />
-              </Tooltip>
-            </span>
+            <Tooltip title="Edit user data">
+              <EditOutlinedIcon
+                fontSize="small"
+                onClick={() => edit(item._id)}
+              />
+            </Tooltip>
           );
 
           rows.push(
@@ -170,8 +198,6 @@ const AllUsers = () => {
   };
 
   const handleChange = (name) => (event) => {
-    console.log(name);
-    console.log(event.target.value);
     if (name === "sortFirstname") {
       setFilters({
         ...filters,
@@ -208,6 +234,10 @@ const AllUsers = () => {
 
   const filterBy = ["sortFirstname", "sortLastname", "filterStatus"];
 
+  const activateUserAccount = (id) => {
+    dispatch(activateAccount(id));
+  };
+
   return (
     <>
       <Grid container justifyContent={"center"} style={{ overflow: "hidden" }}>
@@ -224,6 +254,7 @@ const AllUsers = () => {
             >
               {filterByTitles[index]}
               <SelectComponent
+                className={classes.selectFields}
                 array={filterItems[index]}
                 selectedValue={filters[filterBy[index]]}
                 handleChange={handleChange(filterBy[index])}

@@ -11,6 +11,13 @@ const enrolledStudents = [];
 
 const users = [
   {
+    firstName: "Mak",
+    lastName: "Ovcina",
+    email: "mak.ovcina@test.com",
+    password: "12345678",
+    role: "mentor",
+  },
+  {
     firstName: "John",
     lastName: "Doe",
     email: "john.doe@test.com",
@@ -39,31 +46,25 @@ const users = [
     role: "admin",
     active: true,
   },
-  {
-    firstName: "Mak",
-    lastName: "Ovcina",
-    email: "john.doe@test.com",
-    password: "12345678",
-    role: "mentor",
-  },
+
   {
     firstName: "Luka",
     lastName: "Ovcina",
-    email: "john.doe@test.com",
+    email: "luka.ovcina@test.com",
     password: "12345678",
     role: "mentor",
   },
   {
     firstName: "Marina",
     lastName: "Ovcina",
-    email: "john.doe@test.com",
+    email: "luka.ovcina@test.com",
     password: "12345678",
     role: "mentor",
   },
   {
     firstName: "Adnan",
     lastName: "Ovcina",
-    email: "john.doe@test.com",
+    email: "adnan.ovcina@test.com",
     password: "12345678",
     role: "mentor",
   },

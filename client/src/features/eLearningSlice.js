@@ -259,6 +259,16 @@ export const fetchUsers = createAsyncThunk("eLearning/users", async (users) => {
     .catch((error) => error);
 });
 
+export const activateAccount = createAsyncThunk(
+  "eLearning/activateAccount",
+  async (param) => {
+    return await axios
+      .put(`/admin/users/${param}`)
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+
 const initialState = {
   // user data
   singinUserForm: false,
@@ -288,6 +298,7 @@ const initialState = {
   courses: {},
   users: {},
   updateCourse: {},
+  activateAccount: {},
   // courses
   userCourses: {},
   dashboardData: [],
@@ -390,6 +401,9 @@ const eLearningSlice = createSlice({
     cleanAddCourseMessage: (state, action) => {
       state.addCourse = {};
     },
+    cleanActivateAccountMessage: (state, action) => {
+      state.activateAccount = {};
+    },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
   },
@@ -477,6 +491,9 @@ const eLearningSlice = createSlice({
     [fetchUsers.fulfilled]: (state, { payload }) => {
       return { ...state, users: payload };
     },
+    [activateAccount.fulfilled]: (state, { payload }) => {
+      return { ...state, activateAccount: payload };
+    },
   },
 });
 
@@ -531,6 +548,8 @@ export const getCreateCourseMessage = (state) => state.eLearning.addCourse;
 // admin
 export const getUsers = (state) => state.eLearning.users;
 export const getCourses = (state) => state.eLearning.courses;
+export const getActivateAccountMessage = (state) =>
+  state.eLearning.activateAccount;
 
 export const {
   setSigninUserForm,
@@ -565,6 +584,7 @@ export const {
   cleanUserUpdateMessage,
   setCourseToEdit,
   setUserToEdit,
+  cleanActivateAccountMessage,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

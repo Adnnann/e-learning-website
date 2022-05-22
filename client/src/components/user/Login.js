@@ -54,7 +54,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   submit: {
-    margin: "auto",
     marginBottom: theme.spacing(2),
   },
   noaccount: {
@@ -111,72 +110,79 @@ const Login = () => {
   };
 
   return (
-    <Grid container justifyContent="center">
-      <Card className={classes.card}>
-        <CardContent>
-          <Typography variant="h6" className={classes.tittle}>
-            LOGIN
-          </Typography>
+    <Card className={classes.card}>
+      <Grid container justifyContent="center">
+        <Grid item xs={12} md={12} lg={12} xl={12}>
+          <CardContent>
+            <Typography variant="h6" className={classes.tittle}>
+              LOGIN
+            </Typography>
 
-          <TextField
-            id="email"
-            type="email"
-            label="Email"
-            className={classes.textField}
-            value={values.email}
-            onChange={handleChange("email")}
-            margin="normal"
-          />
-          <br />
+            <TextField
+              id="email"
+              type="email"
+              label="Email"
+              className={classes.textField}
+              value={values.email}
+              onChange={handleChange("email")}
+              margin="normal"
+            />
+            <br />
 
-          <TextField
-            id="password"
-            type="password"
-            label="Password"
-            className={classes.textField}
-            value={values.password}
-            onChange={handleChange("password")}
-            margin="normal"
-          />
-          <br />
-          {
-            //display error returned from server
-            Object.keys(loggedUserData).length !== 0 && (
-              <Typography component="p" color="error">
-                <Icon color="error" className={classes.error}></Icon>
-                {loggedUserData.error}
+            <TextField
+              id="password"
+              type="password"
+              label="Password"
+              className={classes.textField}
+              value={values.password}
+              onChange={handleChange("password")}
+              margin="normal"
+            />
+            <br />
+            {
+              //display error returned from server
+              Object.keys(loggedUserData).length !== 0 && (
+                <Typography component="p" color="error">
+                  <Icon color="error" className={classes.error}></Icon>
+                  {loggedUserData.error}
+                </Typography>
+              )
+            }
+          </CardContent>
+        </Grid>
+        <Grid item xs={12} md={12} lg={3} xl={3}>
+          <CardActions>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={clickSubmit}
+              className={classes.submit}
+            >
+              Login
+            </Button>
+          </CardActions>
+        </Grid>
+        <br />
+        <Grid container justifyContent="center">
+          <Grid item xs={12} md={12} lg={6} xl={6}>
+            <CardActions>
+              <Typography component="p" className={classes.noaccount}>
+                No account?
               </Typography>
-            )
-          }
-        </CardContent>
 
-        <CardActions>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={clickSubmit}
-            className={classes.submit}
-          >
-            Login
-          </Button>
-        </CardActions>
-
-        <CardActions>
-          <Typography component="p" className={classes.noaccount}>
-            No account?
-          </Typography>
-
-          <Typography
-            component="p"
-            color="primary"
-            className={classes.signup}
-            onClick={redirectToSignup}
-          >
-            SIGN UP
-          </Typography>
-        </CardActions>
-      </Card>
-    </Grid>
+              <Typography
+                component="p"
+                color="primary"
+                className={classes.signup}
+                onClick={redirectToSignup}
+              >
+                SIGN UP
+              </Typography>
+            </CardActions>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Card>
   );
 };
 
