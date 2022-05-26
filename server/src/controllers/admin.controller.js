@@ -82,17 +82,45 @@ const getCourses = (req, res) => {
         item.title.toLowerCase().includes(req.body.filterTerm.toLowerCase())
       );
 
-      // course.map((item, index) => {
-      //   users[index];
-      // });
-
       return res.send({ data: courses, totalNumOfCourses: courses.length });
     }
-    if (Math.ceil(course.length / 12 - req.body.page) === 0) {
-      courses = course.slice(
-        (Math.ceil(course.length / 12) - 1) * 12,
-        course.length
-      );
+
+    if (!req.body.filterLevel && !req.body.filterDuation) {
+      courses = course.slice(req.body.firstValue, req.body.lastValue);
+    } else if (req.body.filterLevel === "All levels") {
+      if (req.body.filterDuration) {
+        courses = course
+          .filter(
+            (item) =>
+              (item.level === "Beginner Level" ||
+                item.level === "Advanced Level" ||
+                item.level === "Intermediate Level") &&
+              item.duration.includes(req.body.filterDuration)
+          )
+          .slice(req.body.firstValue, req.body.lastValue);
+      } else {
+        courses = course
+          .filter(
+            (item) =>
+              item.level === "Beginner Level" ||
+              item.level === "Advanced Level" ||
+              item.level === "Intermediate Level"
+          )
+          .slice(req.body.firstValue, req.body.lastValue);
+      }
+
+      // courses = course.slice(
+      //   (Math.ceil(course.length / 12) - 1) * 12,
+      //   course.length
+      // );
+    } else if (req.body.filterLevel && req.body.filterDuration) {
+      courses = course
+        .filter(
+          (item) =>
+            item.duration.includes(req.body.filterDuration) &&
+            item.level.includes(req.body.filterLevel)
+        )
+        .slice(req.body.firstValue, req.body.lastValue);
     } else if (req.body.filterLevel) {
       courses = course
         .filter((item) => item.level.includes(req.body.filterLevel))
@@ -101,8 +129,6 @@ const getCourses = (req, res) => {
       courses = course
         .filter((item) => item.duration.includes(req.body.filterDuration))
         .slice(req.body.firstValue, req.body.lastValue);
-    } else {
-      courses = course.slice(req.body.firstValue, req.body.lastValue);
     }
 
     if (error) {
@@ -110,13 +136,36 @@ const getCourses = (req, res) => {
     } else {
       res.send({
         data: courses,
-        totalNumOfCourses: req.body.filterLevel
-          ? course.filter((item) => item.level.includes(req.body.filterLevel))
-          : req.body.filterDuration
-          ? course.filter((item) =>
-              item.duration.includes(req.body.filterDuration)
-            ).length
-          : course.length,
+        totalNumOfCourses:
+          req.body.filterLevel === "All levels" && req.body.filterDuration
+            ? course.filter(
+                (item) =>
+                  (item.level === "Beginner Level" ||
+                    item.level === "Advanced Level" ||
+                    item.level === "Intermediate Level") &&
+                  item.duration.includes(req.body.filterDuration)
+              ).length
+            : req.body.filterLevel === "All levels"
+            ? course.filter(
+                (item) =>
+                  item.level === "Beginner Level" ||
+                  item.level === "Advanced Level" ||
+                  item.level === "Intermediate Level"
+              ).length
+            : req.body.filterLevel && req.body.filterDuration
+            ? course.filter(
+                (item) =>
+                  item.duration.includes(req.body.filterDuration) &&
+                  item.level.includes(req.body.filterLevel)
+              ).length
+            : req.body.filterLevel
+            ? course.filter((item) => item.level.includes(req.body.filterLevel))
+                .length
+            : req.body.filterDuration
+            ? course.filter((item) =>
+                item.duration.includes(req.body.filterDuration)
+              ).length
+            : course.length,
       });
     }
   });

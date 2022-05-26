@@ -1,5 +1,8 @@
+import UserCourses from "../courses/UserCourses";
 import { Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useSelector } from "react-redux";
+import { getLoggedUserData } from "../../features/eLearningSlice";
 
 const useStyles = makeStyles((theme) => ({
   userDashboardMessage: {
@@ -15,12 +18,23 @@ const useStyles = makeStyles((theme) => ({
 
 const DashboardRightPanel = () => {
   const classes = useStyles();
+  const loggedUser = useSelector(getLoggedUserData);
 
   return (
     <div className={classes.userDashboardMessage}>
-      <Alert variant="filled" severity="info" style={{ fontSize: "20px" }}>
+      <Alert
+        variant="filled"
+        color="info"
+        severity="info"
+        style={{
+          fontSize: "20px",
+          marginBottom: "20px",
+          backgroundColor: "lightblue",
+        }}
+      >
         Courses - Your Current Courses and Progress
       </Alert>
+      {loggedUser.user.role === "student" ? <UserCourses /> : null}
     </div>
   );
 };

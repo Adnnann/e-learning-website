@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+
 export const signupUser = createAsyncThunk(
   "eLearning/signedupUser",
   async (user) => {
@@ -47,10 +48,10 @@ export const userToken = createAsyncThunk("users/protected", async () => {
 });
 
 export const fetchUserData = createAsyncThunk(
-  "users/profile",
-  async (params) => {
+  "eLearning/loggedUser",
+  async (id) => {
     return await axios
-      .get(`/api/users/${params}`)
+      .get(`/api/users/${id}`)
       .then((response) => response.data)
       .catch((error) => error);
   }
@@ -107,9 +108,12 @@ export const closeAccount = createAsyncThunk(
 );
 export const fetchUserCourses = createAsyncThunk(
   "/eLearning/userCourses",
-  async () => {
+  async (user) => {
     return await axios
-      .get(`/api/courses`)
+      .post(`/api/userCourses`, {
+        userCourses: user.userCourses,
+        completedCourses: user.completedCourses,
+      })
       .then((response) => response.data)
       .catch((error) => error);
   }
@@ -269,6 +273,42 @@ export const activateAccount = createAsyncThunk(
   }
 );
 
+export const enrollInCourse = createAsyncThunk(
+  "eLearning/enrollInCourse",
+  async (user) => {
+    return await axios
+      .post(`/api/users/${user.param}`, {
+        id: user.id,
+        courseId: user.courseId,
+      })
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+
+export const completeCourse = createAsyncThunk(
+  "eLearning/completedCourse",
+  async (user) => {
+    return await axios
+      .post(`/api/completedCourses`, {
+        id: user.id,
+        courseId: user.courseId,
+      })
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+
+export const fetchMentors = createAsyncThunk(
+  "eLearning/allMentors",
+  async () => {
+    return await axios
+      .get(`/api/mentors`)
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+
 const initialState = {
   // user data
   singinUserForm: false,
@@ -310,6 +350,10 @@ const initialState = {
   courseToEdit: {},
   userToEdit: {},
   addCourse: {},
+  courseOverviewModal: [],
+  displayUserCourses: false,
+  completedCourse: {},
+  allMentors: {},
 };
 
 const eLearningSlice = createSlice({
@@ -404,6 +448,19 @@ const eLearningSlice = createSlice({
     cleanActivateAccountMessage: (state, action) => {
       state.activateAccount = {};
     },
+    setShowModalCourseWindow: (state, action) => {
+      state.courseOverviewModal[action.payload] =
+        !state.courseOverviewModal[action.payload];
+    },
+    setDisplayUserCourses: (state, action) => {
+      state.displayUserCourses = action.payload;
+    },
+    cleanCompletedCourseMessage: (state, action) => {
+      state.completedCourse = {};
+    },
+    cleanEnrollInCourseMessage: (state, action) => {
+      state.enrollInCourse = {};
+    },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
   },
@@ -421,7 +478,7 @@ const eLearningSlice = createSlice({
       return { ...state, userToken: payload };
     },
     [fetchUserData.fulfilled]: (state, { payload }) => {
-      return { ...state, userData: payload };
+      return { ...state, loggedUser: payload };
     },
     [updateUserData.fulfilled]: (state, { payload }) => {
       if (payload.error) {
@@ -494,6 +551,15 @@ const eLearningSlice = createSlice({
     [activateAccount.fulfilled]: (state, { payload }) => {
       return { ...state, activateAccount: payload };
     },
+    [enrollInCourse.fulfilled]: (state, { payload }) => {
+      return { ...state, enrollInCourse: payload };
+    },
+    [completeCourse.fulfilled]: (state, { payload }) => {
+      return { ...state, completedCourse: payload };
+    },
+    [fetchMentors.fulfilled]: (state, { payload }) => {
+      return { ...state, allMentors: payload };
+    },
   },
 });
 
@@ -545,11 +611,21 @@ export const getCoursesOverviewLevel = (state) =>
 export const getCourseToEdit = (state) => state.eLearning.courseToEdit;
 export const getCreateCourseMessage = (state) => state.eLearning.addCourse;
 
+export const getCourseOverviewModal = (state) =>
+  state.eLearning.courseOverviewModal;
+export const getDisplayUserCoursesStatus = (state) =>
+  state.eLearning.displayUserCourses;
+export const getEnrollInCourseMessage = (state) =>
+  state.eLearning.enrollInCourse;
+export const getCompletedCourseMessage = (state) =>
+  state.eLearning.completedCourse;
+
 // admin
 export const getUsers = (state) => state.eLearning.users;
 export const getCourses = (state) => state.eLearning.courses;
 export const getActivateAccountMessage = (state) =>
   state.eLearning.activateAccount;
+export const getAllMentors = (state) => state.eLearning.allMentors;
 
 export const {
   setSigninUserForm,
@@ -585,6 +661,10 @@ export const {
   setCourseToEdit,
   setUserToEdit,
   cleanActivateAccountMessage,
+  setShowModalCourseWindow,
+  setDisplayUserCourses,
+  cleanEnrollInCourseMessage,
+  cleanCompletedCourseMessage,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

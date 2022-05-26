@@ -58,6 +58,9 @@ const UserSchema = new mongoose.Schema({
   enrolledInCourses: {
     type: Array,
   },
+  completedCourses: {
+    type: Array,
+  },
   salt: String,
 });
 

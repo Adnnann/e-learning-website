@@ -380,7 +380,7 @@ const AllCourses = () => {
       </Grid>
       <Grid container justifyContent={"center"}>
         {courses?.totalNumOfCourses &&
-        Math.ceil(courses.totalNumOfCourses) > 1 ? (
+        Math.ceil(courses.totalNumOfCourses / 12) > 1 ? (
           <PaginationComponent
             page={page}
             handleChange={handlePagination}

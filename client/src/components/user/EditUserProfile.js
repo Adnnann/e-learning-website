@@ -10,6 +10,7 @@ import {
   getUpdateUserStatus,
   cleanUserUpdateMessage,
   getUserToEdit,
+  setEditUserProfileForm,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -119,7 +120,7 @@ const EditProfile = () => {
   };
 
   const cancel = () => {
-    navigate("/dashboard");
+    dispatch(setEditUserProfileForm(false));
   };
 
   const uploadPhoto = () => {

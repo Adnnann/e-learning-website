@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
+  faChalkboardUser,
   faHouse,
   faGear,
   faRightFromBracket,
@@ -46,6 +47,7 @@ const DashboardLeftPanel = () => {
   const loggedUser = useSelector(getLoggedUserData);
 
   const redirectToDashboard = () => {
+    dispatch(setEditUserProfileForm(false));
     navigate("/dashboard");
   };
 
@@ -70,6 +72,16 @@ const DashboardLeftPanel = () => {
     };
 
     dispatch(fetchUsers(users));
+    dispatch(fetchCourses(courses));
+    navigate("/admin/courses");
+  };
+
+  const viewAllAvailableCourses = () => {
+    const courses = {
+      firstValue: 1,
+      lastValue: 12,
+    };
+
     dispatch(fetchCourses(courses));
     navigate("/courses");
   };
@@ -97,9 +109,14 @@ const DashboardLeftPanel = () => {
   };
 
   const userButtonsAndIcons = {
-    clickEvents: [redirectToDashboard, editUser, signout],
-    buttons: ["Dashboard", "Edit Profile", "Logout"],
-    icons: [faHouse, faGear, faRightFromBracket],
+    clickEvents: [
+      redirectToDashboard,
+      viewAllAvailableCourses,
+      editUser,
+      signout,
+    ],
+    buttons: ["Dashboard", "Courses", "Edit Profile", "Logout"],
+    icons: [faHouse, faChalkboardUser, faGear, faRightFromBracket],
   };
 
   const formatUserData = (str) => {
@@ -144,13 +161,14 @@ const DashboardLeftPanel = () => {
         <br />
         courses
         <br />
-        {loggedUser.user.numberOfCompletedCourses}
+        {loggedUser.user.completedCourses.length}
       </Typography>
       <Typography variant="h6" className={classes.userInfo}>
-        in progress
+        In progress
         <br />
         {loggedUser.user?.enrolledInCourses
-          ? loggedUser.user?.enrolledInCourses.length
+          ? [...new Set(loggedUser.user.enrolledInCourses)].length -
+            loggedUser.user.completedCourses.length
           : "0"}
       </Typography>
     </>

@@ -31,7 +31,10 @@ export default function Search({ changeHandler }) {
   const filter = useSelector(getFilter);
 
   const handleKeyPress = (event) => {
-    if (window.location.pathname === "/admin/courses") {
+    if (
+      window.location.pathname === "/admin/courses" ||
+      window.location.pathname === "/courses"
+    ) {
       if (event.target.value === "") {
         const courses = {
           filterTerm: "",

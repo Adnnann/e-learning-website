@@ -57,9 +57,9 @@ const Dashboard = () => {
         <Grid
           item
           xs={12}
-          md={6}
-          lg={6}
-          xl={6}
+          md={8}
+          lg={8}
+          xl={8}
           className={classes.largeScreens}
         >
           {!iPadAirScreen && !iPadMiniScreen && !surfaceDuo ? (

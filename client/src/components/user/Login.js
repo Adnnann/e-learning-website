@@ -11,6 +11,7 @@ import {
   getLoggedUserData,
   cleanLoginMessage,
   fetchUserCourses,
+  fetchCourses,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -81,11 +82,19 @@ const Login = () => {
   useEffect(() => {
     if (loggedUserData?.token) {
       dispatch(userToken());
-      if (loggedUserData.user.role !== "admin") {
-        dispatch(fetchUserCourses());
-      }
 
-      navigate("/dashboard");
+      const courses = {
+        firstValue: 1,
+        lastValue: 12,
+      };
+
+      dispatch(fetchCourses(courses));
+
+      if (loggedUserData.user.role !== "admin") {
+        navigate("/courses");
+      } else {
+        navigate("/dashboard");
+      }
     }
   }, [loggedUserData]);
 

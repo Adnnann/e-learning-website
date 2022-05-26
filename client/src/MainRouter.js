@@ -25,6 +25,7 @@ import AllCourses from "./components/admin/AllCourses";
 import EditCourse from "./components/courses/EditCourse";
 import EditProfile from "./components/user/EditUserProfile";
 import AddCourse from "./components/courses/AddCourse";
+import Courses from "./components/courses/Courses";
 
 function MainRouter() {
   return (
@@ -35,10 +36,11 @@ function MainRouter() {
         <Route path="/" element={<LoginOrSignup />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/users" element={<AllUsers />}></Route>
-        <Route path="/courses" element={<AllCourses />}></Route>
+        <Route path="/admin/courses" element={<AllCourses />}></Route>
         <Route path="/editCourse" element={<EditCourse />}></Route>
         <Route path="/editProfile" element={<EditProfile />}></Route>
         <Route path="/addCourse" element={<AddCourse />}></Route>
+        <Route path="/courses" element={<Courses />}></Route>
       </Routes>
     </Router>
   );

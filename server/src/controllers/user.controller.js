@@ -1,7 +1,11 @@
 /* eslint-disable no-underscore-dangle */
+import jwt from "jsonwebtoken";
 import _ from "lodash";
 import User from "../models/user.model";
 import errorHandler from "./helpers/dbErrorHandlers";
+import Course from "../models/courses.model";
+import jwtDecode from "jwt-decode";
+import config from "../config/config";
 
 const create = (req, res, next) => {
   const user = new User(req.body);
@@ -15,9 +19,31 @@ const create = (req, res, next) => {
 };
 
 const read = (req, res) => {
-  req.profile.hashed_password = undefined;
-  req.profile.salt = undefined;
-  res.status(200).json(req.profile);
+  User.findOne({ _id: req.profile.id }, (err, user) => {
+    const token = jwt.sign(
+      {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+      config.secret
+    );
+
+    return res.send({
+      token,
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        userImage: user.userImage,
+        enrolledInCourses: user.enrolledInCourses,
+        completedCourses: user.completedCourses,
+      },
+    });
+  });
 };
 
 const update = (req, res, next) => {
@@ -73,6 +99,68 @@ const updateUserPassword = async (req, res, next) => {
   });
 };
 
+const enrollInCourse = async (req, res) => {
+  const user = await User.findByIdAndUpdate(
+    { _id: req.body.id },
+    { $push: { enrolledInCourses: req.body.courseId } }
+  );
+  if (user) {
+    res.send({ message: "User enrolled" });
+  } else {
+    res.send({ error: errorHandler.getErrorMessage(err) });
+  }
+};
+
+const courseCompleted = async (req, res) => {
+  const user = await User.findByIdAndUpdate(
+    { _id: req.body.id },
+    { $push: { completedCourses: req.body.courseId } }
+  );
+  if (user) {
+    res.send({ message: "Course completed" });
+  } else {
+    res.send({ error: errorHandler.getErrorMessage(err) });
+  }
+};
+
+const getUserCourses = (req, res) => {
+  Course.find({}, (err, course) => {
+    const userCourses = [];
+
+    if (err) {
+      return res.send({ error: errorHandler.getErrorMessage(err) });
+    }
+    course.map((item, index) => {
+      if (req.body.completedCourses.length !== 0) {
+        if (
+          req.body.userCourses.includes(item._id.toString()) &&
+          !req.body.completedCourses.includes(item._id)
+        ) {
+          userCourses.push(item);
+        }
+      } else {
+        if (req.body.userCourses.includes(item._id.toString())) {
+          userCourses.push(item);
+        }
+      }
+    });
+
+    return res.send({ data: userCourses });
+  });
+};
+
+const getAllMentors = (req, res) => {
+  User.find({})
+    .where({ role: "mentor" })
+    .exec((err, user) => {
+      if (err) {
+        res.send({ err: "error" });
+      } else {
+        res.send({ mentors: user });
+      }
+    });
+};
+
 const userByID = (req, res, next, id) => {
   User.findById(id).exec((err, user) => {
     if (err || !user) {
@@ -89,5 +177,9 @@ export default {
   update,
   remove,
   updateUserPassword,
+  enrollInCourse,
+  courseCompleted,
+  getUserCourses,
+  getAllMentors,
   userByID,
 };

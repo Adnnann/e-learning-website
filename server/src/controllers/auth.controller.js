@@ -39,6 +39,8 @@ const signin = (req, res) => {
         email: user.email,
         role: user.role,
         userImage: user.userImage,
+        enrolledInCourses: user.enrolledInCourses,
+        completedCourses: user.completedCourses,
       },
     });
   });
