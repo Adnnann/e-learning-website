@@ -6,8 +6,11 @@ import { makeStyles } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCourses,
+  fetchMentorCourses,
   getFilter,
+  getLoggedUserData,
   setFilter,
+  setFilterTerm,
 } from "../../features/eLearningSlice";
 
 const useStyles = makeStyles((theme) => ({
@@ -29,6 +32,7 @@ export default function Search({ changeHandler }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter = useSelector(getFilter);
+  const loggedUser = useSelector(getLoggedUserData);
 
   const handleKeyPress = (event) => {
     if (
@@ -39,6 +43,7 @@ export default function Search({ changeHandler }) {
         const courses = {
           filterTerm: "",
         };
+        dispatch(setFilterTerm(""));
         return dispatch(fetchCourses(courses));
       }
 
@@ -47,7 +52,30 @@ export default function Search({ changeHandler }) {
           filterTerm: filter,
         };
 
+        dispatch(setFilterTerm(filter));
+
         return dispatch(fetchCourses(courses));
+      }
+    } else if (
+      window.location.pathname === "/dashboard" &&
+      loggedUser.user.role === "mentor"
+    ) {
+      if (event.target.value === "") {
+        const courses = {
+          mentorId: loggedUser.user._id,
+          filterTerm: "",
+        };
+        dispatch(setFilterTerm(""));
+        return dispatch(fetchMentorCourses(courses));
+      }
+
+      if (event.keyCode === 13) {
+        const courses = {
+          mentorId: loggedUser.user._id,
+          filterTerm: filter,
+        };
+        dispatch(setFilterTerm(filter));
+        return dispatch(fetchMentorCourses(courses));
       }
     }
   };

@@ -10,6 +10,7 @@ import {
   cleanAddCourseMessage,
   getCreateCourseMessage,
   createCourse,
+  fetchMentorCourses,
 } from "../../features/eLearningSlice";
 import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -77,6 +78,20 @@ const AddCourse = () => {
 
   useEffect(() => {
     if (addCourseStatus?.message) {
+      if (loggedUser.user.role === "mentor") {
+        const user = {
+          mentorId: loggedUser.user._id,
+          firstItem: 1,
+          lastItem: 11,
+        };
+
+        dispatch(fetchMentorCourses(user));
+        dispatch(cleanAddCourseMessage());
+        dispatch(cleanUploadImageStatus());
+        navigate("/dashboard");
+        return;
+      }
+
       const course = {
         filterTerm: "",
         filterLevel: "",
@@ -111,6 +126,7 @@ const AddCourse = () => {
   };
 
   const courseDataToEdit = ["title", "description"];
+  const types = ["text", "text"];
   const levels = ["Beginner Level", "Intermediate Level", "Advanced Level"];
   const durations = [
     "0 - 3 Hours",
@@ -164,7 +180,7 @@ const AddCourse = () => {
       />
       <div
         style={{
-          backgroundColor: "blue",
+          backgroundColor: "lightBlue",
           minHeight: "50px",
           marginBottom: "20px",
         }}
@@ -189,6 +205,7 @@ const AddCourse = () => {
             values={values}
             value={courseDataToEdit}
             labels={labels}
+            types={types}
           />
           Level
           <SelectComponent
@@ -232,6 +249,9 @@ const AddCourse = () => {
             Upload photo
           </Button>
         </Grid>
+        {addCourseStatus?.error ? (
+          <p style={{ color: "red" }}>{addCourseStatus.error}</p>
+        ) : null}
       </Grid>
     </Card>
   );

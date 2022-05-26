@@ -119,6 +119,21 @@ export const fetchUserCourses = createAsyncThunk(
   }
 );
 
+export const fetchMentorCourses = createAsyncThunk(
+  "/eLearning/mentorCourses",
+  async (courses) => {
+    return await axios
+      .post(`/api/mentorCourses`, {
+        mentorId: courses.mentorId,
+        firstItem: courses.firstItem,
+        lastItem: courses.lastItem,
+        filterTerm: courses.filterTerm,
+      })
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+
 export const createCourse = createAsyncThunk(
   "eLearning/createCourse",
   async (course) => {
@@ -354,6 +369,8 @@ const initialState = {
   displayUserCourses: false,
   completedCourse: {},
   allMentors: {},
+  mentorCourses: {},
+  selectedFilterTerm: "",
 };
 
 const eLearningSlice = createSlice({
@@ -430,9 +447,14 @@ const eLearningSlice = createSlice({
       state.coursesDisplayPage = action.payload;
     },
     setCourseToEdit: (state, action) => {
-      state.courseToEdit = Object.values(state.courses.data).filter(
-        (item) => item._id === action.payload
-      )[0];
+      state.courseToEdit =
+        Object.keys(state.courses).length !== 0
+          ? Object.values(state.courses.data).filter(
+              (item) => item._id === action.payload
+            )[0]
+          : Object.values(state.mentorCourses.data).filter(
+              (item) => item._id === action.payload
+            )[0];
     },
     setUserToEdit: (state, action) => {
       state.userToEdit = Object.values(state.users.data).filter(
@@ -460,6 +482,9 @@ const eLearningSlice = createSlice({
     },
     cleanEnrollInCourseMessage: (state, action) => {
       state.enrollInCourse = {};
+    },
+    setFilterTerm: (state, action) => {
+      state.selectedFilterTerm = state.filterTerm;
     },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
@@ -560,6 +585,9 @@ const eLearningSlice = createSlice({
     [fetchMentors.fulfilled]: (state, { payload }) => {
       return { ...state, allMentors: payload };
     },
+    [fetchMentorCourses.fulfilled]: (state, { payload }) => {
+      return { ...state, mentorCourses: payload };
+    },
   },
 });
 
@@ -626,6 +654,9 @@ export const getCourses = (state) => state.eLearning.courses;
 export const getActivateAccountMessage = (state) =>
   state.eLearning.activateAccount;
 export const getAllMentors = (state) => state.eLearning.allMentors;
+export const getMentorCourses = (state) => state.eLearning.mentorCourses;
+export const getSelectedFilterTerm = (state) =>
+  state.eLearning.selectedFilterTerm;
 
 export const {
   setSigninUserForm,
@@ -665,6 +696,7 @@ export const {
   setDisplayUserCourses,
   cleanEnrollInCourseMessage,
   cleanCompletedCourseMessage,
+  setFilterTerm,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

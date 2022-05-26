@@ -1,19 +1,25 @@
 import { useSelector } from "react-redux";
 import {
   getCloseAccountFormStatus,
+  getCourses,
   getEditUserFormStatus,
   getEditUserPasswordFormStatus,
+  getFilter,
+  getLoggedUserData,
+  getMentorCourses,
+  getSelectedFilterTerm,
 } from "../../features/eLearningSlice";
 import { makeStyles } from "@mui/styles";
 import { Grid } from "@material-ui/core";
 import EditUserPassword from "../user/EditUserPassword";
-import { useMediaQuery } from "@mui/material";
+import { Typography, useMediaQuery } from "@mui/material";
 import CloseAccountForm from "../user/DeleteAccountForm";
 import DeleteAccountModal from "../user/DeleteAccountModal";
 import EditUserDataButtons from "./DashboardButtons";
 import EditProfile from "../user/EditUserProfile";
 import DashboardLeftPanel from "./DashboardLeftPanel";
 import DashboardRightPanel from "./DashboardRightPanel";
+import MentorCourses from "../courses/MentorCourses";
 
 const useStyles = makeStyles((theme) => ({
   largeScreens: {
@@ -40,6 +46,10 @@ const Dashboard = () => {
   const editUserProfile = useSelector(getEditUserFormStatus);
   const editUserPassword = useSelector(getEditUserPasswordFormStatus);
   const closeAccount = useSelector(getCloseAccountFormStatus);
+  const filterTerm = useSelector(getSelectedFilterTerm);
+  const mentorCourses = useSelector(getMentorCourses);
+  const courses = useSelector(getCourses);
+  const loggedUser = useSelector(getLoggedUserData);
 
   const iPadAirScreen = useMediaQuery("(width:820px)");
   const iPadMiniScreen = useMediaQuery("(width:768px)");
@@ -47,6 +57,31 @@ const Dashboard = () => {
 
   return (
     <Grid container>
+      <Grid item xs={12} md={12} lg={12} xl={12}>
+        {filterTerm ? (
+          loggedUser.user.role === "mentor" && mentorCourses.data.length > 1 ? (
+            <Typography
+              variant="h5"
+              style={{ textAlign: "left", marginLeft: "10px" }}
+            >
+              There are {mentorCourses.data.length} results for the term{" "}
+              <span style={{ fontWeight: "900", textDecoration: "underline" }}>
+                {filterTerm}
+              </span>
+            </Typography>
+          ) : (
+            <Typography
+              variant="h5"
+              style={{ textAlign: "left", marginLeft: "10px" }}
+            >
+              There is {mentorCourses.data.length} result for the term{" "}
+              <span style={{ fontWeight: "900", textDecoration: "underline" }}>
+                {filterTerm}
+              </span>
+            </Typography>
+          )
+        ) : null}
+      </Grid>
       <Grid item xs={12} md={6} lg={6} xl={6} className={classes.smallScreens}>
         <DashboardRightPanel />
       </Grid>

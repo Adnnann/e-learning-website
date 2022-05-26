@@ -10,6 +10,7 @@ import {
   getUploadUserImageStatus,
   cleanUploadImageStatus,
   getLoggedUserData,
+  fetchMentorCourses,
 } from "../../features/eLearningSlice";
 import {
   Alert,
@@ -86,6 +87,19 @@ const EditCourse = () => {
 
   useEffect(() => {
     if (updateCourseStatus?.message) {
+      if (loggedUser.user.role === "mentor") {
+        const courses = {
+          mentorId: loggedUser.user._id,
+          firstItem: 1,
+          lastItem: 11,
+        };
+        dispatch(cleanCourseUpdatedMessage());
+        dispatch(cleanUploadImageStatus());
+        dispatch(fetchMentorCourses(courses));
+        navigate("/dashboard");
+        return;
+      }
+
       const course = {
         filterTerm: "",
         filterLevel: "",

@@ -4,7 +4,6 @@ import _ from "lodash";
 import User from "../models/user.model";
 import errorHandler from "./helpers/dbErrorHandlers";
 import Course from "../models/courses.model";
-import jwtDecode from "jwt-decode";
 import config from "../config/config";
 
 const create = (req, res, next) => {
@@ -149,6 +148,29 @@ const getUserCourses = (req, res) => {
   });
 };
 
+const getMentorCourses = (req, res) => {
+  console.log(req.body);
+  Course.find({ mentorId: req.body.mentorId })
+    .where({ status: "active" })
+    .exec((err, course) => {
+      console.log(course);
+      if (err) {
+        return res.send({ error: errorHandler.getErrorMessage(err) });
+      }
+      return res.send({
+        data: req.body.filterTerm
+          ? course
+              .filter((item) => item.title.includes(req.body.filterTerm))
+              .slice(req.body.firstItem, req.body.lastItem)
+          : course.slice(req.body.firstItem, req.body.lastItem),
+
+        totalNumOfCourses: req.body.filterTerm
+          ? course.filter((item) => item.title.includes(req.body.filterTerm))
+              .length
+          : course.length,
+      });
+    });
+};
 const getAllMentors = (req, res) => {
   User.find({})
     .where({ role: "mentor" })
@@ -181,5 +203,6 @@ export default {
   courseCompleted,
   getUserCourses,
   getAllMentors,
+  getMentorCourses,
   userByID,
 };

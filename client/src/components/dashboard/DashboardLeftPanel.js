@@ -2,7 +2,10 @@ import {
   cleanStore,
   fetchCourses,
   fetchUsers,
+  getCourses,
   getLoggedUserData,
+  getMentorCourses,
+  getUsers,
   setEditUserProfileForm,
   signoutUser,
 } from "../../features/eLearningSlice";
@@ -43,6 +46,9 @@ const DashboardLeftPanel = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const mentorCourses = useSelector(getMentorCourses);
+  const users = useSelector(getUsers);
+  const courses = useSelector(getCourses);
 
   const loggedUser = useSelector(getLoggedUserData);
 
@@ -111,12 +117,22 @@ const DashboardLeftPanel = () => {
   const userButtonsAndIcons = {
     clickEvents: [
       redirectToDashboard,
-      viewAllAvailableCourses,
+      loggedUser.user.role === "student" ? viewAllAvailableCourses : null,
       editUser,
       signout,
     ],
-    buttons: ["Dashboard", "Courses", "Edit Profile", "Logout"],
-    icons: [faHouse, faChalkboardUser, faGear, faRightFromBracket],
+    buttons: [
+      "Dashboard",
+      loggedUser.user.role === "student" ? "Courses" : null,
+      "Edit Profile",
+      "Logout",
+    ],
+    icons: [
+      faHouse,
+      loggedUser.user.role === "student" ? faChalkboardUser : null,
+      faGear,
+      faRightFromBracket,
+    ],
   };
 
   const formatUserData = (str) => {
@@ -142,35 +158,63 @@ const DashboardLeftPanel = () => {
         buttons={
           loggedUser.user.role === "admin"
             ? adminButtonsAndIcons.buttons
-            : userButtonsAndIcons.buttons
+            : userButtonsAndIcons.buttons.filter(Boolean)
         }
         clickEvents={
           loggedUser.user.role === "admin"
             ? adminButtonsAndIcons.clickEvents
-            : userButtonsAndIcons.clickEvents
+            : userButtonsAndIcons.clickEvents.filter(Boolean)
         }
         icons={
           loggedUser.user.role === "admin"
             ? adminButtonsAndIcons.icons
-            : userButtonsAndIcons.icons
+            : userButtonsAndIcons.icons.filter(Boolean)
         }
       />
 
-      <Typography variant="h6" className={classes.userInfo}>
-        Completed
-        <br />
-        courses
-        <br />
-        {loggedUser.user.completedCourses.length}
-      </Typography>
-      <Typography variant="h6" className={classes.userInfo}>
-        In progress
-        <br />
-        {loggedUser.user?.enrolledInCourses
-          ? [...new Set(loggedUser.user.enrolledInCourses)].length -
-            loggedUser.user.completedCourses.length
-          : "0"}
-      </Typography>
+      {loggedUser.user.role === "student" ? (
+        <>
+          <Typography variant="h6" className={classes.userInfo}>
+            Completed
+            <br />
+            courses
+            <br />
+            {loggedUser.user.completedCourses.length}
+          </Typography>
+          <Typography variant="h6" className={classes.userInfo}>
+            In progress
+            <br />
+            {loggedUser.user?.enrolledInCourses
+              ? [...new Set(loggedUser.user.enrolledInCourses)].length -
+                loggedUser.user.completedCourses.length
+              : "0"}
+          </Typography>
+        </>
+      ) : loggedUser.user.role === "mentor" ? (
+        <>
+          <Typography variant="h6" className={classes.userInfo}>
+            Total number <br />
+            of courses
+            <br />
+            {mentorCourses.totalNumOfCourses}
+          </Typography>
+        </>
+      ) : courses?.data && users?.data ? (
+        <>
+          <Typography variant="h6" className={classes.userInfo}>
+            Total number of <br />
+            users
+            <br />
+            {users.data.length}
+          </Typography>
+          <Typography variant="h6" className={classes.userInfo}>
+            Total number of <br />
+            courses
+            <br />
+            {courses.data.length}
+          </Typography>
+        </>
+      ) : null}
     </>
   );
 };

@@ -12,6 +12,8 @@ import {
   cleanLoginMessage,
   fetchUserCourses,
   fetchCourses,
+  fetchMentorCourses,
+  fetchUsers,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -83,6 +85,18 @@ const Login = () => {
     if (loggedUserData?.token) {
       dispatch(userToken());
 
+      if (loggedUserData.user.role === "mentor") {
+        const user = {
+          mentorId: loggedUserData.user._id,
+          firstItem: 1,
+          lastItem: 11,
+        };
+
+        dispatch(fetchMentorCourses(user));
+        navigate("/dashboard");
+        return;
+      }
+
       const courses = {
         firstValue: 1,
         lastValue: 12,
@@ -93,6 +107,12 @@ const Login = () => {
       if (loggedUserData.user.role !== "admin") {
         navigate("/courses");
       } else {
+        const users = {
+          firstItem: 0,
+          lastItem: 11,
+        };
+
+        dispatch(fetchUsers(users));
         navigate("/dashboard");
       }
     }

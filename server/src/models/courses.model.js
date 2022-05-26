@@ -5,7 +5,7 @@ const CoursesSchema = new mongoose.Schema({
     type: String,
     trim: true,
     unique: "Title must be unique",
-    required: "Course title is required",
+    required: "Course title is required!",
     match: [
       /^[a-zA-Z0-9\s]*$/,
       "Only letters and number are allowed for title",
@@ -14,12 +14,15 @@ const CoursesSchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    required: "Course description is required!",
   },
   level: {
     type: String,
+    required: "Course level is required!",
   },
   duration: {
     type: String,
+    required: "Course duration is required!",
   },
   courseImage: {
     type: String,

@@ -3,6 +3,7 @@ import { Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useSelector } from "react-redux";
 import { getLoggedUserData } from "../../features/eLearningSlice";
+import MentorCourses from "../courses/MentorCourses";
 
 const useStyles = makeStyles((theme) => ({
   userDashboardMessage: {
@@ -35,6 +36,7 @@ const DashboardRightPanel = () => {
         Courses - Your Current Courses and Progress
       </Alert>
       {loggedUser.user.role === "student" ? <UserCourses /> : null}
+      {loggedUser.user.role === "mentor" ? <MentorCourses /> : null}
     </div>
   );
 };

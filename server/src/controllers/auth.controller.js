@@ -7,7 +7,6 @@ import config from "../config/config";
 const signin = (req, res) => {
   User.findOne({ email: req.body.email }, (err, user) => {
     if (user && user.active === false) {
-      console.log(user.active);
       return res.send({ error: "You account has not been activated yet." });
     }
     if (err || !user) {
