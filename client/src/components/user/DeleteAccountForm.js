@@ -49,6 +49,9 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     minWidth: 110,
   },
+  buttonContainer: {
+    margin: "0 auto",
+  },
 }));
 const CloseAccountForm = () => {
   const classes = useStyles();
@@ -132,7 +135,7 @@ const CloseAccountForm = () => {
           </CardContent>
 
           <CardActions>
-            <div style={{ margin: "0 auto" }}>
+            <div className={classes.buttonContainer}>
               <Button
                 color="primary"
                 variant="contained"

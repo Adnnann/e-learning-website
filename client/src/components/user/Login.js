@@ -58,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     marginBottom: theme.spacing(2),
+    margin: "0 auto",
   },
   noaccount: {
     margin: "auto",

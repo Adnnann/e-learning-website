@@ -13,6 +13,7 @@ import {
   setCourseToEdit,
   getCourseDeleteModalStatus,
   setCourseDeleteModal,
+  getSelectedFilterTerm,
 } from "../../features/eLearningSlice";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -44,13 +45,25 @@ const useStyles = makeStyles((theme) => ({
   tooltips: {
     marginLeft: "20px",
   },
+  addCourseButtonContainer: {
+    paddingTop: "20px !important",
+    paddingRight: "20px",
+  },
   addCourseButton: {
     paddingRight: "10px",
     paddingTop: "20px",
+    backgroundColor: "#2F4F4F !important",
+    minWidth: "320px !important",
+    minHeight: "50px !important",
+    [theme.breakpoints.only("xs")]: {
+      width: "95%",
+      marginLeft: "5px !important",
+    },
   },
   warningIcon: {
     fontSize: "60px",
   },
+  container: { overflow: "hidden" },
 }));
 
 const AllCourses = () => {
@@ -63,6 +76,7 @@ const AllCourses = () => {
   const page = useSelector(getCoursesDisplayPage);
   const deleteCourseStatus = useSelector(getDeleteCourseMessage);
   const courseDeleteModalStatus = useSelector(getCourseDeleteModalStatus);
+  const filterTerm = useSelector(getSelectedFilterTerm);
 
   const rows = [];
 
@@ -85,6 +99,7 @@ const AllCourses = () => {
 
   const handlePagination = (event, value) => {
     const courses = {
+      filterTerm: filterTerm !== "" ? filterTerm : undefined,
       filterValue: filters.filterByLevel
         ? filters.filterLevel
         : filters.filterByDuration
@@ -371,15 +386,18 @@ const AllCourses = () => {
         container
         justifyContent={"center"}
         spacing={2}
-        style={{ overflow: "hidden" }}
+        className={classes.container}
       >
         <Grid
           container
           justifyContent={"flex-end"}
-          style={{ paddingRight: "10px" }}
-          className={classes.addCourseButton}
+          className={classes.addCourseButtonContainer}
         >
-          <Button variant="contained" onClick={() => navigate("/addCourse")}>
+          <Button
+            variant="contained"
+            onClick={() => navigate("/addCourse")}
+            className={classes.addCourseButton}
+          >
             Add courses
           </Button>
         </Grid>

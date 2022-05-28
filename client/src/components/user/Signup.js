@@ -257,27 +257,6 @@ const Signup = () => {
               LOGIN
             </Typography>
           </CardActions>
-          {!iPadAirScreen && !iPadMiniScreen && !surfaceDuo ? (
-            <>
-              <CardActions className={classes.smallScreens}>
-                <Typography component="p" className={classes.hasAccount}>
-                  Already have an account?
-                </Typography>
-              </CardActions>
-
-              <CardActions className={classes.smallScreens}>
-                <Typography
-                  component="p"
-                  color="primary"
-                  className={classes.signin}
-                  onClick={redirectToSignin}
-                >
-                  LOGIN
-                </Typography>
-                <br />
-              </CardActions>
-            </>
-          ) : null}
         </Grid>
         <div>
           Mentor account <Checkbox onChange={handleChange("mentorAccount")} />

@@ -76,6 +76,14 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: "50px",
     },
   },
+  loginButton: {
+    textTransform: "none !important",
+    marginLeft: "10px",
+  },
+  signupButton: {
+    textTransform: "none !important",
+    marginLeft: "10px !important",
+  },
 }));
 
 const Header = () => {
@@ -152,10 +160,7 @@ const Header = () => {
                   variant="contained"
                   color="primary"
                   onClick={login}
-                  sx={{
-                    textTransform: "none",
-                    marginLeft: "10px",
-                  }}
+                  className={classes.loginButton}
                 >
                   Log In
                 </Button>
@@ -164,10 +169,7 @@ const Header = () => {
                   variant="contained"
                   color="primary"
                   onClick={signup}
-                  sx={{
-                    textTransform: "none",
-                    marginLeft: "10px",
-                  }}
+                  className={classes.signupButton}
                 >
                   Sign Up
                 </Button>

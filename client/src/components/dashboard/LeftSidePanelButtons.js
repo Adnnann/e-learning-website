@@ -6,6 +6,9 @@ const useStyles = makeStyles((theme) => ({
   userIcon: {
     fontSize: "48px",
     marginTop: "60px",
+    [theme.breakpoints.only("xs")]: {
+      marginTop: "10px",
+    },
   },
   buttons: {
     fontSize: "24px",

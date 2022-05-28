@@ -13,10 +13,10 @@ import {
   fetchMentorCourses,
 } from "../../features/eLearningSlice";
 import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -65,6 +65,20 @@ const useStyles = makeStyles((theme) => ({
     borderColor: "grey",
     borderWidth: "1px",
   },
+  addCourseContainer: {
+    backgroundColor: "lightBlue",
+    minHeight: "50px",
+    marginBottom: "20px",
+  },
+  addCourseTitle: {
+    textAlign: "center",
+    paddingTop: "5px",
+    paddingBottom: "5px",
+    color: "white",
+  },
+  buttonContainer: { marginTop: "20px" },
+  durationSelectFieldLabel: { marginBottom: "0" },
+  error: { color: "red" },
 }));
 
 const AddCourse = () => {
@@ -178,23 +192,8 @@ const AddCourse = () => {
         id="uploadImage"
         onChange={handleUpload}
       />
-      <div
-        style={{
-          backgroundColor: "lightBlue",
-          minHeight: "50px",
-          marginBottom: "20px",
-        }}
-      >
-        <h2
-          style={{
-            textAlign: "center",
-            paddingTop: "5px",
-            paddingBottom: "5px",
-            color: "white",
-          }}
-        >
-          Add Course
-        </h2>
+      <div className={classes.addCourseContainer}>
+        <h2 className={classes.addCourseTitle}>Add Course</h2>
       </div>
 
       <Grid container justifyContent={"center"} spacing={2}>
@@ -214,7 +213,7 @@ const AddCourse = () => {
             handleChange={handleChange("level")}
             className={classes.selectFields}
           />
-          <ButtonGroup style={{ marginTop: "20px" }}>
+          <ButtonGroup className={classes.buttonContainer}>
             <Button
               variant="contained"
               style={{ marginRight: "10px" }}
@@ -229,7 +228,7 @@ const AddCourse = () => {
         </Grid>
 
         <Grid item xs={12} md={6} lg={6} xl={6}>
-          <p style={{ marginBottom: "0" }}>Duration</p>
+          <p className={classes.durationSelectFieldLabel}>Duration</p>
           <SelectComponent
             selectedValue={values.duration}
             array={durations}
@@ -250,7 +249,7 @@ const AddCourse = () => {
           </Button>
         </Grid>
         {addCourseStatus?.error ? (
-          <p style={{ color: "red" }}>{addCourseStatus.error}</p>
+          <p className={classes.error}>{addCourseStatus.error}</p>
         ) : null}
       </Grid>
     </Card>

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   cleanCompletedCourseMessage,
@@ -18,10 +19,34 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { useEffect } from "react";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+  card: {
+    margin: "auto",
+    textAlign: "center",
+    marginTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    marginBottom: "20px",
+  },
+  title: {
+    textAlign: "left",
+    marginLeft: "10px",
+    marginBottom: "20px",
+  },
+  mentorName: {
+    textAlign: "left",
+    marginLeft: "10px",
+    marginBottom: "20px",
+    fontStyle: "italic",
+  },
+}));
 
 const UserCourses = () => {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const userCourses = useSelector(getUserCourses);
   const loggedUser = useSelector(getLoggedUserData);
   const allMentors = useSelector(getAllMentors);
@@ -43,16 +68,13 @@ const UserCourses = () => {
   };
 
   return (
-    <Grid container spacing={2}>
+    <Grid container>
       {userCourses?.data
         ? userCourses.data.map((item) => {
-            if (
-              loggedUser.user.enrolledInCourses.includes(item._id) &&
-              !loggedUser.user.completedCourses.includes(item._id)
-            ) {
+            if (!loggedUser.user.completedCourses.includes(item._id)) {
               return (
-                <Grid item xs={12} md={2} lg={2} xl={2}>
-                  <Card style={{ marginBottom: "20px" }}>
+                <Grid item xs={12} md={4} lg={3} xl={2} key={item.title}>
+                  <Card className={classes.card}>
                     <CardMedia
                       component={"img"}
                       src={
@@ -60,26 +82,11 @@ const UserCourses = () => {
                       }
                     ></CardMedia>
 
-                    <Typography
-                      variant="h5"
-                      style={{
-                        textAlign: "left",
-                        marginLeft: "10px",
-                        marginBottom: "20px",
-                      }}
-                    >
+                    <Typography variant="h5" className={classes.title}>
                       {item.title}
                     </Typography>
 
-                    <Typography
-                      component={"p"}
-                      style={{
-                        textAlign: "left",
-                        marginLeft: "10px",
-                        marginBottom: "20px",
-                        fontStyle: "italic",
-                      }}
-                    >
+                    <Typography component={"p"} className={classes.mentorName}>
                       Mentor:{" "}
                       {`${
                         allMentors.mentors.filter(
@@ -97,11 +104,7 @@ const UserCourses = () => {
                         <FormControlLabel
                           label="Completed"
                           control={
-                            <Checkbox
-                              onClick={() => complete(item._id)}
-                              //onChange={handleDurationFilter("filterDuration")}
-                              //checked={checked[index + 4]}
-                            />
+                            <Checkbox onClick={() => complete(item._id)} />
                           }
                         />
                       </FormControl>

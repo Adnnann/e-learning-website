@@ -12,7 +12,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import { Grid } from "@material-ui/core";
 import EditUserPassword from "../user/EditUserPassword";
-import { Typography, useMediaQuery } from "@mui/material";
+import { Typography, useMediaQuery, Alert } from "@mui/material";
 import CloseAccountForm from "../user/DeleteAccountForm";
 import DeleteAccountModal from "../user/DeleteAccountModal";
 import EditUserDataButtons from "./DashboardButtons";
@@ -39,6 +39,22 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: "20px",
     },
   },
+  dashboardTitle: {
+    fontSize: "20px",
+    marginBottom: "20px",
+    backgroundColor: "lightblue",
+    [theme.breakpoints.up("md")]: {
+      display: "none",
+    },
+  },
+  numberOfSelectedCourses: {
+    textAlign: "left",
+    marginLeft: "10px",
+  },
+  selectedTerm: {
+    fontWeight: "900",
+    textDecoration: "underline",
+  },
 }));
 
 const Dashboard = () => {
@@ -58,36 +74,41 @@ const Dashboard = () => {
   return (
     <Grid container>
       <Grid item xs={12} md={12} lg={12} xl={12}>
+        <Alert
+          variant="filled"
+          color="info"
+          severity="info"
+          className={classes.dashboardTitle}
+        >
+          Courses - Your Current Courses and Progress
+        </Alert>
         {filterTerm ? (
           loggedUser.user.role === "mentor" && mentorCourses.data.length > 1 ? (
             <Typography
               variant="h5"
-              style={{ textAlign: "left", marginLeft: "10px" }}
+              className={classes.numberOfSelectedCourses}
             >
               There are {mentorCourses.data.length} results for the term{" "}
-              <span style={{ fontWeight: "900", textDecoration: "underline" }}>
-                {filterTerm}
-              </span>
+              <span className={classes.selectedTerm}>{filterTerm}</span>
             </Typography>
           ) : (
             <Typography
               variant="h5"
-              style={{ textAlign: "left", marginLeft: "10px" }}
+              className={classes.numberOfSelectedCourses}
             >
               There is {mentorCourses.data.length} result for the term{" "}
-              <span style={{ fontWeight: "900", textDecoration: "underline" }}>
-                {filterTerm}
-              </span>
+              <span className={classes.selectedTerm}>{filterTerm}</span>
             </Typography>
           )
         ) : null}
       </Grid>
-      <Grid item xs={12} md={6} lg={6} xl={6} className={classes.smallScreens}>
-        <DashboardRightPanel />
-      </Grid>
       <Grid item xs={12} md={3} lg={3} xl={3}>
         <DashboardLeftPanel />
       </Grid>
+      <Grid item xs={12} md={6} lg={6} xl={6} className={classes.smallScreens}>
+        <DashboardRightPanel />
+      </Grid>
+
       {!editUserProfile && !editUserPassword && !closeAccount ? (
         <Grid
           item

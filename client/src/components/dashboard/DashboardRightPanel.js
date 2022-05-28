@@ -3,6 +3,7 @@ import { Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useSelector } from "react-redux";
 import { getLoggedUserData } from "../../features/eLearningSlice";
+import { useMediaQuery } from "@material-ui/core";
 import MentorCourses from "../courses/MentorCourses";
 
 const useStyles = makeStyles((theme) => ({
@@ -15,11 +16,23 @@ const useStyles = makeStyles((theme) => ({
     },
     marginTop: window.innerWidth === 820 ? "0px" : "50px",
   },
+  dashboardTitle: {
+    fontSize: "20px",
+    marginBottom: "20px",
+    backgroundColor: "lightblue",
+    [theme.breakpoints.only("xs")]: {
+      display: "none",
+    },
+  },
 }));
 
 const DashboardRightPanel = () => {
   const classes = useStyles();
   const loggedUser = useSelector(getLoggedUserData);
+
+  const iPadAirScreen = useMediaQuery("(width:820px)");
+  const iPadMiniScreen = useMediaQuery("(width:768px)");
+  const surfaceDuo = useMediaQuery("(width:912px)");
 
   return (
     <div className={classes.userDashboardMessage}>
@@ -28,10 +41,9 @@ const DashboardRightPanel = () => {
         color="info"
         severity="info"
         style={{
-          fontSize: "20px",
-          marginBottom: "20px",
-          backgroundColor: "lightblue",
+          display: iPadAirScreen || iPadMiniScreen || surfaceDuo ? "none" : "",
         }}
+        className={classes.dashboardTitle}
       >
         Courses - Your Current Courses and Progress
       </Alert>

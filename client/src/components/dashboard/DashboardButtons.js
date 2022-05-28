@@ -68,7 +68,6 @@ const EditUserDataButtons = () => {
     dispatch(setEditUserProfileForm(false));
     dispatch(setEditUserPasswordForm(false));
     dispatch(setCloseAccountModal(true));
-    //console.log(deleteAccountModalStatus);
   };
 
   const items = ["Edit Profile", "New Password", "Delete Account"];

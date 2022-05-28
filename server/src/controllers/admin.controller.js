@@ -78,11 +78,21 @@ const getCourses = (req, res) => {
     });
 
     if (req.body.filterTerm) {
-      courses = course.filter((item) =>
-        item.title.toLowerCase().includes(req.body.filterTerm.toLowerCase())
-      );
+      console.log(req.body.filterTerm);
+      courses = course
+        .filter((item) =>
+          item.title.toLowerCase().includes(req.body.filterTerm.toLowerCase())
+        )
+        .slice(req.body.firstValue, req.body.lastValue);
 
-      return res.send({ data: courses, totalNumOfCourses: courses.length });
+      console.log(courses);
+
+      return res.send({
+        data: courses,
+        totalNumOfCourses: course.filter((item) =>
+          item.title.toLowerCase().includes(req.body.filterTerm.toLowerCase())
+        ).length,
+      });
     }
 
     if (!req.body.filterLevel && !req.body.filterDuation) {
@@ -108,11 +118,6 @@ const getCourses = (req, res) => {
           )
           .slice(req.body.firstValue, req.body.lastValue);
       }
-
-      // courses = course.slice(
-      //   (Math.ceil(course.length / 12) - 1) * 12,
-      //   course.length
-      // );
     } else if (req.body.filterLevel && req.body.filterDuration) {
       courses = course
         .filter(

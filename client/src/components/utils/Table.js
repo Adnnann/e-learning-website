@@ -43,11 +43,16 @@ const TableComponent = ({ columns, createData, createRows, rows }) => {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {columns.map((column) => (
+              {columns.map((column, index) => (
                 <TableCell
-                  key={Math.floor(Math.random() * 1000)}
+                  key={"column" + index}
                   align={column.align}
-                  style={{ minWidth: column.minWidth, backgroundColor: "grey" }}
+                  style={{
+                    minWidth: column.minWidth,
+                    backgroundColor: "#2F4F4F",
+                    color: "whitesmoke",
+                    fontWeight: "900",
+                  }}
                 >
                   {column.label}
                 </TableCell>
@@ -58,18 +63,19 @@ const TableComponent = ({ columns, createData, createRows, rows }) => {
             {rows.map((row, index) => {
               return (
                 <TableRow
+                  key={`row-${index}`}
                   style={{
                     padding: "0 !important",
                     height: "90px",
                     wordBreak: "break",
+                    backgroundColor: "ButtonFace",
                   }}
-                  key={Math.floor(Math.random() * 10000)}
                 >
-                  {columns.map((column) => {
+                  {columns.map((column, index) => {
                     const value = row[column.id];
                     return (
                       <TableCell
-                        key={Math.floor(Math.random() * 100000)}
+                        key={index}
                         align={column.align}
                         style={{ wordBreak: "break-all" }}
                       >

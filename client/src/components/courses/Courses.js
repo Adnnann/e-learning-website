@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import _ from "lodash";
@@ -15,6 +15,7 @@ import {
   getEnrollInCourseMessage,
   getLoggedUserData,
   setCoursesDisplayPage,
+  setUsersDisplayPage,
 } from "../../features/eLearningSlice";
 import {
   Typography,
@@ -36,11 +37,98 @@ import PaginationComponent from "../utils/Pagination";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { useEffect } from "react";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    paddingTop: "50px",
+    position: "fixed",
+  },
+  filtersToggleButton: {
+    marginTop: "50px",
+    marginBottom: "20px",
+    minWidth: "300px !important",
+    minHeight: "60px !important",
+    [theme.breakpoints.only("xs")]: {
+      marginTop: "0px",
+      width: "220px",
+    },
+  },
+  filterLevels: {
+    display: "flex",
+    flexDirection: "column",
+    borderStyle: "solid",
+    paddingLeft: "10px",
+  },
+  filterDurations: {
+    display: "flex",
+    flexDirection: "column",
+    borderStyle: "solid",
+    paddingLeft: "10px",
+    marginTop: "20px",
+  },
+  enrolledInCourseMessage: {
+    marginTop: "20px",
+    color: "red",
+    marginBottom: "0px",
+    textAlign: "center",
+  },
+  displayCoursesContainer: {
+    maxHeight: "100vh",
+    overflow: "auto",
+    paddingBottom: "20px",
+  },
+  paginationContainer: {
+    marginBottom: "50px",
+  },
+  card: {
+    marginBottom: "10px",
+    paddingLeft: "5px",
+    paddingRight: "5px",
+    marginLeft: "5px",
+    marginRight: "5px",
+  },
+  title: {
+    textAlign: "left",
+    marginLeft: "10px",
+    marginBottom: "20px !important",
+  },
+  enrolledInCourseCardMessage: {
+    marginLeft: "5px",
+    fontSize: "12px",
+  },
+  description: {
+    textAlign: "left",
+    marginLeft: "10px",
+    marginBottom: "50px !important",
+  },
+  duration: {
+    textAlign: "left",
+    display: "inline-flex",
+    fontWeight: "bolder",
+  },
+  level: {
+    textAlign: "left",
+    display: "inline-flex",
+    fontWeight: "bolder",
+  },
+  cardText: {
+    marginBottom: "2px",
+  },
+  image: {
+    minHeight: "240px",
+    minWidth: "240px",
+    marginTop: "10px",
+    [theme.breakpoints.only("xs")]: {
+      marginLeft: "10px",
+    },
+  },
+}));
 
 const Courses = () => {
   const courses = useSelector(getCourses);
   const dispatch = useDispatch();
+  const classes = useStyles();
   const loggedUser = useSelector(getLoggedUserData);
   const [checked, setChecked] = useState([
     false,
@@ -68,8 +156,6 @@ const Courses = () => {
       dispatch(cleanEnrollInCourseMessage());
       dispatch(fetchMentors());
 
-      dispatch(fetchUserData(loggedUser.user._id));
-
       const user = {
         userCourses: loggedUser.user.enrolledInCourses,
         param: loggedUser.user._id,
@@ -78,7 +164,9 @@ const Courses = () => {
         completedCourses: loggedUser.user.completedCourses,
       };
 
+      dispatch(fetchUserData(loggedUser.user._id));
       dispatch(fetchUserCourses(user));
+      dispatch(setCoursesDisplayPage(1));
       navigate("/dashboard");
     }
   }, [enrollInCourseStatus]);
@@ -103,8 +191,8 @@ const Courses = () => {
     };
 
     dispatch(enrollInCourse(user));
-
     setCourseOverviewModal(false);
+    dispatch(fetchUserData(loggedUser.user._id));
   };
 
   const showModal = (title) => {
@@ -204,14 +292,14 @@ const Courses = () => {
     <Grid
       container
       spacing={2}
-      style={{ paddingTop: "50px", position: "fixed" }}
+      className={classes.container}
       justifyContent="center"
     >
-      <Grid item xs={12} md={2} lg={2} xl={2}>
+      <Grid item xs={12} md={3} lg={3} xl={2}>
         <Box justifyContent={"center"}>
           <Button
             onClick={() => setDisplayFilters(!displayFilters)}
-            style={{ marginTop: "50px", marginBottom: "20px" }}
+            className={classes.filtersToggleButton}
             startIcon={<FilterListIcon />}
             endIcon={
               displayFilters ? (
@@ -222,25 +310,16 @@ const Courses = () => {
             }
             color={"info"}
             variant="contained"
-            fullWidth
           >
             Filters
           </Button>
         </Box>
         {displayFilters ? (
           <>
-            <Box
-              justifyContent={"center"}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                borderStyle: "solid",
-                paddingLeft: "10px",
-              }}
-            >
+            <Box justifyContent={"center"} className={classes.filterLevels}>
               {filterItems[0].map((item, index) => {
                 return (
-                  <FormControl>
+                  <FormControl key={item}>
                     <FormControlLabel
                       label={item}
                       control={
@@ -256,19 +335,10 @@ const Courses = () => {
               })}
             </Box>
 
-            <Box
-              justifyContent={"center"}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                borderStyle: "solid",
-                paddingLeft: "10px",
-                marginTop: "20px",
-              }}
-            >
+            <Box justifyContent={"center"} className={classes.filterDurations}>
               {filterItems[1].map((item, index) => {
                 return (
-                  <FormControl>
+                  <FormControl key={item}>
                     <FormControlLabel
                       label={item}
                       control={
@@ -286,19 +356,14 @@ const Courses = () => {
           </>
         ) : null}
       </Grid>
-      {/* ?show course popup window */}
-      <Grid item xs={12} md={5} lg={5} xl={5}>
+
+      <Grid item xs={12} md={9} lg={7} xl={7}>
         <Dialog open={courseOverviewModal}>
           {courseOverviewModal &&
           loggedUser.user.enrolledInCourses.includes(courseToDisplay[0]._id) ? (
             <Typography
               component={"p"}
-              style={{
-                marginTop: "20px",
-                color: "red",
-                marginBottom: "0px",
-                textAlign: "center",
-              }}
+              className={classes.enrolledInCourseMessage}
             >
               You are already enrolled into this course
             </Typography>
@@ -310,7 +375,7 @@ const Courses = () => {
             {courseToDisplay[0]?.description
               ? courseToDisplay[0].description.split(".").map((item) => {
                   return (
-                    <DialogContentText>
+                    <DialogContentText key={item}>
                       {item !== "" ? `> ${item}` : null}
                     </DialogContentText>
                   );
@@ -349,17 +414,11 @@ const Courses = () => {
         </Dialog>
 
         {courses?.data ? (
-          <Box
-            style={{
-              maxHeight: "100vh",
-              overflow: "auto",
-              paddingBottom: "20px",
-            }}
-          >
+          <Box className={classes.displayCoursesContainer}>
             <Grid
               container
               justifyContent={"center"}
-              style={{ marginBottom: "50px" }}
+              className={classes.paginationContainer}
             >
               {courses?.totalNumOfCourses &&
               Math.ceil(courses.totalNumOfCourses / 12) > 1 ? (
@@ -374,69 +433,72 @@ const Courses = () => {
 
             {_.chain(Object.values(courses.data))
 
-              .map((item, index) => (
-                <>
-                  <Card style={{ marginBottom: "20px" }}>
-                    <Grid container justifyContent={"flex-start"}>
-                      <Grid item xs={12} md={4} lg={4} xl={4}>
-                        <CardMedia
-                          onMouseEnter={() => showModal(item.title)}
-                          component={"img"}
-                          src={
-                            "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
-                          }
-                        ></CardMedia>
-                      </Grid>
-                      <Grid item xs={12} md={8} lg={8} xl={8}>
+              .map((item) => (
+                <Card className={classes.card} key={item.title}>
+                  <Grid container>
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      lg={4}
+                      xl={4}
+                      flexDirection="column"
+                    >
+                      <CardMedia
+                        className={classes.image}
+                        component={"img"}
+                        src={
+                          "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
+                        }
+                      ></CardMedia>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      md={8}
+                      lg={8}
+                      xl={8}
+                      className={classes.cardText}
+                    >
+                      <DialogContent>
                         <Typography
+                          onMouseEnter={() => showModal(item.title)}
                           variant="h4"
-                          style={{
-                            textAlign: "left",
-                            marginLeft: "10px",
-                            marginBottom: "20px",
-                          }}
+                          className={classes.title}
                         >
                           {item.title}
+                          <span className={classes.enrolledInCourseCardMessage}>
+                            {loggedUser.user.enrolledInCourses.includes(
+                              item._id
+                            )
+                              ? `(enrolled)`
+                              : null}
+                          </span>
                         </Typography>
 
                         <Typography
                           component={"p"}
-                          style={{
-                            textAlign: "left",
-                            marginLeft: "10px",
-                            marginBottom: "50px",
-                          }}
+                          className={classes.description}
                         >
                           {item.description}
                         </Typography>
-                        <span style={{ fontWeight: "bold" }}>
-                          <Typography
-                            component={"p"}
-                            style={{
-                              textAlign: "left",
-                              marginLeft: "10px",
-                              display: "inline-flex",
-                              fontWeight: "bolder",
-                            }}
+
+                        <Typography
+                          component={"p"}
+                          className={classes.description}
+                        >
+                          <span
+                            style={{ fontWeight: "bold", marginTop: "20px" }}
                           >
-                            {`Duration: ${item.duration}`}
-                          </Typography>
-                          <Typography
-                            component={"p"}
-                            style={{
-                              textAlign: "left",
-                              marginLeft: "70px",
-                              display: "inline-flex",
-                              fontWeight: "bolder",
-                            }}
-                          >
-                            {`Level: ${item.level}`}
-                          </Typography>
-                        </span>
-                      </Grid>
+                            {`Duration: ${item.duration} ||`}
+
+                            {` Level: ${item.level}`}
+                          </span>
+                        </Typography>
+                      </DialogContent>
                     </Grid>
-                  </Card>
-                </>
+                  </Grid>
+                </Card>
               ))
               .value()}
           </Box>

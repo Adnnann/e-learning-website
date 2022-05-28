@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   getCourseToEdit,
   getUpdateCourseStatus,
@@ -12,18 +13,10 @@ import {
   getLoggedUserData,
   fetchMentorCourses,
 } from "../../features/eLearningSlice";
-import {
-  Alert,
-  Button,
-  ButtonGroup,
-  Card,
-  CardMedia,
-  Grid,
-} from "@mui/material";
+import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
-import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,43 +28,58 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(2),
     paddingRight: theme.spacing(2),
     paddingLeft: theme.spacing(2),
-  },
-  error: {
-    verticalAlign: "middle",
-    fontSize: "18px",
-  },
-  tittle: {
-    marginTop: theme.spacing(2),
-    color: theme.palette.openTitle,
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 300,
-  },
-  save: {
-    marginBottom: theme.spacing(2),
-    minWidth: "120px",
-    marginRight: theme.spacing(2),
-  },
-  cancel: {
-    marginBottom: theme.spacing(2),
-    minWidth: "120px",
+    [theme.breakpoints.only("xs")]: {
+      marginTop: "5px",
+    },
   },
   userImagePlaceholder: {
-    width: 130,
-    height: 130,
+    width: 200,
+    height: 200,
     marginTop: "40px",
     marginBottom: "20px",
-  },
-  uploadPhoto: {
-    minWidth: "125px",
+    margin: "0 auto",
+    [theme.breakpoints.only("xs")]: {
+      margin: "0 auto",
+      marginTop: "20px",
+      marginBottom: "5px",
+      width: 200,
+      height: 200,
+    },
   },
   selectFields: {
     height: "60px",
     borderStyle: "solid",
     borderColor: "grey",
     borderWidth: "1px",
+  },
+  buttonContainer: {
+    marginTop: "20px",
+    [theme.breakpoints.only("xs")]: {
+      display: "none",
+    },
+  },
+  buttonContainerForSmallScreens: {
+    marginTop: "5px",
+    [theme.breakpoints.up("md")]: {
+      display: "none",
+    },
+  },
+  titleContainer: {
+    backgroundColor: "lightblue",
+    minHeight: "50px",
+    marginBottom: "20px",
+  },
+  title: {
+    textAlign: "center",
+    paddingTop: "5px",
+    paddingBottom: "5px",
+    color: "white",
+  },
+  durationLabel: {
+    marginBottom: "0",
+  },
+  saveButton: {
+    marginRight: "10px",
   },
 }));
 
@@ -191,23 +199,8 @@ const EditCourse = () => {
         id="uploadImage"
         onChange={handleUpload}
       />
-      <div
-        style={{
-          backgroundColor: "blue",
-          minHeight: "50px",
-          marginBottom: "20px",
-        }}
-      >
-        <h2
-          style={{
-            textAlign: "center",
-            paddingTop: "5px",
-            paddingBottom: "5px",
-            color: "white",
-          }}
-        >
-          Edit
-        </h2>
+      <div className={classes.titleContainer}>
+        <h2 className={classes.title}>Edit</h2>
       </div>
 
       <Grid container justifyContent={"center"} spacing={2}>
@@ -227,10 +220,10 @@ const EditCourse = () => {
             handleChange={handleChange("level")}
             className={classes.selectFields}
           />
-          <ButtonGroup style={{ marginTop: "20px" }}>
+          <ButtonGroup className={classes.buttonContainer}>
             <Button
               variant="contained"
-              style={{ marginRight: "10px" }}
+              className={classes.saveButton}
               onClick={clickSubmit}
             >
               Save
@@ -242,13 +235,27 @@ const EditCourse = () => {
         </Grid>
 
         <Grid item xs={12} md={6} lg={6} xl={6}>
-          <p style={{ marginBottom: "0" }}>Duration</p>
+          <p className={classes.durationLabel}>Duration</p>
           <SelectComponent
             selectedValue={values.duration}
             array={durations}
             handleChange={handleChange("duration")}
             className={classes.selectFields}
           />
+
+          <ButtonGroup className={classes.buttonContainerForSmallScreens}>
+            <Button
+              variant="contained"
+              className={classes.saveButton}
+              onClick={clickSubmit}
+            >
+              Save
+            </Button>
+            <Button variant="contained" onClick={cancel}>
+              Cancel
+            </Button>
+          </ButtonGroup>
+
           <CardMedia
             className={classes.userImagePlaceholder}
             src={

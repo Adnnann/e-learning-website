@@ -50,7 +50,14 @@ const useStyles = makeStyles((theme) => ({
   },
   addCourseButton: {
     marginLeft: "auto !important",
-    marginBottom: "20px",
+    marginBottom: "20px !important",
+    minWidth: "220px",
+    marginRight: "10px",
+    minHeight: "50px",
+    [theme.breakpoints.only("xs")]: {
+      margin: "0 auto",
+      marginTop: "10px",
+    },
   },
   warningIcon: {
     fontSize: "60px",
@@ -64,6 +71,8 @@ const useStyles = makeStyles((theme) => ({
     borderStyle: "solid",
     borderWidth: "1px",
     marginBottom: "10px",
+    paddingLeft: "5px",
+    paddingRight: "5px",
   },
   cardContainer: {
     marginBottom: "20px",
@@ -89,6 +98,10 @@ const useStyles = makeStyles((theme) => ({
   },
   deleteCourse: {
     fontSize: "30px !important",
+  },
+  durationAndLevelTextContainer: {
+    fontSize: "12px",
+    fontWeight: "bolder",
   },
 }));
 
@@ -152,8 +165,8 @@ const MentorCourses = () => {
         </Button>
       </Grid>
 
-      <Grid container justifyContent={"center"}>
-        <Grid item xs={12} md={4} lg={4} xl={4}>
+      <Grid container justifyContent={"space-around"}>
+        <div style={{ margin: "0 auto" }}>
           {mentorCourses?.totalNumOfCourses &&
           Math.ceil(mentorCourses.totalNumOfCourses / 12) > 1 ? (
             <PaginationComponent
@@ -163,80 +176,78 @@ const MentorCourses = () => {
               numberOfItems={Object.keys(mentorCourses.data).length}
             />
           ) : null}
-        </Grid>
+        </div>
+
         {mentorCourses?.data ? (
           <Box className={classes.mentorCoursesContainer}>
             {_.chain(Object.values(mentorCourses.data))
 
               .map((item, index) => (
-                <>
-                  <Card key={item.title} className={classes.card}>
-                    <Grid
-                      container
-                      justifyContent={"space-around"}
-                      className={classes.cardContainer}
-                    >
-                      <Grid item xs={12} md={3} lg={3} xl={3}>
-                        <CardMedia
-                          className={classes.cardImage}
-                          component={"img"}
-                          src={
-                            "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
-                          }
-                        ></CardMedia>
-                      </Grid>
-
-                      <Grid
-                        item
-                        xs={12}
-                        md={6}
-                        lg={6}
-                        xl={6}
-                        className={classes.cardText}
-                      >
-                        <Typography variant="h5" className={classes.cardTitle}>
-                          {item.title}
-                        </Typography>
-
-                        <Typography
-                          component={"p"}
-                          className={classes.description}
-                        >
-                          {item.description}
-                        </Typography>
-
-                        <Typography component={"p"} className={classes.level}>
-                          {`Level: ${item.level}`}
-                          <br />
-
-                          {`Duration: ${item.duration}`}
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={12} md={2} xl={2} lg={2}>
-                        <Tooltip
-                          title="Edit course"
-                          className={classes.editCourse}
-                        >
-                          <EditOutlinedIcon
-                            fontSize="small"
-                            onClick={() => edit(item._id)}
-                          />
-                        </Tooltip>
-
-                        <Tooltip
-                          title="Delete course"
-                          className={classes.deleteCourse}
-                        >
-                          <DeleteOutlineOutlinedIcon
-                            onClick={() => remove(item._id)}
-                            fontSize="small"
-                          />
-                        </Tooltip>
-                      </Grid>
+                <Card key={item.title} className={classes.card}>
+                  <Grid
+                    container
+                    justifyContent={"space-around"}
+                    className={classes.cardContainer}
+                  >
+                    <Grid item xs={12} md={3} lg={3} xl={3}>
+                      <CardMedia
+                        className={classes.cardImage}
+                        component={"img"}
+                        src={
+                          "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
+                        }
+                      ></CardMedia>
                     </Grid>
-                  </Card>
-                </>
+
+                    <Grid
+                      item
+                      xs={12}
+                      md={6}
+                      lg={6}
+                      xl={6}
+                      className={classes.cardText}
+                    >
+                      <Typography variant="h5" className={classes.cardTitle}>
+                        {item.title}
+                      </Typography>
+
+                      <Typography
+                        component={"p"}
+                        className={classes.description}
+                      >
+                        {item.description}
+                      </Typography>
+
+                      <span className={classes.durationAndLevelTextContainer}>
+                        {`Level: ${item.level} ||`}
+
+                        {` Duration: ${item.duration}`}
+                      </span>
+                    </Grid>
+
+                    <Grid item xs={12} md={2} xl={2} lg={2}>
+                      <Tooltip
+                        title="Edit course"
+                        className={classes.editCourse}
+                      >
+                        <EditOutlinedIcon
+                          fontSize="small"
+                          onClick={() => edit(item._id)}
+                        />
+                      </Tooltip>
+
+                      <Tooltip
+                        title="Delete course"
+                        className={classes.deleteCourse}
+                      >
+                        <DeleteOutlineOutlinedIcon
+                          onClick={() => remove(item._id)}
+                          fontSize="small"
+                        />
+                      </Tooltip>
+                    </Grid>
+                  </Grid>
+                </Card>
               ))
               .value()}
           </Box>

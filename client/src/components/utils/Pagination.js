@@ -5,9 +5,10 @@ export default function PaginationComponent({
   numberOfPages,
   handleChange,
   page,
+  className,
 }) {
   return (
-    <div style={{ margin: "0 auto", marginTop: "20px" }}>
+    <div className={className}>
       <Pagination
         key={page}
         count={numberOfPages}

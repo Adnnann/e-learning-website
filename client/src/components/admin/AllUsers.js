@@ -30,10 +30,14 @@ const useStyles = makeStyles((theme) => ({
     borderStyle: "solid",
     borderColor: "grey",
     borderWidth: "1px",
-    marginLeft: "2px",
   },
   tooltips: {
     marginLeft: "20px",
+  },
+  tableContainer: { marginTop: "10px !important" },
+  selectFieldsContainer: {
+    marginTop: "10px",
+    marginLeft: "10px !important",
   },
 }));
 
@@ -241,29 +245,37 @@ const AllUsers = () => {
   return (
     <>
       <Grid container justifyContent={"center"} style={{ overflow: "hidden" }}>
-        {Object.values(filterItems).map((item, index) => {
-          return (
-            <Grid
-              key={Math.random() + 1}
-              item
-              xs={12}
-              md={2}
-              lg={2}
-              xl={2}
-              style={{ marginTop: "10px", marginLeft: "10px" }}
-            >
-              {filterByTitles[index]}
-              <SelectComponent
-                className={classes.selectFields}
-                array={filterItems[index]}
-                selectedValue={filters[filterBy[index]]}
-                handleChange={handleChange(filterBy[index])}
-              />
-            </Grid>
-          );
-        })}
+        {Object.keys(users).length !== 0 &&
+          Object.values(filterItems).map((item, index) => {
+            return (
+              <Grid
+                key={Math.random() + 1}
+                item
+                xs={12}
+                md={2}
+                lg={2}
+                xl={2}
+                className={classes.selectFieldsContainer}
+              >
+                {filterByTitles[index]}
+                <SelectComponent
+                  className={classes.selectFields}
+                  array={filterItems[index]}
+                  selectedValue={filters[filterBy[index]]}
+                  handleChange={handleChange(filterBy[index])}
+                />
+              </Grid>
+            );
+          })}
 
-        <Grid item xs={12} md={10} lg={10} xl={9} style={{ marginTop: "10px" }}>
+        <Grid
+          item
+          xs={12}
+          md={10}
+          lg={10}
+          xl={9}
+          className={classes.tableContainer}
+        >
           <TableComponents
             rows={rows}
             columns={columns}
