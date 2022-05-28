@@ -11,13 +11,26 @@ import {
   cleanDeleteCourseMessage,
   removeCourse,
   setCourseToEdit,
+  getCourseDeleteModalStatus,
+  setCourseDeleteModal,
 } from "../../features/eLearningSlice";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { Tooltip, Button, useMediaQuery, Grid } from "@mui/material";
+import {
+  Tooltip,
+  Button,
+  useMediaQuery,
+  Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 import TableComponents from "../utils/Table";
 import SelectComponent from "../utils/SelectComponent";
 import PaginationComponent from "../utils/Pagination";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,15 +48,21 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "10px",
     paddingTop: "20px",
   },
+  warningIcon: {
+    fontSize: "60px",
+  },
 }));
 
 const AllCourses = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [courseToDelete, setCourseToDelete] = useState({});
+
   const courses = useSelector(getCourses);
   const page = useSelector(getCoursesDisplayPage);
   const deleteCourseStatus = useSelector(getDeleteCourseMessage);
-  const navigate = useNavigate();
+  const courseDeleteModalStatus = useSelector(getCourseDeleteModalStatus);
 
   const rows = [];
 
@@ -59,6 +78,7 @@ const AllCourses = () => {
         lastItem: page * 12,
       };
       dispatch(fetchCourses(courses));
+      dispatch(setCourseDeleteModal(false));
       dispatch(cleanDeleteCourseMessage());
     }
   }, [deleteCourseStatus]);
@@ -202,7 +222,7 @@ const AllCourses = () => {
 
               <Tooltip title="Delete course" className={classes.tooltips}>
                 <DeleteOutlineOutlinedIcon
-                  onClick={() => dispatch(removeCourse(item._id))}
+                  onClick={() => remove(item._id)}
                   fontSize="small"
                 />
               </Tooltip>
@@ -338,57 +358,96 @@ const AllCourses = () => {
     navigate("/editCourse");
   };
 
+  const remove = (id) => {
+    setCourseToDelete(
+      Object.values(courses.data).filter((item) => item._id === id)
+    );
+    dispatch(setCourseDeleteModal(true));
+  };
+
   return (
-    <Grid
-      container
-      justifyContent={"center"}
-      spacing={2}
-      style={{ overflow: "hidden" }}
-    >
+    <>
       <Grid
         container
-        justifyContent={"flex-end"}
-        style={{ paddingRight: "10px" }}
-        className={classes.addCourseButton}
+        justifyContent={"center"}
+        spacing={2}
+        style={{ overflow: "hidden" }}
       >
-        <Button variant="contained" onClick={() => navigate("/addCourse")}>
-          Add courses
-        </Button>
-      </Grid>
-      {Object.values(filterItems).map((item, index) => {
-        return (
-          <Grid key={Math.random() + 1} item xs={12} md={3} lg={2} xl={2}>
-            {filterByTitles[index]}
-            <SelectComponent
-              className={classes.selectFields}
-              array={filterItems[index]}
-              selectedValue={filters[filterBy[index]]}
-              handleChange={handleChange(filterBy[index])}
-            />
-          </Grid>
-        );
-      })}
+        <Grid
+          container
+          justifyContent={"flex-end"}
+          style={{ paddingRight: "10px" }}
+          className={classes.addCourseButton}
+        >
+          <Button variant="contained" onClick={() => navigate("/addCourse")}>
+            Add courses
+          </Button>
+        </Grid>
+        {Object.values(filterItems).map((item, index) => {
+          return (
+            <Grid key={Math.random() + 1} item xs={12} md={3} lg={2} xl={2}>
+              {filterByTitles[index]}
+              <SelectComponent
+                className={classes.selectFields}
+                array={filterItems[index]}
+                selectedValue={filters[filterBy[index]]}
+                handleChange={handleChange(filterBy[index])}
+              />
+            </Grid>
+          );
+        })}
 
-      <Grid item xs={12} md={10} lg={10} xl={9}>
-        <TableComponents
-          rows={rows}
-          columns={columns}
-          createData={createColumns}
-          createRows={createRows}
-        />
-      </Grid>
-      <Grid container justifyContent={"center"}>
-        {courses?.totalNumOfCourses &&
-        Math.ceil(courses.totalNumOfCourses / 12) > 1 ? (
-          <PaginationComponent
-            page={page}
-            handleChange={handlePagination}
-            numberOfPages={Math.ceil(courses.totalNumOfCourses / 12)}
-            numberOfItems={Object.keys(courses.data).length}
+        <Grid item xs={12} md={10} lg={10} xl={9}>
+          <TableComponents
+            rows={rows}
+            columns={columns}
+            createData={createColumns}
+            createRows={createRows}
           />
-        ) : null}
+        </Grid>
+        <Grid container justifyContent={"center"}>
+          {courses?.totalNumOfCourses &&
+          Math.ceil(courses.totalNumOfCourses / 12) > 1 ? (
+            <PaginationComponent
+              page={page}
+              handleChange={handlePagination}
+              numberOfPages={Math.ceil(courses.totalNumOfCourses / 12)}
+              numberOfItems={Object.keys(courses.data).length}
+            />
+          ) : null}
+        </Grid>
       </Grid>
-    </Grid>
+      <Dialog open={courseDeleteModalStatus}>
+        <DialogTitle>Are you sure you want to delete course?</DialogTitle>
+        <DialogContent style={{ textAlign: "center" }}>
+          <FontAwesomeIcon
+            icon={faTriangleExclamation}
+            className={classes.warningIcon}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            fullWidth
+            color="success"
+            autoFocus="autoFocus"
+            variant="contained"
+            onClick={() => dispatch(setCourseDeleteModal(false))}
+          >
+            Return back
+          </Button>
+
+          <Button
+            fullWidth
+            color="error"
+            autoFocus="autoFocus"
+            variant="contained"
+            onClick={() => dispatch(removeCourse(courseToDelete[0]._id))}
+          >
+            Delete course
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import _ from "lodash";
@@ -13,21 +13,96 @@ import {
   setCourseToEdit,
   getDeleteCourseMessage,
   cleanDeleteCourseMessage,
+  getCourseDeleteModalStatus,
+  setCourseDeleteModal,
 } from "../../features/eLearningSlice";
-import { Typography, Grid, Card, CardMedia, Box, Button } from "@mui/material";
 import PaginationComponent from "../utils/Pagination";
-import { useEffect } from "react";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { Tooltip } from "@mui/material";
+import {
+  Typography,
+  Grid,
+  Card,
+  CardMedia,
+  Box,
+  Button,
+  Tooltip,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+} from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { makeStyles } from "@mui/styles";
+import { style } from "@mui/system";
+
+const useStyles = makeStyles((theme) => ({
+  selectFields: {
+    height: "60px",
+    borderStyle: "solid",
+    borderColor: "grey",
+    borderWidth: "1px",
+    marginLeft: "2px",
+  },
+  tooltips: {
+    marginLeft: "20px",
+  },
+  addCourseButton: {
+    marginLeft: "auto !important",
+    marginBottom: "20px",
+  },
+  warningIcon: {
+    fontSize: "60px",
+  },
+  mentorCoursesContainer: {
+    maxHeight: "100vh",
+    overflow: "auto",
+    paddingBottom: "20px",
+  },
+  card: {
+    borderStyle: "solid",
+    borderWidth: "1px",
+    marginBottom: "10px",
+  },
+  cardContainer: {
+    marginBottom: "20px",
+  },
+  cardImage: { marginTop: "5px" },
+  cardText: { paddingLeft: "10px" },
+  cardTitle: {
+    fontWeight: "900 !important",
+    textAlign: "left",
+    marginBottom: "5px !important",
+  },
+  description: {
+    textAlign: "left",
+    marginBottom: "15px !important",
+  },
+  level: {
+    textAlign: "left",
+    fontWeight: "bolder !important",
+  },
+  editCourse: {
+    marginRight: "10px",
+    fontSize: "30px !important",
+  },
+  deleteCourse: {
+    fontSize: "30px !important",
+  },
+}));
 
 const MentorCourses = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [courseToDelete, setCourseToDelete] = useState({});
+  const classes = useStyles();
+
   const loggedUser = useSelector(getLoggedUserData);
   const page = useSelector(getCoursesDisplayPage);
   const mentorCourses = useSelector(getMentorCourses);
+  const courseDeleteModalStatus = useSelector(getCourseDeleteModalStatus);
   const deleteCourseStatus = useSelector(getDeleteCourseMessage);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (deleteCourseStatus?.message) {
@@ -38,6 +113,7 @@ const MentorCourses = () => {
       };
       dispatch(fetchMentorCourses(courses));
       dispatch(cleanDeleteCourseMessage());
+      dispatch(setCourseDeleteModal(false));
     }
   }, [deleteCourseStatus]);
 
@@ -57,12 +133,19 @@ const MentorCourses = () => {
     navigate("/editCourse");
   };
 
+  const remove = (id) => {
+    setCourseToDelete(
+      Object.values(mentorCourses.data).filter((item) => item._id === id)
+    );
+    dispatch(setCourseDeleteModal(true));
+  };
+
   return (
     <>
       <Grid container>
         <Button
           variant="contained"
-          style={{ marginLeft: "auto", marginBottom: "20px" }}
+          className={classes.addCourseButton}
           onClick={() => navigate("/addCourse")}
         >
           Add Course
@@ -82,33 +165,20 @@ const MentorCourses = () => {
           ) : null}
         </Grid>
         {mentorCourses?.data ? (
-          <Box
-            style={{
-              maxHeight: "100vh",
-              overflow: "auto",
-              paddingBottom: "20px",
-            }}
-          >
+          <Box className={classes.mentorCoursesContainer}>
             {_.chain(Object.values(mentorCourses.data))
 
               .map((item, index) => (
                 <>
-                  <Card
-                    key={item.title}
-                    style={{
-                      borderStyle: "solid",
-                      borderWidth: "1px",
-                      marginBottom: "10px",
-                    }}
-                  >
+                  <Card key={item.title} className={classes.card}>
                     <Grid
                       container
                       justifyContent={"space-around"}
-                      style={{ marginBottom: "20px" }}
+                      className={classes.cardContainer}
                     >
                       <Grid item xs={12} md={3} lg={3} xl={3}>
                         <CardMedia
-                          style={{ marginTop: "5px" }}
+                          className={classes.cardImage}
                           component={"img"}
                           src={
                             "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
@@ -122,36 +192,20 @@ const MentorCourses = () => {
                         md={6}
                         lg={6}
                         xl={6}
-                        style={{ paddingLeft: "10px" }}
+                        className={classes.cardText}
                       >
-                        <Typography
-                          variant="h5"
-                          style={{
-                            fontWeight: "bold",
-                            textAlign: "left",
-                            marginBottom: "5px",
-                          }}
-                        >
+                        <Typography variant="h5" className={classes.cardTitle}>
                           {item.title}
                         </Typography>
 
                         <Typography
                           component={"p"}
-                          style={{
-                            textAlign: "left",
-                            marginBottom: "15px",
-                          }}
+                          className={classes.description}
                         >
                           {item.description}
                         </Typography>
 
-                        <Typography
-                          component={"p"}
-                          style={{
-                            textAlign: "left",
-                            fontWeight: "bolder",
-                          }}
-                        >
+                        <Typography component={"p"} className={classes.level}>
                           {`Level: ${item.level}`}
                           <br />
 
@@ -162,10 +216,7 @@ const MentorCourses = () => {
                       <Grid item xs={12} md={2} xl={2} lg={2}>
                         <Tooltip
                           title="Edit course"
-                          style={{
-                            marginRight: "10px",
-                            fontSize: "30px",
-                          }}
+                          className={classes.editCourse}
                         >
                           <EditOutlinedIcon
                             fontSize="small"
@@ -175,10 +226,10 @@ const MentorCourses = () => {
 
                         <Tooltip
                           title="Delete course"
-                          style={{ fontSize: "30px" }}
+                          className={classes.deleteCourse}
                         >
                           <DeleteOutlineOutlinedIcon
-                            onClick={() => dispatch(removeCourse(item._id))}
+                            onClick={() => remove(item._id)}
                             fontSize="small"
                           />
                         </Tooltip>
@@ -193,6 +244,36 @@ const MentorCourses = () => {
           "Loading..."
         )}
       </Grid>
+      <Dialog open={courseDeleteModalStatus}>
+        <DialogTitle>Are you sure you want to delete course?</DialogTitle>
+        <DialogContent style={{ textAlign: "center" }}>
+          <FontAwesomeIcon
+            icon={faTriangleExclamation}
+            className={classes.warningIcon}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            fullWidth
+            color="success"
+            autoFocus="autoFocus"
+            variant="contained"
+            onClick={() => dispatch(setCourseDeleteModal(false))}
+          >
+            Return back
+          </Button>
+
+          <Button
+            fullWidth
+            color="error"
+            autoFocus="autoFocus"
+            variant="contained"
+            onClick={() => dispatch(removeCourse(courseToDelete[0]._id))}
+          >
+            Delete course
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

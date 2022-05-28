@@ -10,14 +10,11 @@ import {
   fetchMentors,
   fetchUserCourses,
   fetchUserData,
-  getCourseOverviewModal,
   getCourses,
   getCoursesDisplayPage,
   getEnrollInCourseMessage,
   getLoggedUserData,
-  getUserData,
   setCoursesDisplayPage,
-  setDisplayUserCourses,
 } from "../../features/eLearningSlice";
 import {
   Typography,

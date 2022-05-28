@@ -2,11 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   cleanCompletedCourseMessage,
   completeCourse,
-  fetchUserCourses,
   fetchUserData,
   getAllMentors,
   getCompletedCourseMessage,
-  getCourses,
   getLoggedUserData,
   getUserCourses,
 } from "../../features/eLearningSlice";
