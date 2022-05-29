@@ -6,6 +6,7 @@ import {
   getLoggedUserData,
   getMentorCourses,
   getUsers,
+  setEditUserPasswordForm,
   setEditUserProfileForm,
   signoutUser,
 } from "../../features/eLearningSlice";
@@ -57,6 +58,7 @@ const DashboardLeftPanel = () => {
 
   const redirectToDashboard = () => {
     dispatch(setEditUserProfileForm(false));
+    dispatch(setEditUserPasswordForm(false));
     navigate("/dashboard");
   };
 

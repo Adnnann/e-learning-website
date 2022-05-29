@@ -60,6 +60,7 @@ const updateUserPassword = async (req, res, next) => {
   });
 };
 const getCourses = (req, res) => {
+  console.log(req.body);
   Course.find({ status: "active" }, (error, course) => {
     Object.values(req.users);
     let courses = [];
@@ -78,21 +79,11 @@ const getCourses = (req, res) => {
     });
 
     if (req.body.filterTerm) {
-      console.log(req.body.filterTerm);
-      courses = course
-        .filter((item) =>
-          item.title.toLowerCase().includes(req.body.filterTerm.toLowerCase())
-        )
-        .slice(req.body.firstValue, req.body.lastValue);
+      courses = course.filter((item) =>
+        item.title.toLowerCase().includes(req.body.filterTerm.toLowerCase())
+      );
 
-      console.log(courses);
-
-      return res.send({
-        data: courses,
-        totalNumOfCourses: course.filter((item) =>
-          item.title.toLowerCase().includes(req.body.filterTerm.toLowerCase())
-        ).length,
-      });
+      return res.send({ data: courses, totalNumOfCourses: courses.length });
     }
 
     if (!req.body.filterLevel && !req.body.filterDuation) {
@@ -118,6 +109,11 @@ const getCourses = (req, res) => {
           )
           .slice(req.body.firstValue, req.body.lastValue);
       }
+
+      // courses = course.slice(
+      //   (Math.ceil(course.length / 12) - 1) * 12,
+      //   course.length
+      // );
     } else if (req.body.filterLevel && req.body.filterDuration) {
       courses = course
         .filter(

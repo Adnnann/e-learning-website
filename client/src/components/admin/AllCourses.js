@@ -14,6 +14,7 @@ import {
   getCourseDeleteModalStatus,
   setCourseDeleteModal,
   getSelectedFilterTerm,
+  getLoggedUserData,
 } from "../../features/eLearningSlice";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -26,6 +27,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Alert,
+  Box,
+  Card,
+  CardMedia,
+  Typography,
 } from "@mui/material";
 import TableComponents from "../utils/Table";
 import SelectComponent from "../utils/SelectComponent";
@@ -64,6 +70,61 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "60px",
   },
   container: { overflow: "hidden" },
+  filterResults: {
+    marginTop: "20px",
+  },
+  mentorCoursesContainer: {
+    maxHeight: "50vh",
+    overflow: "auto",
+    paddingBottom: "20px",
+  },
+  card: {
+    borderStyle: "solid",
+    borderWidth: "1px",
+    marginBottom: "10px",
+    paddingLeft: "5px",
+    paddingRight: "5px",
+  },
+  cardContainer: {
+    marginBottom: "20px",
+  },
+  cardImage: { marginTop: "5px" },
+  cardText: { paddingLeft: "10px" },
+  cardTitle: {
+    fontWeight: "900 !important",
+    textAlign: "left",
+    marginBottom: "5px !important",
+  },
+  description: {
+    textAlign: "left",
+    marginBottom: "15px !important",
+  },
+  level: {
+    textAlign: "left",
+    fontWeight: "bolder !important",
+  },
+  editCourse: {
+    marginRight: "10px",
+    fontSize: "30px !important",
+  },
+  deleteCourse: {
+    fontSize: "30px !important",
+  },
+  durationAndLevelTextContainer: {
+    fontSize: "12px",
+    fontWeight: "bolder",
+  },
+  mentor: {
+    textAlign: "left",
+    marginBottom: "15px !important",
+    fontStyle: "italic",
+  },
+  coursesFixedContainer: {
+    position: "fixed",
+    [theme.breakpoints.only("xs")]: {
+      position: "unset",
+    },
+  },
 }));
 
 const AllCourses = () => {
@@ -71,18 +132,15 @@ const AllCourses = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [courseToDelete, setCourseToDelete] = useState({});
+  const filterTerm = useSelector(getSelectedFilterTerm);
 
   const courses = useSelector(getCourses);
   const page = useSelector(getCoursesDisplayPage);
   const deleteCourseStatus = useSelector(getDeleteCourseMessage);
   const courseDeleteModalStatus = useSelector(getCourseDeleteModalStatus);
-  const filterTerm = useSelector(getSelectedFilterTerm);
+  const loggedUser = useSelector(getLoggedUserData);
 
   const rows = [];
-
-  const iPadAirScreen = useMediaQuery("(width:820px)");
-  const iPadMiniScreen = useMediaQuery("(width:768px)");
-  const surfaceDuo = useMediaQuery("(width:912px)");
 
   useEffect(() => {
     if (deleteCourseStatus?.message) {
@@ -99,12 +157,7 @@ const AllCourses = () => {
 
   const handlePagination = (event, value) => {
     const courses = {
-      filterTerm: filterTerm !== "" ? filterTerm : undefined,
-      filterValue: filters.filterByLevel
-        ? filters.filterLevel
-        : filters.filterByDuration
-        ? filters.filterDuration
-        : undefined,
+      ...filters,
       page: value,
       firstItem: value * 12 - 11,
       lastItem: value * 12,
@@ -117,169 +170,14 @@ const AllCourses = () => {
   const [filters, setFilters] = useState({
     filterByTitle: true,
     filterByMentorName: false,
-    filterByDuration: false,
-    filterByLevel: false,
     filterTitle: "",
     filterMentorName: "",
     filterLevel: "",
     filterDuration: "",
   });
 
-  const columns = [
-    {
-      id: "title",
-      label: "Title",
-      minWidth: 160,
-      align: "center",
-    },
-    {
-      id: "mentor",
-      label: "Mentor",
-      maxWidth: 120,
-      align: "center",
-    },
-    {
-      id: "description",
-      label: "Description",
-      minWidth: 120,
-      align: "center",
-      format: (value) => value.toLocaleString("en-US"),
-    },
-    {
-      id: "level",
-      label: "Level",
-      minWidth: 120,
-      align: "left",
-      format: (value) => value.toLocaleString("en-US"),
-    },
-    {
-      id: "duration",
-      label: "Duration",
-      minWidth: 100,
-      align: "left",
-      format: (value) => value.toLocaleString("en-US"),
-    },
-
-    {
-      id: "edit",
-      label: null,
-      minWidth: 100,
-      align: "left",
-      format: (value) => value.toLocaleString("en-US"),
-    },
-  ];
-
-  const createColumns = (title, mentor, description, level, duration, edit) => {
-    return { title, mentor, description, level, duration, edit };
-  };
-
-  const createRows = () => {
-    if (courses?.data) {
-      (filters.filterByLevel === true || filters.filterByDuration === true
-        ? _.chain(
-            Object.values(courses.data).filter((item) =>
-              filters.filterByLevel
-                ? item.level === filters.filterLevel
-                : filters.filterByDuration
-                ? item.duration === filters.filterDuration
-                : ""
-            )
-          )
-        : _.chain(Object.values(courses.data))
-      )
-
-        .orderBy(
-          [
-            filters.filterByTitle
-              ? (course) => course.title.toLowerCase()
-              : filters.filterByMentorName
-              ? (course) => course.mentorId.toLowerCase()
-              : null,
-          ],
-          [
-            filters.filterByTitle
-              ? filters.filterTitle === "A-Z"
-                ? "asc"
-                : "desc"
-              : filters.filterByMentorName
-              ? filters.filterMentorName === "A-Z"
-                ? "asc"
-                : "desc"
-              : null,
-          ]
-        )
-
-        .map((item) => {
-          const firstCol = <div>{item.title}</div>;
-          const secondCol = <div>{item.mentorId}</div>;
-          const thirdCol = (
-            <div>
-              {item.description.split(".").map((item) => {
-                return (
-                  <>
-                    {item}
-                    <br />
-                  </>
-                );
-              })}
-            </div>
-          );
-          const fourthCol = <div>{item.level}</div>;
-          const fifthCol = <div>{item.duration}</div>;
-          const sixthCol = (
-            <span>
-              <Tooltip title="Edit course">
-                <EditOutlinedIcon
-                  fontSize="small"
-                  onClick={() => edit(item._id)}
-                />
-              </Tooltip>
-
-              <Tooltip title="Delete course" className={classes.tooltips}>
-                <DeleteOutlineOutlinedIcon
-                  onClick={() => remove(item._id)}
-                  fontSize="small"
-                />
-              </Tooltip>
-            </span>
-          );
-
-          rows.push(
-            createColumns(
-              firstCol,
-              secondCol,
-              thirdCol,
-              fourthCol,
-              fifthCol,
-              sixthCol
-            )
-          );
-        })
-        .value();
-    }
-  };
-
   const handleChange = (name) => (event) => {
-    if (event.target.value === "All levels") {
-      const courses = {
-        filterLevel: undefined,
-        filterDuration: undefined,
-        page: 1,
-        firstItem: 0,
-        lastItem: 11,
-      };
-
-      setFilters({
-        ...filters,
-        [name]: event.target.value,
-        filterByTitle: false,
-        filterByMentorName: false,
-        filterByDuration: false,
-        filterByLevel: false,
-      });
-
-      dispatch(fetchCourses(courses));
-    } else if (name === "filterTitle") {
+    if (name === "filterTitle") {
       setFilters({
         ...filters,
         [name]: event.target.value,
@@ -293,34 +191,17 @@ const AllCourses = () => {
         filterByTitle: false,
         filterByMentorName: true,
       });
-    } else if (name === "filterLevel") {
-      const courses = {
-        filterLevel: event.target.value,
-        filterDuration:
-          filters.filterDuration !== "" ? filters.filterDuration : undefined,
-        page: 1,
-        firstItem: 0,
-        lastItem: 11,
-      };
-
-      dispatch(setCoursesDisplayPage(1));
-      dispatch(fetchCourses(courses));
-
-      setFilters({
-        ...filters,
-        [name]: event.target.value,
-        filterByDuration: false,
-        filterByLevel: true,
-      });
     } else {
       const courses = {
-        filterLevel:
-          filters.filterLevel === "All levels"
-            ? undefined
-            : filters.filterLevel !== ""
-            ? filters.filterLevel
-            : undefined,
-        filterDuration: event.target.value,
+        filterLevel: filters.filterLevel ? filters.filterLevel : undefined,
+        filterDuration: filters.filterDuration
+          ? filters.filterDuration
+          : undefined,
+        filterTitle: filters.filterTitle ? filters.filterTitle : "",
+        filterMentorName: filters.filterMentorName
+          ? filters.filterMentorName
+          : "",
+        [name]: event.target.value,
         page: 1,
         firstItem: 0,
         lastItem: 11,
@@ -332,8 +213,6 @@ const AllCourses = () => {
       setFilters({
         ...filters,
         [name]: event.target.value,
-        filterByDuration: true,
-        filterByLevel: false,
       });
     }
   };
@@ -381,58 +260,176 @@ const AllCourses = () => {
   };
 
   return (
-    <>
+    <Grid
+      container
+      justifyContent={"center"}
+      spacing={2}
+      className={classes.container}
+    >
+      <Grid item xs={12} md={6} lg={6} xl={6}>
+        {filterTerm ? (
+          <Alert
+            variant="filled"
+            color="info"
+            severity="info"
+            className={classes.filterResults}
+          >
+            {loggedUser.user.role === "admin" && courses.data.length > 1 ? (
+              <>
+                {`There are ${courses.data.length} results for the term `}
+                <span className={classes.selectedTerm}>{filterTerm}</span>
+              </>
+            ) : (
+              <>
+                {`There is ${courses.data.length} result for the term `}
+                <span className={classes.selectedTerm}>{filterTerm}</span>
+              </>
+            )}
+          </Alert>
+        ) : null}
+      </Grid>
       <Grid
         container
-        justifyContent={"center"}
-        spacing={2}
-        className={classes.container}
+        justifyContent={"flex-end"}
+        className={classes.addCourseButtonContainer}
       >
-        <Grid
-          container
-          justifyContent={"flex-end"}
-          className={classes.addCourseButtonContainer}
+        <Button
+          variant="contained"
+          onClick={() => navigate("/addCourse")}
+          className={classes.addCourseButton}
         >
-          <Button
-            variant="contained"
-            onClick={() => navigate("/addCourse")}
-            className={classes.addCourseButton}
-          >
-            Add courses
-          </Button>
-        </Grid>
-        {Object.values(filterItems).map((item, index) => {
-          return (
-            <Grid key={Math.random() + 1} item xs={12} md={3} lg={2} xl={2}>
-              {filterByTitles[index]}
-              <SelectComponent
-                className={classes.selectFields}
-                array={filterItems[index]}
-                selectedValue={filters[filterBy[index]]}
-                handleChange={handleChange(filterBy[index])}
-              />
-            </Grid>
-          );
-        })}
-
-        <Grid item xs={12} md={10} lg={10} xl={9}>
-          <TableComponents
-            rows={rows}
-            columns={columns}
-            createData={createColumns}
-            createRows={createRows}
-          />
-        </Grid>
-        <Grid container justifyContent={"center"}>
-          {courses?.totalNumOfCourses &&
-          Math.ceil(courses.totalNumOfCourses / 12) > 1 ? (
-            <PaginationComponent
-              page={page}
-              handleChange={handlePagination}
-              numberOfPages={Math.ceil(courses.totalNumOfCourses / 12)}
-              numberOfItems={Object.keys(courses.data).length}
+          Add courses
+        </Button>
+      </Grid>
+      {Object.values(filterItems).map((item, index) => {
+        return (
+          <Grid key={Math.random() + 1} item xs={12} md={3} lg={2} xl={2}>
+            {filterByTitles[index]}
+            <SelectComponent
+              className={classes.selectFields}
+              array={filterItems[index]}
+              selectedValue={filters[filterBy[index]]}
+              handleChange={handleChange(filterBy[index])}
             />
-          ) : null}
+          </Grid>
+        );
+      })}
+
+      <Grid item xs={12} md={10} lg={10} xl={9}>
+        <Grid container justifyContent={"space-around"}>
+          <Grid item xs={12} md={12} lg={12} xl={12}>
+            <Grid container justifyContent={"center"}>
+              {courses?.totalNumOfCourses &&
+              Math.ceil(courses.totalNumOfCourses / 12) > 1 ? (
+                <PaginationComponent
+                  page={page}
+                  handleChange={handlePagination}
+                  numberOfPages={Math.ceil(courses.totalNumOfCourses / 12)}
+                  numberOfItems={Object.keys(courses.data).length}
+                />
+              ) : null}
+            </Grid>
+          </Grid>
+
+          {courses?.data ? (
+            <Box className={classes.mentorCoursesContainer}>
+              {_.chain(Object.values(courses.data))
+                .orderBy(
+                  [
+                    filters.filterByTitle
+                      ? (course) => course.title.toLowerCase()
+                      : filters.filterByMentorName
+                      ? (course) => course.mentorId.toLowerCase()
+                      : null,
+                  ],
+                  [
+                    filters.filterByTitle
+                      ? filters.filterTitle === "A-Z"
+                        ? "asc"
+                        : "desc"
+                      : filters.filterByMentorName
+                      ? filters.filterMentorName === "A-Z"
+                        ? "asc"
+                        : "desc"
+                      : null,
+                  ]
+                )
+                .map((item, index) => (
+                  <Card key={index} className={classes.card}>
+                    <Grid
+                      container
+                      justifyContent={"space-around"}
+                      className={classes.cardContainer}
+                    >
+                      <Grid item xs={12} md={3} lg={3} xl={3}>
+                        <CardMedia
+                          className={classes.cardImage}
+                          component={"img"}
+                          src={
+                            "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
+                          }
+                        ></CardMedia>
+                      </Grid>
+
+                      <Grid
+                        item
+                        xs={12}
+                        md={6}
+                        lg={6}
+                        xl={6}
+                        className={classes.cardText}
+                      >
+                        <Typography variant="h5" className={classes.cardTitle}>
+                          {item.title}
+                        </Typography>
+
+                        <Typography
+                          component={"p"}
+                          className={classes.description}
+                        >
+                          {item.description}
+                        </Typography>
+
+                        <Typography component={"p"} className={classes.mentor}>
+                          Mentor: {item.mentorId}
+                        </Typography>
+
+                        <span className={classes.durationAndLevelTextContainer}>
+                          {`Level: ${item.level} ||`}
+
+                          {` Duration: ${item.duration}`}
+                        </span>
+                      </Grid>
+
+                      <Grid item xs={12} md={2} xl={2} lg={2}>
+                        <Tooltip
+                          title="Edit course"
+                          className={classes.editCourse}
+                        >
+                          <EditOutlinedIcon
+                            fontSize="small"
+                            onClick={() => edit(item._id)}
+                          />
+                        </Tooltip>
+
+                        <Tooltip
+                          title="Delete course"
+                          className={classes.deleteCourse}
+                        >
+                          <DeleteOutlineOutlinedIcon
+                            onClick={() => remove(item._id)}
+                            fontSize="small"
+                          />
+                        </Tooltip>
+                      </Grid>
+                    </Grid>
+                  </Card>
+                ))
+                .value()}
+            </Box>
+          ) : (
+            "Loading..."
+          )}
         </Grid>
       </Grid>
       <Dialog open={courseDeleteModalStatus}>
@@ -465,7 +462,7 @@ const AllCourses = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Grid>
   );
 };
 

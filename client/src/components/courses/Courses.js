@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
   filtersToggleButton: {
     marginTop: "50px",
-    marginBottom: "20px",
+    marginBottom: "20px !important",
     minWidth: "300px !important",
     minHeight: "60px !important",
     [theme.breakpoints.only("xs")]: {
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   displayCoursesContainer: {
-    maxHeight: "100vh",
+    maxHeight: "60vh",
     overflow: "auto",
     paddingBottom: "20px",
   },
@@ -153,19 +153,8 @@ const Courses = () => {
 
   useEffect(() => {
     if (enrollInCourseStatus?.message) {
-      dispatch(cleanEnrollInCourseMessage());
       dispatch(fetchMentors());
-
-      const user = {
-        userCourses: loggedUser.user.enrolledInCourses,
-        param: loggedUser.user._id,
-        id: loggedUser.user._id,
-        courseId: courseToDisplay[0]._id,
-        completedCourses: loggedUser.user.completedCourses,
-      };
-
       dispatch(fetchUserData(loggedUser.user._id));
-      dispatch(fetchUserCourses(user));
       dispatch(setCoursesDisplayPage(1));
       navigate("/dashboard");
     }

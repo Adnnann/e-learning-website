@@ -6,6 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { makeStyles } from "@mui/styles";
+import { Grid } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -45,7 +46,7 @@ const TableComponent = ({ columns, createData, createRows, rows }) => {
             <TableRow>
               {columns.map((column, index) => (
                 <TableCell
-                  key={"column" + index}
+                  key={index * 1000000}
                   align={column.align}
                   style={{
                     minWidth: column.minWidth,
@@ -63,7 +64,7 @@ const TableComponent = ({ columns, createData, createRows, rows }) => {
             {rows.map((row, index) => {
               return (
                 <TableRow
-                  key={`row-${index}`}
+                  key={index}
                   style={{
                     padding: "0 !important",
                     height: "90px",
@@ -75,7 +76,7 @@ const TableComponent = ({ columns, createData, createRows, rows }) => {
                     const value = row[column.id];
                     return (
                       <TableCell
-                        key={index}
+                        key={Math.random() + index}
                         align={column.align}
                         style={{ wordBreak: "break-all" }}
                       >

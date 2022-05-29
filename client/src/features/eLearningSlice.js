@@ -113,6 +113,7 @@ export const fetchUserCourses = createAsyncThunk(
       .post(`/api/userCourses`, {
         userCourses: user.userCourses,
         completedCourses: user.completedCourses,
+        filterTerm: user.filterTerm || undefined,
       })
       .then((response) => response.data)
       .catch((error) => error);

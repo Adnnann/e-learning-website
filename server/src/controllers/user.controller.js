@@ -123,6 +123,7 @@ const courseCompleted = async (req, res) => {
 };
 
 const getUserCourses = (req, res) => {
+  console.log(req.body);
   Course.find({}, (err, course) => {
     const userCourses = [];
 
@@ -144,12 +145,19 @@ const getUserCourses = (req, res) => {
       }
     });
 
-    return res.send({ data: userCourses });
+    return res.send({
+      data: req.body.filterTerm
+        ? userCourses.filter((course) =>
+            course.title
+              .toLowerCase()
+              .includes(req.body.filterTerm.toLowerCase())
+          )
+        : userCourses,
+    });
   });
 };
 
 const getMentorCourses = (req, res) => {
-  console.log(req.body);
   Course.find({ mentorId: req.body.mentorId })
     .where({ status: "active" })
     .exec((err, course) => {

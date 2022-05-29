@@ -7,11 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCourses,
   fetchMentorCourses,
+  fetchUserCourses,
   getFilter,
   getLoggedUserData,
   setFilter,
   setFilterTerm,
 } from "../../features/eLearningSlice";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   searchInput: {
@@ -33,6 +35,7 @@ export default function Search({ changeHandler }) {
   const dispatch = useDispatch();
   const filter = useSelector(getFilter);
   const loggedUser = useSelector(getLoggedUserData);
+  const navigate = useNavigate();
 
   const handleKeyPress = (event) => {
     if (
@@ -77,9 +80,36 @@ export default function Search({ changeHandler }) {
         dispatch(setFilterTerm(filter));
         return dispatch(fetchMentorCourses(courses));
       }
+    } else if (
+      window.location.pathname === "/dashboard" &&
+      loggedUser.user.role === "student"
+    ) {
+      if (event.target.value === "") {
+        const user = {
+          userCourses: loggedUser.user.enrolledInCourses,
+          param: loggedUser.user._id,
+          id: loggedUser.user._id,
+          completedCourses: loggedUser.user.completedCourses,
+          filterTerm: "",
+        };
+
+        dispatch(setFilterTerm(""));
+        return dispatch(fetchUserCourses(user));
+      }
+
+      if (event.keyCode === 13) {
+        const user = {
+          userCourses: loggedUser.user.enrolledInCourses,
+          param: loggedUser.user._id,
+          id: loggedUser.user._id,
+          completedCourses: loggedUser.user.completedCourses,
+          filterTerm: filter,
+        };
+        dispatch(setFilterTerm(filter));
+        return dispatch(fetchUserCourses(user));
+      }
     }
   };
-
   const handleChange = (event) => {
     dispatch(setFilter(event.target.value));
   };

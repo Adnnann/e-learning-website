@@ -4,7 +4,6 @@ import {
   getCourses,
   getEditUserFormStatus,
   getEditUserPasswordFormStatus,
-  getFilter,
   getLoggedUserData,
   getMentorCourses,
   getSelectedFilterTerm,
@@ -19,7 +18,6 @@ import EditUserDataButtons from "./DashboardButtons";
 import EditProfile from "../user/EditUserProfile";
 import DashboardLeftPanel from "./DashboardLeftPanel";
 import DashboardRightPanel from "./DashboardRightPanel";
-import MentorCourses from "../courses/MentorCourses";
 
 const useStyles = makeStyles((theme) => ({
   largeScreens: {
@@ -64,7 +62,6 @@ const Dashboard = () => {
   const closeAccount = useSelector(getCloseAccountFormStatus);
   const filterTerm = useSelector(getSelectedFilterTerm);
   const mentorCourses = useSelector(getMentorCourses);
-  const courses = useSelector(getCourses);
   const loggedUser = useSelector(getLoggedUserData);
 
   const iPadAirScreen = useMediaQuery("(width:820px)");
@@ -82,8 +79,8 @@ const Dashboard = () => {
         >
           Courses - Your Current Courses and Progress
         </Alert>
-        {filterTerm ? (
-          loggedUser.user.role === "mentor" && mentorCourses.data.length > 1 ? (
+        {filterTerm && loggedUser.user.role === "mentor" ? (
+          mentorCourses.data.length > 1 ? (
             <Typography
               variant="h5"
               className={classes.numberOfSelectedCourses}
