@@ -14,6 +14,8 @@ import {
   cleanActivateAccountMessage,
 } from "../../features/eLearningSlice";
 import { Grid, Checkbox, Tooltip } from "@mui/material";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import TableComponents from "../utils/Table";
 import SelectComponent from "../utils/SelectComponent";
 import PaginationComponent from "../utils/Pagination";
 import { makeStyles } from "@mui/styles";
@@ -145,15 +147,26 @@ const AllUsers = () => {
         )
 
         .map((item) => {
-          const firstCol = <div>{item.firstName}</div>;
+          const firstCol = (
+            <div>
+              {item.firstName} {item.lastName}
+              <br />
+              <span style={{ color: "red" }}>
+                {item.active === "closed" ? "(account closed by user)" : null}
+              </span>
+              <span style={{ color: "red" }}>
+                {item.active === "deactivated" ? "(deactivated account)" : null}
+              </span>
+            </div>
+          );
           const secondCol = <div>{item.lastName}</div>;
           const thirdCol = <div>{item.email}</div>;
           const fourthCol = (
             <span>
               <Tooltip title="Activate or deactivate account">
                 <Checkbox
-                  onChange={() => activateUserAccount(item._id)}
-                  checked={item.active ? true : false}
+                  onChange={() => activateUserAccount(item._id, item.active)}
+                  checked={item.active === "activated" ? true : false}
                 />
               </Tooltip>
               {item.role === "mentor"
@@ -232,8 +245,12 @@ const AllUsers = () => {
 
   const filterBy = ["sortFirstname", "sortLastname", "filterStatus"];
 
-  const activateUserAccount = (id) => {
-    dispatch(activateAccount(id));
+  const activateUserAccount = (id, status) => {
+    const user = {
+      param: id,
+      userStatus: status === "activated" ? "deactivated" : "activated",
+    };
+    dispatch(activateAccount(user));
   };
 
   return (

@@ -70,7 +70,9 @@ const remove = async (req, res, next) => {
   }
 
   const user = req.profile;
-  await User.findOneAndUpdate({ _id: req.profile._id }, { active: false });
+  await User.findOneAndUpdate({ _id: req.profile._id }, { active: "closed" });
+
+  return res.send({ message: "Account deleted" });
 };
 
 const updateUserPassword = async (req, res, next) => {

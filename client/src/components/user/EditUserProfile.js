@@ -11,6 +11,8 @@ import {
   cleanUserUpdateMessage,
   getUserToEdit,
   setEditUserProfileForm,
+  fetchUserData,
+  cleanUploadImageStatus,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -92,10 +94,11 @@ const EditProfile = () => {
     });
 
     if (updateUserStatus?.message) {
+      dispatch(cleanUploadImageStatus());
       dispatch(cleanUserUpdateMessage());
       navigate("/dashboard");
     }
-  }, [updateUserStatus, dispatch, loggedUser.user.firstName]);
+  }, [updateUserStatus]);
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
@@ -109,8 +112,10 @@ const EditProfile = () => {
         lastName: values.lastName || undefined,
         email: values.email || undefined,
         token: token.message,
+        userImage: uploadUserImageStatus.imageUrl,
       },
     };
+
     dispatch(updateUserData(user));
   };
 
@@ -213,9 +218,7 @@ const EditProfile = () => {
             <Grid item xs={12} md={2} lg={2} xl={2}>
               <img
                 src={
-                  loggedUser.user.userImage
-                    ? loggedUser.user.userImage
-                    : userImagePlaceholder
+                  loggedUser.user.userImage || uploadUserImageStatus.imageUrl
                 }
                 className={classes.userImagePlaceholder}
                 alt="Placeholder"

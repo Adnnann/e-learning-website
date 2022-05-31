@@ -52,8 +52,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
   },
   active: {
-    type: Boolean,
-    default: false,
+    type: String,
+    default: "inactive",
   },
   enrolledInCourses: {
     type: Array,

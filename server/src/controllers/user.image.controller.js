@@ -3,11 +3,9 @@ import fs from "file-system";
 import Image from "../models/image.model";
 
 const create = async (req, res, next) => {
-  const originalFileName = req.file.originalname.split("-")[0];
   const fileName = req.file.originalname;
 
   const imageId = fileName.split("-")[0];
-  console.log(imageId);
 
   // file size threshold
   const fileSizeLimit = 1024 * 1024 * 10;
@@ -37,14 +35,11 @@ const create = async (req, res, next) => {
 
       // loop through folder images and filter all images that have the same value before
       // -. Than remove all except last added item
-      fs.fs
-        .readdirSync("./images")
-        //.filter((item) => item.includes(`${originalFileName}`))
-        .map((item) => {
-          if (item !== fileName && item.includes(imageId)) {
-            fs.fs.unlinkSync(`./images/${item}`);
-          }
-        });
+      fs.fs.readdirSync("./images").map((item) => {
+        if (item !== fileName && item.includes(imageId)) {
+          fs.fs.unlinkSync(`./images/${item}`);
+        }
+      });
 
       return res.send({
         message: "Image uploaded successfully",

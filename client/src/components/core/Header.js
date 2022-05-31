@@ -15,9 +15,17 @@ import { makeStyles } from "@mui/styles";
 const useStyles = makeStyles((theme) => ({
   logo: {
     maxWidth: 220,
-    marginTop: "20px",
+    marginTop: "20px !important",
     borderRadius: "50%",
     [theme.breakpoints.only("xs")]: {
+      maxWidth: "120px",
+      marginBottom: "20px",
+    },
+    [theme.breakpoints.only("md")]: {
+      maxWidth: "120px",
+      marginBottom: "20px",
+    },
+    [theme.breakpoints.only("lg")]: {
       maxWidth: "120px",
       marginBottom: "20px",
     },
@@ -28,20 +36,19 @@ const useStyles = makeStyles((theme) => ({
     textTransform: "none",
     marginLeft: "auto",
   },
-  searchField: {
-    marginBottom: "5px",
-  },
   headerContainer: {
     paddingBottom: "20px",
   },
   title: {
     textAlign: "left",
-    marginTop: "20px",
+    marginTop: "40px !important",
     [theme.breakpoints.up("xs")]: {
-      marginLeft: "20px",
+      marginLeft: "20px !important",
+    },
+    [theme.breakpoints.only("xl")]: {
+      marginTop: "120px !important",
     },
     [theme.breakpoints.up("md")]: {
-      marginTop: "120px",
       textAlign: "right",
       marginLeft: "60px",
     },
@@ -58,9 +65,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   buttons: {
-    marginTop: "20px",
-    [theme.breakpoints.up("md")]: {
-      marginTop: "120px",
+    marginTop: "40px !important",
+    [theme.breakpoints.up("xl")]: {
+      marginTop: "120px !important",
     },
   },
   searchFieldContainerSignedUser: {
@@ -80,6 +87,12 @@ const useStyles = makeStyles((theme) => ({
   signupButton: {
     textTransform: "none !important",
     marginLeft: "10px !important",
+  },
+  searchField: {
+    marginTop: "40px",
+    [theme.breakpoints.only("xl")]: {
+      marginTop: "120px",
+    },
   },
 }));
 
@@ -106,15 +119,13 @@ const Header = () => {
       <Toolbar>
         <Grid container justifyContent="center">
           <Grid item xs={3} md={2} lg={2} xl={2}>
-            <Item>
-              <Box
-                component="img"
-                className={classes.logo}
-                alt="Expense tracker"
-                src="https://www.elearning-journal.com/wp-content/uploads/2019/08/news_07082019_11.jpg"
-                onClick={() => navigate("/dashboard")}
-              />
-            </Item>
+            <Box
+              component="img"
+              className={classes.logo}
+              alt="Expense tracker"
+              src="https://www.elearning-journal.com/wp-content/uploads/2019/08/news_07082019_11.jpg"
+              onClick={() => navigate("/dashboard")}
+            />
           </Grid>
 
           {loggedUser?.user ? (
@@ -130,7 +141,9 @@ const Header = () => {
                 xl={6}
                 className={classes.searchFieldContainer}
               >
-                <Search />
+                <div className={classes.searchField}>
+                  <Search />
+                </div>
               </Grid>
             </>
           ) : (
@@ -143,7 +156,9 @@ const Header = () => {
                 xl={6}
                 className={classes.searchFieldContainerSignedUser}
               >
-                <Search />
+                <div className={classes.searchField}>
+                  <Search />
+                </div>
               </Grid>
               <Grid
                 item
@@ -155,7 +170,7 @@ const Header = () => {
               >
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="info"
                   onClick={login}
                   className={classes.loginButton}
                 >
@@ -164,7 +179,7 @@ const Header = () => {
 
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="info"
                   onClick={signup}
                   className={classes.signupButton}
                 >

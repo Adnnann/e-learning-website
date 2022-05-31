@@ -28,10 +28,8 @@ import {
   DialogTitle,
   DialogContent,
 } from "@mui/material";
-import {
-  EditOutlinedIcon,
-  DeleteOutlineOutlinedIcon,
-} from "@mui/icons-material/EditOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import PaginationComponent from "../utils/Pagination";

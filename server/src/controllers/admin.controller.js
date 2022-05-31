@@ -79,8 +79,15 @@ const getCourses = (req, res) => {
     });
 
     if (req.body.filterTerm) {
-      courses = course.filter((item) =>
-        item.title.toLowerCase().includes(req.body.filterTerm.toLowerCase())
+      courses = course.filter(
+        (item) =>
+          item.title
+            .toLowerCase()
+            .includes(req.body.filterTerm.toLowerCase()) ||
+          item.mentorId.toLowerCase().split(" ")[0] ===
+            req.body.filterTerm.toLowerCase() ||
+          item.mentorId.toLowerCase().split(" ")[1] ===
+            req.body.filterTerm.toLowerCase()
       );
 
       return res.send({ data: courses, totalNumOfCourses: courses.length });
@@ -132,36 +139,46 @@ const getCourses = (req, res) => {
     } else {
       res.send({
         data: courses,
-        totalNumOfCourses:
-          req.body.filterLevel === "All levels" && req.body.filterDuration
-            ? course.filter(
-                (item) =>
-                  (item.level === "Beginner Level" ||
-                    item.level === "Advanced Level" ||
-                    item.level === "Intermediate Level") &&
-                  item.duration.includes(req.body.filterDuration)
-              ).length
-            : req.body.filterLevel === "All levels"
-            ? course.filter(
-                (item) =>
-                  item.level === "Beginner Level" ||
+        totalNumOfCourses: req.body.filterTerm
+          ? course.filter(
+              (item) =>
+                item.title
+                  .toLowerCase()
+                  .includes(req.body.filterTerm.toLowerCase()) ||
+                item.mentorId.toLowerCase().split(" ")[0] ===
+                  req.body.filterTerm.toLowerCase() ||
+                item.mentorId.toLowerCase().split(" ")[1] ===
+                  req.body.filterTerm.toLowerCase()
+            ).length
+          : req.body.filterLevel === "All levels" && req.body.filterDuration
+          ? course.filter(
+              (item) =>
+                (item.level === "Beginner Level" ||
                   item.level === "Advanced Level" ||
-                  item.level === "Intermediate Level"
-              ).length
-            : req.body.filterLevel && req.body.filterDuration
-            ? course.filter(
-                (item) =>
-                  item.duration.includes(req.body.filterDuration) &&
-                  item.level.includes(req.body.filterLevel)
-              ).length
-            : req.body.filterLevel
-            ? course.filter((item) => item.level.includes(req.body.filterLevel))
-                .length
-            : req.body.filterDuration
-            ? course.filter((item) =>
+                  item.level === "Intermediate Level") &&
                 item.duration.includes(req.body.filterDuration)
-              ).length
-            : course.length,
+            ).length
+          : req.body.filterLevel === "All levels"
+          ? course.filter(
+              (item) =>
+                item.level === "Beginner Level" ||
+                item.level === "Advanced Level" ||
+                item.level === "Intermediate Level"
+            ).length
+          : req.body.filterLevel && req.body.filterDuration
+          ? course.filter(
+              (item) =>
+                item.duration.includes(req.body.filterDuration) &&
+                item.level.includes(req.body.filterLevel)
+            ).length
+          : req.body.filterLevel
+          ? course.filter((item) => item.level.includes(req.body.filterLevel))
+              .length
+          : req.body.filterDuration
+          ? course.filter((item) =>
+              item.duration.includes(req.body.filterDuration)
+            ).length
+          : course.length,
       });
     }
   });
@@ -198,9 +215,10 @@ const removeCourse = async (req, res) => {
 };
 
 const activateUserAccount = async (req, res, next) => {
+  console.log(req.body);
   let user = await User.findById({ _id: req.profile._id });
   user = _.extend(user, req.body);
-  user.active = !user.active;
+  user.active = req.body.userStatus;
 
   user.save((err, user) => {
     if (err) {

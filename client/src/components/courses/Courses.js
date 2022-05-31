@@ -29,12 +29,10 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import PaginationComponent from "../utils/Pagination";
-import {
-  FilterListIcon,
-  KeyboardArrowDownIcon,
-  KeyboardArrowUpIcon,
-} from "@mui/icons-material/FilterList";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({

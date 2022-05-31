@@ -61,20 +61,12 @@ export const updateUserData = createAsyncThunk(
   "users/updateUserData",
   async (user) => {
     return await axios
-      .put(
-        `/api/users/${user.params}`,
-        {
-          firstName: user.data.firstName,
-          lastName: user.data.lastName,
-          email: user.data.email,
+      .put(`/api/users/${user.params}`, user.data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      )
+      })
       .then((response) => response.data)
       .catch((error) => error);
   }
@@ -281,9 +273,9 @@ export const fetchUsers = createAsyncThunk("eLearning/users", async (users) => {
 
 export const activateAccount = createAsyncThunk(
   "eLearning/activateAccount",
-  async (param) => {
+  async (user) => {
     return await axios
-      .put(`/admin/users/${param}`)
+      .put(`/admin/users/${user.param}`, { userStatus: user.userStatus })
       .then((response) => response.data)
       .catch((error) => error);
   }

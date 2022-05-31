@@ -9,8 +9,13 @@ const signin = async (req, res) => {
   const courseNum = await Course.find({}).exec();
 
   User.findOne({ email: req.body.email }, (err, user) => {
-    if (user && user.active === false) {
+    if (user && user.active === "inactive") {
       return res.send({ error: "You account has not been activated yet." });
+    }
+    if (user && user.active === "Closed") {
+      return res.send({
+        error: "You have deleted your account. Please sign up again.",
+      });
     }
     if (err || !user) {
       return res.send({ error: "User not found" });
