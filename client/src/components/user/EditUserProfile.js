@@ -13,6 +13,9 @@ import {
   setEditUserProfileForm,
   fetchUserData,
   cleanUploadImageStatus,
+  fetchAllUsers,
+  fetchUsers,
+  updateUserDataByAdmin,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -88,15 +91,26 @@ const EditProfile = () => {
   });
   useEffect(() => {
     setValues({
-      firstName: loggedUser.user.firstName || userToEdit.firstName,
-      lastName: loggedUser.user.lastName || userToEdit.lastName,
-      email: loggedUser.user.email || userToEdit.email,
+      firstName: userToEdit.firstName || loggedUser.user.firstName,
+      lastName: userToEdit.lastName || loggedUser.user.lastName,
+      email: userToEdit.email || loggedUser.user.email,
     });
 
     if (updateUserStatus?.message) {
       dispatch(cleanUploadImageStatus());
       dispatch(cleanUserUpdateMessage());
-      navigate("/dashboard");
+
+      if (loggedUser.user.role === "admin") {
+        const users = {
+          firstItem: 0,
+          lastItem: 11,
+        };
+
+        dispatch(fetchUsers(users));
+        navigate("/users");
+      } else {
+        navigate("/dashboard");
+      }
     }
   }, [updateUserStatus]);
 
@@ -106,7 +120,7 @@ const EditProfile = () => {
 
   const clickSubmit = () => {
     const user = {
-      params: loggedUser.user._id,
+      param: userToEdit._id || loggedUser.user._id,
       data: {
         firstName: values.firstName || undefined,
         lastName: values.lastName || undefined,
@@ -116,11 +130,19 @@ const EditProfile = () => {
       },
     };
 
-    dispatch(updateUserData(user));
+    if (userToEdit?._id) {
+      dispatch(updateUserDataByAdmin(user));
+    } else {
+      dispatch(updateUserData(user));
+    }
   };
 
   const cancel = () => {
-    dispatch(setEditUserProfileForm(false));
+    if (loggedUser.user.role === "admin") {
+      navigate("/users");
+    } else {
+      dispatch(setEditUserProfileForm(false));
+    }
   };
 
   const uploadPhoto = () => {
@@ -218,7 +240,13 @@ const EditProfile = () => {
             <Grid item xs={12} md={2} lg={2} xl={2}>
               <img
                 src={
-                  loggedUser.user.userImage || uploadUserImageStatus.imageUrl
+                  userToEdit.userImage
+                    ? userToEdit.userImage
+                    : loggedUser.user.userImage
+                    ? loggedUser.user.userImage
+                    : uploadUserImageStatus.imageUrl
+                    ? uploadUserImageStatus.imageUrl
+                    : userImagePlaceholder
                 }
                 className={classes.userImagePlaceholder}
                 alt="Placeholder"

@@ -121,7 +121,11 @@ const AddCourse = () => {
       dispatch(fetchCourses(course));
       dispatch(cleanAddCourseMessage());
       dispatch(cleanUploadImageStatus());
-      navigate("/courses");
+      if (loggedUser.user.role === "admin") {
+        navigate("/admin/courses");
+      } else {
+        navigate("/courses");
+      }
     }
   }, [addCourseStatus]);
 

@@ -4,6 +4,7 @@ import {
   fetchCourses,
   fetchMentorCourses,
   fetchUserCourses,
+  fetchUsers,
   getFilter,
   getLoggedUserData,
   setFilter,
@@ -33,9 +34,34 @@ export default function Search({ changeHandler }) {
   const dispatch = useDispatch();
   const filter = useSelector(getFilter);
   const loggedUser = useSelector(getLoggedUserData);
-  const navigate = useNavigate();
 
   const handleKeyPress = (event) => {
+    if (
+      window.location.pathname === "/users" &&
+      loggedUser.user.role === "admin"
+    ) {
+      if (event.target.value === "") {
+        const users = {
+          firstItem: 0,
+          lastItem: 11,
+          filterTerm: undefined,
+        };
+
+        dispatch(setFilterTerm(filter));
+        return dispatch(fetchUsers(users));
+      }
+
+      if (event.keyCode === 13) {
+        const users = {
+          firstItem: 0,
+          lastItem: 11,
+          filterTerm: event.target.value,
+        };
+
+        dispatch(setFilterTerm(filter));
+        return dispatch(fetchUsers(users));
+      }
+    }
     if (
       window.location.pathname === "/admin/courses" ||
       window.location.pathname === "/courses"
@@ -92,18 +118,6 @@ export default function Search({ changeHandler }) {
         };
 
         dispatch(setFilterTerm(""));
-        return dispatch(fetchUserCourses(user));
-      }
-
-      if (event.keyCode === 13) {
-        const user = {
-          userCourses: loggedUser.user.enrolledInCourses,
-          param: loggedUser.user._id,
-          id: loggedUser.user._id,
-          completedCourses: loggedUser.user.completedCourses,
-          filterTerm: filter,
-        };
-        dispatch(setFilterTerm(filter));
         return dispatch(fetchUserCourses(user));
       }
     }

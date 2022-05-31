@@ -71,6 +71,20 @@ export const updateUserData = createAsyncThunk(
       .catch((error) => error);
   }
 );
+export const updateUserDataByAdmin = createAsyncThunk(
+  "users/updateUserData",
+  async (user) => {
+    return await axios
+      .put(`/api/users/${user.param}`, user.data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
 export const updateUserPassword = createAsyncThunk(
   "eLearning/updatePassword",
   async (user) => {
@@ -266,6 +280,7 @@ export const fetchUsers = createAsyncThunk("eLearning/users", async (users) => {
     .post(`/admin/users`, {
       firstValue: users.firstItem,
       lastValue: users.lastItem,
+      filterTerm: users.filterTerm,
     })
     .then((response) => response.data)
     .catch((error) => error);
@@ -523,6 +538,12 @@ const eLearningSlice = createSlice({
           token: payload.token,
           user: payload.data,
         },
+      };
+    },
+    [updateUserDataByAdmin.fulfilled]: (state, { payload }) => {
+      return {
+        ...state,
+        updateUser: payload,
       };
     },
     [closeAccount.fulfilled]: (state, { payload }) => {

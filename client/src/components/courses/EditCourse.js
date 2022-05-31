@@ -13,7 +13,15 @@ import {
   getLoggedUserData,
   fetchMentorCourses,
 } from "../../features/eLearningSlice";
-import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  CardMedia,
+  Grid,
+  Icon,
+  Typography,
+} from "@mui/material";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
@@ -121,7 +129,11 @@ const EditCourse = () => {
       dispatch(fetchCourses(course));
       dispatch(cleanCourseUpdatedMessage());
       dispatch(cleanUploadImageStatus());
-      navigate("/courses");
+      if (loggedUser.user.role !== "admin") {
+        navigate("/courses");
+      } else {
+        navigate("/admin/courses");
+      }
     }
   }, [updateCourseStatus]);
 
@@ -237,6 +249,15 @@ const EditCourse = () => {
               Cancel
             </Button>
           </ButtonGroup>
+          {
+            //display error returned from server
+            updateCourseStatus?.error && (
+              <Typography component="p" color="error">
+                <Icon color="error" className={classes.error}></Icon>
+                {updateCourseStatus.error}
+              </Typography>
+            )
+          }
         </Grid>
 
         <Grid item xs={12} md={6} lg={6} xl={6}>
@@ -247,19 +268,6 @@ const EditCourse = () => {
             handleChange={handleChange("duration")}
             className={classes.selectFields}
           />
-
-          <ButtonGroup className={classes.buttonContainerForSmallScreens}>
-            <Button
-              variant="contained"
-              className={classes.saveButton}
-              onClick={clickSubmit}
-            >
-              Save
-            </Button>
-            <Button variant="contained" onClick={cancel}>
-              Cancel
-            </Button>
-          </ButtonGroup>
 
           <CardMedia
             className={classes.userImagePlaceholder}

@@ -274,6 +274,9 @@ const AllCourses = () => {
 
   const removeFilters = () => {
     const courses = {
+      page: 1,
+      firstItem: 0,
+      lastItem: 11,
       filterLevel: undefined,
       filterDuration: undefined,
       filterTitle: filters.filterTitle ? filters.filterTitle : "",
@@ -282,6 +285,7 @@ const AllCourses = () => {
         : "",
       filterTerm: undefined,
     };
+    dispatch(setCoursesDisplayPage(1));
     dispatch(fetchCourses(courses));
     setFilters({
       filterByTitle: true,

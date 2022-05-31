@@ -45,22 +45,31 @@ const read = (req, res) => {
   });
 };
 
-const update = (req, res, next) => {
+const update = async (req, res, next) => {
+  console.log(req.body);
   let user = req.profile;
   user = _.extend(user, req.body);
 
-  user.updated = Date.now();
-  user.save((err) => {
-    if (err) {
-      return res.send({ error: errorHandler.getErrorMessage(err) });
-    }
-    res.send({
-      message: "Data updated",
-      data: user,
-      token: req.cookies.userJwtToken,
-    });
+  await User.findOneAndUpdate({ _id: req.profile._id }, { ...user }).exec();
+
+  return res.send({
+    message: "Data updated",
+    data: user,
+    token: req.cookies.userJwtToken,
   });
 };
+
+// user.updated = Date.now();
+// user.save((err) => {
+//   if (err) {
+//     return res.send({ error: errorHandler.getErrorMessage(err) });
+//   }
+//   res.send({
+//     message: "Data updated",
+//     data: user,
+//     token: req.cookies.userJwtToken,
+//   });
+// });
 
 const remove = async (req, res, next) => {
   const userProfile = await User.findOne({ _id: req.profile._id });

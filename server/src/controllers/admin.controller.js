@@ -199,8 +199,7 @@ const getCourses = (req, res) => {
     if (error) {
       res.send({ error: dbErrorHandlers(error) });
     } else {
-      console.log(courses.length);
-      res.send({
+      return res.send({
         data: courses.slice(req.body.firstValue, req.body.lastValue),
         totalNumOfCourses: courses.length,
       });
@@ -210,12 +209,23 @@ const getCourses = (req, res) => {
 
 const getUsers = (req, res) => {
   User.find({}, (error, user) => {
-    const users = user.slice(req.body.firstValue, req.body.lastValue);
+    const users = req.body.filterTerm
+      ? user
+          .filter(
+            (item) =>
+              item.firstName === req.body.filterTerm.split(" ")[0] &&
+              item.lastName === req.body.filterTerm.split(" ")[1]
+          )
+          .slice(req.body.firstValue, req.body.lastValue)
+      : user.slice(req.body.firstValue, req.body.lastValue);
 
     if (error) {
       res.send({ error: dbErrorHandlers(error) });
     } else {
-      res.send({ data: users, totalNumOfUsers: user.length });
+      res.send({
+        data: users,
+        totalNumOfUsers: req.body.filterTerm ? 0 : user.length,
+      });
     }
   });
 };
