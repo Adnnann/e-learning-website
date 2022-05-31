@@ -134,12 +134,10 @@ const Signup = () => {
         ...course,
       });
     }
-    console.log(values);
+
     course = {
       [name]: event.target.value,
     };
-
-    console.log(course);
 
     setValues({
       ...values,

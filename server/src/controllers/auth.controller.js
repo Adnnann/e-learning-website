@@ -3,8 +3,11 @@ import jwt from "jsonwebtoken";
 import expressJwt from "express-jwt";
 import User from "../models/user.model";
 import config from "../config/config";
+import Course from "../models/courses.model";
 
-const signin = (req, res) => {
+const signin = async (req, res) => {
+  const courseNum = await Course.find({}).exec();
+
   User.findOne({ email: req.body.email }, (err, user) => {
     if (user && user.active === false) {
       return res.send({ error: "You account has not been activated yet." });
@@ -29,7 +32,8 @@ const signin = (req, res) => {
       expire: new Date() + 999,
       httpOnly: true,
     });
-    res.send({
+
+    return res.send({
       token,
       user: {
         _id: user._id,
@@ -40,6 +44,7 @@ const signin = (req, res) => {
         userImage: user.userImage,
         enrolledInCourses: user.enrolledInCourses,
         completedCourses: user.completedCourses,
+        courseNum: user.role !== "student" ? courseNum.length : null,
       },
     });
   });

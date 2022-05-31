@@ -134,7 +134,7 @@ const EditProfile = () => {
     formData.append(
       "userImage",
       event.target.files[0],
-      `user_image_${loggedUser.user._id}-${Date.now()}.${
+      `userImage${loggedUser.user._id}-${Date.now()}.${
         event.target.files[0].name.split(".")[1]
       }`
     );

@@ -15,6 +15,9 @@ import {
   Box,
 } from "@material-ui/core/";
 import Modal from "@mui/material/Modal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { ButtonGroup, Typography } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -26,6 +29,7 @@ const style = {
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+  textAlign: "center",
 };
 
 const DeleteAccountModal = () => {
@@ -55,20 +59,36 @@ const DeleteAccountModal = () => {
       <Box sx={style}>
         <DialogTitle>DELETE ACCOUNT</DialogTitle>
         <DialogContent>
-          <DialogContentText>Are you sure?</DialogContentText>
+          <FontAwesomeIcon
+            icon={faTriangleExclamation}
+            style={{ fontSize: "60px" }}
+          />
         </DialogContent>
-        <DialogActions>
+        <DialogContent>
+          <Typography variant="h5" color="error">
+            Are you sure?
+          </Typography>
+        </DialogContent>
+        <ButtonGroup>
           <Button
+            variant="contained"
+            style={{ margin: "0 auto !important", minWidth: "120px" }}
             color="primary"
             autoFocus="autoFocus"
             onClick={redirectToCloseAccountForm}
           >
             OK
           </Button>
-          <Button color="primary" autoFocus="autoFocus" onClick={cancel}>
+          <Button
+            style={{ minWidth: "120px", marginLeft: "10px" }}
+            color="primary"
+            autoFocus="autoFocus"
+            onClick={cancel}
+            variant="contained"
+          >
             Cancel
           </Button>
-        </DialogActions>
+        </ButtonGroup>
       </Box>
     </Modal>
   );

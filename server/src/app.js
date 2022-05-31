@@ -22,11 +22,12 @@ app.use(cookieParser());
 
 app.use("/", authRoutes);
 app.use("/", userRoutes);
-app.use("/", userImageRoutes);
+
 app.use("/", courseRoutes);
 app.use("/", adminRoutes);
 
 app.use("/images", express.static("images"));
+app.use("/", userImageRoutes);
 
 app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {

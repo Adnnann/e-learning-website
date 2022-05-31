@@ -123,7 +123,6 @@ const courseCompleted = async (req, res) => {
 };
 
 const getUserCourses = (req, res) => {
-  console.log(req.body);
   Course.find({}, (err, course) => {
     const userCourses = [];
 
@@ -161,7 +160,6 @@ const getMentorCourses = (req, res) => {
   Course.find({ mentorId: req.body.mentorId })
     .where({ status: "active" })
     .exec((err, course) => {
-      console.log(course);
       if (err) {
         return res.send({ error: errorHandler.getErrorMessage(err) });
       }

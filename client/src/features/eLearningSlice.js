@@ -491,6 +491,9 @@ const eLearningSlice = createSlice({
     setCourseDeleteModal: (state, action) => {
       state.courseDeleteModal = action.payload;
     },
+    incrementNumOfCourses: (state, action) => {
+      state.loggedUser.user.courseNum += 1;
+    },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
   },
@@ -553,16 +556,7 @@ const eLearningSlice = createSlice({
       return { ...state, deleteCourse: payload };
     },
     [uploadImage.fulfilled]: (state, { payload }) => {
-      if (payload.imageUrl.includes("course")) {
-        return { ...state, uploadImage: payload };
-      }
-
-      if (payload.imageUrl) {
-        void (state.loggedUser.user.userImage = payload.imageUrl);
-        void (state.uploadImage = null);
-      } else {
-        return { ...state, uploadImage: payload };
-      }
+      return { ...state, uploadImage: payload };
     },
     [updateUserPassword.fulfilled]: (state, { payload }) => {
       return { ...state, updatePassword: payload };
@@ -705,6 +699,7 @@ export const {
   cleanCompletedCourseMessage,
   setFilterTerm,
   setCourseDeleteModal,
+  incrementNumOfCourses,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

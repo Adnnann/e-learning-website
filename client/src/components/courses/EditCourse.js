@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "0",
   },
   saveButton: {
-    marginRight: "10px",
+    marginRight: "10px !important",
   },
 }));
 
@@ -100,6 +100,7 @@ const EditCourse = () => {
           mentorId: loggedUser.user._id,
           firstItem: 1,
           lastItem: 11,
+          page: 1,
         };
         dispatch(cleanCourseUpdatedMessage());
         dispatch(cleanUploadImageStatus());
@@ -125,6 +126,8 @@ const EditCourse = () => {
   }, [updateCourseStatus]);
 
   const { title, level, description, duration } = courseToEdit;
+
+  console.log(uploadImageStatus.imageUrl);
 
   const [values, setValues] = useState({
     title: title,
@@ -161,6 +164,7 @@ const EditCourse = () => {
     const course = {
       param: courseToEdit._id,
       data: {
+        courseImage: uploadImageStatus.imageUrl,
         ...values,
       },
     };
@@ -179,12 +183,14 @@ const EditCourse = () => {
     document.getElementById("uploadImage").click();
   };
 
+  //RESOLVE SAVING IMAGES. Add Angula, Vue and other images in folder and save their paths in seed
   const handleUpload = (event) => {
     let formData = new FormData();
+    console.log(courseToEdit.courseImage);
     formData.append(
       "userImage",
       event.target.files[0],
-      `course_image_${courseToEdit._id}-${Date.now()}.${
+      `courseImage${courseToEdit._id}-${Date.now()}.${
         event.target.files[0].name.split(".")[1]
       }`
     );

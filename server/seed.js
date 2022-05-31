@@ -80,6 +80,32 @@ const duration = [
   "5 - 15 Days",
 ];
 
+const coursesTitlesAndImages = [
+  {
+    title: `Node.js - Beginner course`,
+    image:
+      "https://buddy.works/guides/covers/test-nodejs-app/share-nodejs-logo.png",
+  },
+  {
+    title: `React.js - Beginner course`,
+    image: "https://blog.wildix.com/wp-content/uploads/2020/06/react-logo.jpg",
+  },
+  {
+    title: `Vue.js - Beginner course`,
+    image: "https://miro.medium.com/max/900/0*EBTwokY-nMyAvDAQ",
+  },
+  {
+    title: `Angular.js - Beginner course`,
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSY5G3jvh6ezlW2kdJWWuWs1vELTstyFy6RcQ&usqp=CAU",
+  },
+  {
+    title: `Express.js - Beginner course`,
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSY5G3jvh6ezlW2kdJWWuWs1vELTstyFy6RcQ&usqp=CAU",
+  },
+];
+
 mongoose
   .connect(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB successfully connected..."))
@@ -90,20 +116,12 @@ const createUsers = async () => {
   const user = await Users.where({ role: "mentor" }).exec();
 
   for (let i = 0; i < 101; i++) {
+    const randomIndex = Math.floor(Math.random() * 5);
     courses.push({
       mentorId: user[Math.floor(Math.random() * user.length)]._id,
-      title:
-        i === 0
-          ? `Aed gravida velit vitae ${i}`
-          : i === 1
-          ? `Bed gravida velit vitae ${i}`
-          : i === 2
-          ? `Ced gravida velit vitae ${i}`
-          : i === 3
-          ? `Ded gravida velit vitae ${i}`
-          : `Sed gravida velit vitae ${i}`,
+      title: `${coursesTitlesAndImages[randomIndex].title} - ${i}`,
       level: levels[Math.floor(Math.random() * levels.length)],
-      courseImage: `/images/image${i + 1}.jpg`,
+      courseImage: coursesTitlesAndImages[randomIndex].image,
       duration: duration[Math.floor(Math.random() * duration.length)],
       description:
         "Sed gravida velit vitae condimentum posuere. Donec libero mauris, tempor ac luctus ut.",

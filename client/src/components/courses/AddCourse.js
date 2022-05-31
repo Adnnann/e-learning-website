@@ -11,6 +11,8 @@ import {
   getCreateCourseMessage,
   createCourse,
   fetchMentorCourses,
+  incrementNumOfCourses,
+  getCoursesDisplayPage,
 } from "../../features/eLearningSlice";
 import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
@@ -89,17 +91,18 @@ const AddCourse = () => {
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
   const loggedUser = useSelector(getLoggedUserData);
   const classes = useStyles();
+  const page = useSelector(getCoursesDisplayPage);
 
   useEffect(() => {
     if (addCourseStatus?.message) {
       if (loggedUser.user.role === "mentor") {
-        const user = {
+        const courses = {
           mentorId: loggedUser.user._id,
-          firstItem: 1,
-          lastItem: 11,
+          firstItem: page === 1 ? 1 : page * 10 - 11,
+          lastItem: page === 1 ? 12 : page * 10,
         };
-
-        dispatch(fetchMentorCourses(user));
+        dispatch(incrementNumOfCourses());
+        dispatch(fetchMentorCourses(courses));
         dispatch(cleanAddCourseMessage());
         dispatch(cleanUploadImageStatus());
         navigate("/dashboard");
@@ -156,6 +159,7 @@ const AddCourse = () => {
   const clickSubmit = () => {
     const course = {
       mentorId: loggedUser.user._id,
+      courseImage: uploadImageStatus.imageUrl,
       ...values,
     };
 
@@ -163,6 +167,7 @@ const AddCourse = () => {
   };
 
   const cancel = () => {
+    dispatch(cleanUploadImageStatus());
     if (loggedUser.user.role === "admin") {
       navigate("/courses");
     } else {
@@ -179,7 +184,9 @@ const AddCourse = () => {
     formData.append(
       "userImage",
       event.target.files[0],
-      `course_image-${Date.now()}.${event.target.files[0].name.split(".")[1]}`
+      `courseImage${loggedUser.user.courseNum}-${Date.now()}.${
+        event.target.files[0].name.split(".")[1]
+      }`
     );
     dispatch(uploadImage(formData, { id: "test" }));
   };

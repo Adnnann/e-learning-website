@@ -285,7 +285,7 @@ const AllUsers = () => {
         </Grid>
       </Grid>
       <Grid container justifyContent={"center"}>
-        {users?.totalNumOfCourses && Math.ceil(users.totalNumOfCourses) > 1 ? (
+        {users?.data && Math.ceil(users.data.length / 12) > 1 ? (
           <PaginationComponent
             page={page}
             handleChange={handlePagination}
