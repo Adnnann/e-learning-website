@@ -1,16 +1,13 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import {
   signinUser,
   userToken,
-  getUserToken,
   setSigninUserForm,
   setSignupUserForm,
   getLoggedUserData,
   cleanLoginMessage,
-  fetchUserCourses,
   fetchCourses,
   fetchMentorCourses,
   fetchUsers,
@@ -59,11 +56,6 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     marginBottom: theme.spacing(2),
     margin: "0 auto",
-  },
-  noaccount: {
-    margin: "auto",
-    marginBottom: theme.spacing(1),
-    marginRight: "0",
   },
   signup: {
     margin: "auto",

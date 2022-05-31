@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   cleanStore,
   fetchCourses,
@@ -10,7 +12,7 @@ import {
   setEditUserProfileForm,
   signoutUser,
 } from "../../features/eLearningSlice";
-import { useNavigate } from "react-router-dom";
+import { Typography } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -21,8 +23,6 @@ import {
   faUserGroup,
   faCube,
 } from "@fortawesome/free-solid-svg-icons";
-import { Typography } from "@material-ui/core";
-import { useDispatch, useSelector } from "react-redux";
 import ButtonGroupWithIcons from "./LeftSidePanelButtons";
 import { makeStyles } from "@mui/styles";
 

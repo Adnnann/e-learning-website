@@ -21,10 +21,10 @@ import {
   Typography,
   Icon,
   Grid,
-} from "@material-ui/core/";
+  ButtonGroup,
+} from "@mui/material";
 import userImagePlaceholder from "../../assets/userImgPlaceholder.png";
 import { makeStyles } from "@mui/styles";
-import { ButtonGroup } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -56,11 +56,6 @@ const useStyles = makeStyles((theme) => ({
   cancel: {
     marginBottom: theme.spacing(2),
     minWidth: "120px",
-  },
-  haveaccount: {
-    margin: "auto",
-    marginBottom: theme.spacing(1),
-    marginRight: "0",
   },
   signin: {
     margin: "auto",
@@ -130,7 +125,6 @@ const EditProfile = () => {
   const handleUpload = (event) => {
     let formData = new FormData();
 
-    //all files will be named image{allRecipes.lenght+1}.jpg
     formData.append(
       "userImage",
       event.target.files[0],

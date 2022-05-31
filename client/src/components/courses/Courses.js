@@ -1,21 +1,17 @@
-import * as React from "react";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import {
-  cleanEnrollInCourseMessage,
   enrollInCourse,
   fetchCourses,
   fetchMentors,
-  fetchUserCourses,
   fetchUserData,
   getCourses,
   getCoursesDisplayPage,
   getEnrollInCourseMessage,
   getLoggedUserData,
   setCoursesDisplayPage,
-  setUsersDisplayPage,
 } from "../../features/eLearningSlice";
 import {
   Typography,
@@ -34,9 +30,11 @@ import {
   DialogTitle,
 } from "@mui/material";
 import PaginationComponent from "../utils/Pagination";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import {
+  FilterListIcon,
+  KeyboardArrowDownIcon,
+  KeyboardArrowUpIcon,
+} from "@mui/icons-material/FilterList";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -186,7 +184,6 @@ const Courses = () => {
 
   const showModal = (title) => {
     setCourseToDisplay(courses.data.filter((item) => item.title === title));
-
     setCourseOverviewModal(true);
   };
 

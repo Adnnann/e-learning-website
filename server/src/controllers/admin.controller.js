@@ -109,11 +109,6 @@ const getCourses = (req, res) => {
           )
           .slice(req.body.firstValue, req.body.lastValue);
       }
-
-      // courses = course.slice(
-      //   (Math.ceil(course.length / 12) - 1) * 12,
-      //   course.length
-      // );
     } else if (req.body.filterLevel && req.body.filterDuration) {
       courses = course
         .filter(
@@ -179,7 +174,7 @@ const getUsers = (req, res) => {
     if (error) {
       res.send({ error: dbErrorHandlers(error) });
     } else {
-      res.send({ data: users, totalNumOfCourses: user.length });
+      res.send({ data: users, totalNumOfUsers: user.length });
     }
   });
 };

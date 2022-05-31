@@ -1,23 +1,21 @@
 import { useSelector } from "react-redux";
 import {
   getCloseAccountFormStatus,
-  getCourses,
   getEditUserFormStatus,
   getEditUserPasswordFormStatus,
   getLoggedUserData,
   getMentorCourses,
   getSelectedFilterTerm,
 } from "../../features/eLearningSlice";
-import { makeStyles } from "@mui/styles";
-import { Grid } from "@material-ui/core";
-import EditUserPassword from "../user/EditUserPassword";
-import { Typography, useMediaQuery, Alert } from "@mui/material";
+import { Typography, useMediaQuery, Alert, Grid } from "@mui/material";
 import CloseAccountForm from "../user/DeleteAccountForm";
 import DeleteAccountModal from "../user/DeleteAccountModal";
 import EditUserDataButtons from "./DashboardButtons";
 import EditProfile from "../user/EditUserProfile";
 import DashboardLeftPanel from "./DashboardLeftPanel";
 import DashboardRightPanel from "./DashboardRightPanel";
+import EditUserPassword from "../user/EditUserPassword";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   largeScreens: {

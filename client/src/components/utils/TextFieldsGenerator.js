@@ -1,5 +1,4 @@
-import { Button, TextField, Grid } from "@mui/material";
-import _ from "lodash";
+import { TextField, Grid } from "@mui/material";
 
 export default function TextFieldsGenerator({
   array,
@@ -15,7 +14,6 @@ export default function TextFieldsGenerator({
       {array.map((item, index) => (
         <Grid key={item} item>
           <br />
-          {/* {_.chain(item).kebabCase().replace("-", "").startCase().value()} */}
           <div className={className}>
             <TextField
               label={labels[index]}

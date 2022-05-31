@@ -7,17 +7,16 @@ import {
   setEditUserProfileForm,
 } from "../../features/eLearningSlice";
 import {
-  DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Button,
   Box,
-} from "@material-ui/core/";
-import Modal from "@mui/material/Modal";
+  Modal,
+  ButtonGroup,
+  Typography,
+} from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { ButtonGroup, Typography } from "@mui/material";
 
 const style = {
   position: "absolute",

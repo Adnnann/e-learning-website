@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getCourseToEdit,
   getUpdateCourseStatus,
@@ -183,7 +183,6 @@ const EditCourse = () => {
     document.getElementById("uploadImage").click();
   };
 
-  //RESOLVE SAVING IMAGES. Add Angula, Vue and other images in folder and save their paths in seed
   const handleUpload = (event) => {
     let formData = new FormData();
     console.log(courseToEdit.courseImage);

@@ -1,7 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
+import {
+  getLoggedUserData,
+  closeAccount,
+  cleanStore,
+  getCloseAccountStatus,
+} from "../../features/eLearningSlice";
 import {
   Card,
   CardActions,
@@ -10,13 +16,7 @@ import {
   TextField,
   Typography,
   Icon,
-} from "@material-ui/core/";
-import {
-  getLoggedUserData,
-  closeAccount,
-  cleanStore,
-  getCloseAccountStatus,
-} from "../../features/eLearningSlice";
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({

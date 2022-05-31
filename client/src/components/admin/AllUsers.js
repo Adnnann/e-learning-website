@@ -1,10 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { Tooltip } from "@mui/material";
-import TableComponents from "../utils/Table";
 import {
   getLoggedUserData,
   getUsers,
@@ -16,12 +13,9 @@ import {
   getActivateAccountMessage,
   cleanActivateAccountMessage,
 } from "../../features/eLearningSlice";
-import Checkbox from "@mui/material/Checkbox";
-import { Grid } from "@mui/material";
+import { Grid, Checkbox, Tooltip } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
 import PaginationComponent from "../utils/Pagination";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -285,11 +279,11 @@ const AllUsers = () => {
         </Grid>
       </Grid>
       <Grid container justifyContent={"center"}>
-        {users?.data && Math.ceil(users.data.length / 12) > 1 ? (
+        {users?.data && Math.ceil(users.totalNumOfUsers / 12) > 1 ? (
           <PaginationComponent
             page={page}
             handleChange={handlePagination}
-            numberOfPages={Math.ceil(users.totalNumOfCourses / 12)}
+            numberOfPages={Math.ceil(users.totalNumOfUsers / 12)}
             numberOfItems={Object.keys(users.data).length}
           />
         ) : null}

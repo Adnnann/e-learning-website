@@ -1,9 +1,5 @@
-import * as React from "react";
-import { TextField } from "@mui/material";
-import { InputAdornment } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { makeStyles } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   fetchCourses,
   fetchMentorCourses,
@@ -13,7 +9,9 @@ import {
   setFilter,
   setFilterTerm,
 } from "../../features/eLearningSlice";
-import { Navigate, useNavigate } from "react-router-dom";
+import { TextField, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   searchInput: {

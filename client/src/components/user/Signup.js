@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setSignupUserForm,
@@ -12,7 +12,6 @@ import {
   CardActions,
   CardContent,
   Button,
-  TextField,
   Typography,
   Icon,
   Grid,
@@ -23,9 +22,9 @@ import {
   DialogTitle,
   Checkbox,
   useMediaQuery,
-} from "@material-ui/core/";
-import { makeStyles } from "@mui/styles";
+} from "@mui/material";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {

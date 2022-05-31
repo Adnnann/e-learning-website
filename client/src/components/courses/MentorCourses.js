@@ -1,7 +1,6 @@
-import * as React from "react";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import {
   fetchMentorCourses,
@@ -16,9 +15,6 @@ import {
   getCourseDeleteModalStatus,
   setCourseDeleteModal,
 } from "../../features/eLearningSlice";
-import PaginationComponent from "../utils/Pagination";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import {
   Typography,
   Grid,
@@ -32,8 +28,13 @@ import {
   DialogTitle,
   DialogContent,
 } from "@mui/material";
+import {
+  EditOutlinedIcon,
+  DeleteOutlineOutlinedIcon,
+} from "@mui/icons-material/EditOutlined";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import PaginationComponent from "../utils/Pagination";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({

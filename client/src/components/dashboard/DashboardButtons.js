@@ -8,9 +8,9 @@ import {
   setEditUserProfileForm,
   signoutUser,
 } from "../../features/eLearningSlice";
-import { makeStyles } from "@mui/styles";
-import { Button, ButtonGroup } from "@material-ui/core/";
+import { Button, ButtonGroup } from "@mui/material";
 import DropdownButtons from "../utils/DropdownButtons";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   notSmallScreens: {

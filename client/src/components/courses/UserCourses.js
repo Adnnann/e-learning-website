@@ -1,10 +1,10 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   cleanCompletedCourseMessage,
   cleanEnrollInCourseMessage,
   completeCourse,
-  fetchMentors,
   fetchUserCourses,
   fetchUserData,
   getAllMentors,
@@ -25,7 +25,6 @@ import {
   Box,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   card: {

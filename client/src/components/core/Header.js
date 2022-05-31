@@ -1,4 +1,6 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import {
   setSigninUserForm,
   setSignupUserForm,
@@ -6,13 +8,8 @@ import {
   cleanLoginMessage,
   cleanSignupMessage,
 } from "../../features/eLearningSlice";
-import { useDispatch } from "react-redux";
-import { Grid, Typography, AppBar, Toolbar } from "@material-ui/core";
-import Item from "@mui/material/Grid";
-import { Box, Button } from "@mui/material";
-import { useSelector } from "react-redux";
+import { Box, Button, Grid, Typography, AppBar, Toolbar } from "@mui/material";
 import Search from "../utils/Search";
-import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({

@@ -21,7 +21,6 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 import {
   Tooltip,
   Button,
-  useMediaQuery,
   Grid,
   Dialog,
   DialogActions,
@@ -33,7 +32,6 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-import TableComponents from "../utils/Table";
 import SelectComponent from "../utils/SelectComponent";
 import PaginationComponent from "../utils/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
