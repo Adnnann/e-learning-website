@@ -422,6 +422,9 @@ const eLearningSlice = createSlice({
     setFilter: (state, action) => {
       state.filterTerm = action.payload;
     },
+    cleanFilterTerm: (state, action) => {
+      state.filterTerm = {};
+    },
     cleanDeleteCourseMessage: (state, payload) => {
       state.deleteCourse = {};
     },
@@ -692,6 +695,7 @@ export const {
   setFilterTerm,
   setCourseDeleteModal,
   incrementNumOfCourses,
+  cleanFilterTerm,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

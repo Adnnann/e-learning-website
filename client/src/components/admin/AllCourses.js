@@ -15,6 +15,7 @@ import {
   setCourseDeleteModal,
   getSelectedFilterTerm,
   getLoggedUserData,
+  cleanFilterTerm,
 } from "../../features/eLearningSlice";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -123,6 +124,19 @@ const useStyles = makeStyles((theme) => ({
       position: "unset",
     },
   },
+  removeFilters: {
+    paddingRight: "10px",
+    paddingTop: "20px",
+    backgroundColor: "#2F4F4F !important",
+    minWidth: "220px !important",
+    minHeight: "50px !important",
+    marginLeft: "10px !important",
+    [theme.breakpoints.only("xs")]: {
+      width: "95%",
+      marginLeft: "5px !important",
+      marginTop: "10px !important",
+    },
+  },
 }));
 
 const AllCourses = () => {
@@ -199,6 +213,7 @@ const AllCourses = () => {
         filterMentorName: filters.filterMentorName
           ? filters.filterMentorName
           : "",
+        filterTerm: filterTerm ? filterTerm : null,
         [name]: event.target.value,
         page: 1,
         firstItem: 0,
@@ -257,6 +272,27 @@ const AllCourses = () => {
     dispatch(setCourseDeleteModal(true));
   };
 
+  const removeFilters = () => {
+    const courses = {
+      filterLevel: undefined,
+      filterDuration: undefined,
+      filterTitle: filters.filterTitle ? filters.filterTitle : "",
+      filterMentorName: filters.filterMentorName
+        ? filters.filterMentorName
+        : "",
+      filterTerm: undefined,
+    };
+    dispatch(fetchCourses(courses));
+    setFilters({
+      filterByTitle: true,
+      filterByMentorName: false,
+      filterTitle: "",
+      filterMentorName: "",
+      filterLevel: "",
+      filterDuration: "",
+    });
+  };
+
   return (
     <Grid
       container
@@ -297,6 +333,13 @@ const AllCourses = () => {
           className={classes.addCourseButton}
         >
           Add courses
+        </Button>
+        <Button
+          variant="contained"
+          onClick={removeFilters}
+          className={classes.removeFilters}
+        >
+          Remove filters
         </Button>
       </Grid>
       {Object.values(filterItems).map((item, index) => {

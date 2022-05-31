@@ -79,106 +79,130 @@ const getCourses = (req, res) => {
     });
 
     if (req.body.filterTerm) {
-      courses = course.filter(
-        (item) =>
-          item.title
-            .toLowerCase()
-            .includes(req.body.filterTerm.toLowerCase()) ||
-          item.mentorId.toLowerCase().split(" ")[0] ===
-            req.body.filterTerm.toLowerCase() ||
-          item.mentorId.toLowerCase().split(" ")[1] ===
-            req.body.filterTerm.toLowerCase()
-      );
+      if (req.body.filterLevel && req.body.filterDuration) {
+        req.body.filterLevel === "All levels"
+          ? (courses = course.filter(
+              (item) =>
+                (item.title
+                  .toLowerCase()
+                  .includes(req.body.filterTerm.toLowerCase()) ||
+                  item.mentorId.toLowerCase().split(" ")[0] ===
+                    req.body.filterTerm.toLowerCase() ||
+                  item.mentorId.toLowerCase().split(" ")[1] ===
+                    req.body.filterTerm.toLowerCase()) &&
+                (item.level === "Beginner Level" ||
+                  item.level === "Advanced Level" ||
+                  item.level === "Intermediate Level") &&
+                item.duration === req.body.filterDuration
+            ))
+          : (courses = course.filter(
+              (item) =>
+                (item.title
+                  .toLowerCase()
+                  .includes(req.body.filterTerm.toLowerCase()) ||
+                  item.mentorId.toLowerCase().split(" ")[0] ===
+                    req.body.filterTerm.toLowerCase() ||
+                  item.mentorId.toLowerCase().split(" ")[1] ===
+                    req.body.filterTerm.toLowerCase()) &&
+                item.level === req.body.filterLevel &&
+                item.duration === req.body.filterDuration
+            ));
+      } else if (req.body.filterLevel) {
+        req.body.filterLevel === "All levels"
+          ? (courses = course.filter(
+              (item) =>
+                (item.title
+                  .toLowerCase()
+                  .includes(req.body.filterTerm.toLowerCase()) ||
+                  item.mentorId.toLowerCase().split(" ")[0] ===
+                    req.body.filterTerm.toLowerCase() ||
+                  item.mentorId.toLowerCase().split(" ")[1] ===
+                    req.body.filterTerm.toLowerCase()) &&
+                (item.level === "Beginner Level" ||
+                  item.level === "Advanced Level" ||
+                  item.level === "Intermediate Level")
+            ))
+          : (courses = course.filter(
+              (item) =>
+                (item.title
+                  .toLowerCase()
+                  .includes(req.body.filterTerm.toLowerCase()) ||
+                  item.mentorId.toLowerCase().split(" ")[0] ===
+                    req.body.filterTerm.toLowerCase() ||
+                  item.mentorId.toLowerCase().split(" ")[1] ===
+                    req.body.filterTerm.toLowerCase()) &&
+                item.level === req.body.filterLevel
+            ));
+      } else if (req.body.filterDuration) {
+        courses = course.filter(
+          (item) =>
+            (item.title
+              .toLowerCase()
+              .includes(req.body.filterTerm.toLowerCase()) ||
+              item.mentorId.toLowerCase().split(" ")[0] ===
+                req.body.filterTerm.toLowerCase() ||
+              item.mentorId.toLowerCase().split(" ")[1] ===
+                req.body.filterTerm.toLowerCase()) &&
+            item.filterDuration === req.body.filterDuration
+        );
+      } else {
+        courses = course.filter(
+          (item) =>
+            item.title
+              .toLowerCase()
+              .includes(req.body.filterTerm.toLowerCase()) ||
+            item.mentorId.toLowerCase().split(" ")[0] ===
+              req.body.filterTerm.toLowerCase() ||
+            item.mentorId.toLowerCase().split(" ")[1] ===
+              req.body.filterTerm.toLowerCase()
+        );
+      }
 
       return res.send({ data: courses, totalNumOfCourses: courses.length });
     }
 
     if (!req.body.filterLevel && !req.body.filterDuation) {
-      courses = course.slice(req.body.firstValue, req.body.lastValue);
+      courses = course;
     } else if (req.body.filterLevel === "All levels") {
       if (req.body.filterDuration) {
-        courses = course
-          .filter(
-            (item) =>
-              (item.level === "Beginner Level" ||
-                item.level === "Advanced Level" ||
-                item.level === "Intermediate Level") &&
-              item.duration.includes(req.body.filterDuration)
-          )
-          .slice(req.body.firstValue, req.body.lastValue);
-      } else {
-        courses = course
-          .filter(
-            (item) =>
-              item.level === "Beginner Level" ||
+        courses = course.filter(
+          (item) =>
+            (item.level === "Beginner Level" ||
               item.level === "Advanced Level" ||
-              item.level === "Intermediate Level"
-          )
-          .slice(req.body.firstValue, req.body.lastValue);
+              item.level === "Intermediate Level") &&
+            item.duration.includes(req.body.filterDuration)
+        );
+      } else {
+        courses = course.filter(
+          (item) =>
+            item.level === "Beginner Level" ||
+            item.level === "Advanced Level" ||
+            item.level === "Intermediate Level"
+        );
       }
     } else if (req.body.filterLevel && req.body.filterDuration) {
-      courses = course
-        .filter(
-          (item) =>
-            item.duration.includes(req.body.filterDuration) &&
-            item.level.includes(req.body.filterLevel)
-        )
-        .slice(req.body.firstValue, req.body.lastValue);
+      courses = course.filter(
+        (item) =>
+          item.duration.includes(req.body.filterDuration) &&
+          item.level.includes(req.body.filterLevel)
+      );
     } else if (req.body.filterLevel) {
-      courses = course
-        .filter((item) => item.level.includes(req.body.filterLevel))
-        .slice(req.body.firstValue, req.body.lastValue);
+      courses = course.filter((item) =>
+        item.level.includes(req.body.filterLevel)
+      );
     } else if (req.body.filterDuration) {
-      courses = course
-        .filter((item) => item.duration.includes(req.body.filterDuration))
-        .slice(req.body.firstValue, req.body.lastValue);
+      courses = course.filter((item) =>
+        item.duration.includes(req.body.filterDuration)
+      );
     }
 
     if (error) {
       res.send({ error: dbErrorHandlers(error) });
     } else {
+      console.log(courses.length);
       res.send({
-        data: courses,
-        totalNumOfCourses: req.body.filterTerm
-          ? course.filter(
-              (item) =>
-                item.title
-                  .toLowerCase()
-                  .includes(req.body.filterTerm.toLowerCase()) ||
-                item.mentorId.toLowerCase().split(" ")[0] ===
-                  req.body.filterTerm.toLowerCase() ||
-                item.mentorId.toLowerCase().split(" ")[1] ===
-                  req.body.filterTerm.toLowerCase()
-            ).length
-          : req.body.filterLevel === "All levels" && req.body.filterDuration
-          ? course.filter(
-              (item) =>
-                (item.level === "Beginner Level" ||
-                  item.level === "Advanced Level" ||
-                  item.level === "Intermediate Level") &&
-                item.duration.includes(req.body.filterDuration)
-            ).length
-          : req.body.filterLevel === "All levels"
-          ? course.filter(
-              (item) =>
-                item.level === "Beginner Level" ||
-                item.level === "Advanced Level" ||
-                item.level === "Intermediate Level"
-            ).length
-          : req.body.filterLevel && req.body.filterDuration
-          ? course.filter(
-              (item) =>
-                item.duration.includes(req.body.filterDuration) &&
-                item.level.includes(req.body.filterLevel)
-            ).length
-          : req.body.filterLevel
-          ? course.filter((item) => item.level.includes(req.body.filterLevel))
-              .length
-          : req.body.filterDuration
-          ? course.filter((item) =>
-              item.duration.includes(req.body.filterDuration)
-            ).length
-          : course.length,
+        data: courses.slice(req.body.firstValue, req.body.lastValue),
+        totalNumOfCourses: courses.length,
       });
     }
   });
