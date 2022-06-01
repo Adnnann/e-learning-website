@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
   save: {
     marginBottom: theme.spacing(2),
+    marginRight: theme.spacing(2),
     minWidth: 110,
   },
   cancel: {

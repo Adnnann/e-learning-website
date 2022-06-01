@@ -134,6 +134,7 @@ const AddCourse = () => {
     description: "",
     level: "",
     duration: "",
+    error: "",
   });
 
   const handleChange = (name) => (event) => {
@@ -167,7 +168,15 @@ const AddCourse = () => {
       ...values,
     };
 
-    dispatch(createCourse(course));
+    if (course.courseImage) {
+      setValues({ ...values, error: "" });
+      dispatch(createCourse(course));
+    } else {
+      setValues({
+        ...values,
+        error: "You have to upload image for the course!",
+      });
+    }
   };
 
   const cancel = () => {
@@ -259,8 +268,10 @@ const AddCourse = () => {
             Upload photo
           </Button>
         </Grid>
-        {addCourseStatus?.error ? (
-          <p className={classes.error}>{addCourseStatus.error}</p>
+        {addCourseStatus?.error || values.error ? (
+          <p className={classes.error}>
+            {addCourseStatus.error || values.error}
+          </p>
         ) : null}
       </Grid>
     </Card>

@@ -139,8 +139,10 @@ const EditProfile = () => {
 
   const cancel = () => {
     if (loggedUser.user.role === "admin") {
+      dispatch(cleanUploadImageStatus());
       navigate("/users");
     } else {
+      dispatch(cleanUploadImageStatus());
       dispatch(setEditUserProfileForm(false));
     }
   };

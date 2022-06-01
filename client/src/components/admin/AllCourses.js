@@ -78,16 +78,18 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: "20px",
   },
   card: {
-    borderStyle: "solid",
-    borderWidth: "1px",
-    marginBottom: "10px",
-    paddingLeft: "5px",
-    paddingRight: "5px",
+    maxWidth: 800,
+    margin: "auto",
+    textAlign: "center",
+    marginTop: theme.spacing(10),
+    paddingBottom: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
   },
   cardContainer: {
     marginBottom: "20px",
   },
-  cardImage: { marginTop: "5px" },
+  cardImage: { marginTop: "5px", width: "240px", height: "220px" },
   cardText: { paddingLeft: "10px" },
   cardTitle: {
     fontWeight: "900 !important",
@@ -180,28 +182,28 @@ const AllCourses = () => {
   };
 
   const [filters, setFilters] = useState({
-    filterByTitle: true,
-    filterByMentorName: false,
-    filterTitle: "",
-    filterMentorName: "",
+    sortByTitle: true,
+    sortByMentorName: false,
+    sortTitle: "",
+    sortMentorName: "",
     filterLevel: "",
     filterDuration: "",
   });
 
   const handleChange = (name) => (event) => {
-    if (name === "filterTitle") {
+    if (name === "sortTitle") {
       setFilters({
         ...filters,
         [name]: event.target.value,
-        filterByTitle: true,
-        filterByMentorName: false,
+        sortByTitle: true,
+        sortByMentorName: false,
       });
-    } else if (name === "filterMentorName") {
+    } else if (name === "sortMentorName") {
       setFilters({
         ...filters,
         [name]: event.target.value,
-        filterByTitle: false,
-        filterByMentorName: true,
+        sortByTitle: false,
+        sortByMentorName: true,
       });
     } else {
       const courses = {
@@ -233,15 +235,15 @@ const AllCourses = () => {
   const orderBy = ["A-Z", "Z-A"];
 
   const filterBy = [
-    "filterTitle",
-    "filterMentorName",
+    "sortTitle",
+    "sortMentorName",
     "filterLevel",
     "filterDuration",
   ];
 
   const filterByTitles = [
-    "Filter By Title",
-    "Filter By Mentor Name",
+    "Sort By Title",
+    "Sort By Mentor Name",
     "Filter By Level",
     "Filter By Duration",
   ];
@@ -381,19 +383,19 @@ const AllCourses = () => {
               {_.chain(Object.values(courses.data))
                 .orderBy(
                   [
-                    filters.filterByTitle
+                    filters.sortByTitle
                       ? (course) => course.title.toLowerCase()
-                      : filters.filterByMentorName
+                      : filters.sortByMentorName
                       ? (course) => course.mentorId.toLowerCase()
                       : null,
                   ],
                   [
-                    filters.filterByTitle
-                      ? filters.filterTitle === "A-Z"
+                    filters.sortByTitle
+                      ? filters.sortTitle === "A-Z"
                         ? "asc"
                         : "desc"
-                      : filters.filterByMentorName
-                      ? filters.filterMentorName === "A-Z"
+                      : filters.sortByMentorName
+                      ? filters.sortMentorName === "A-Z"
                         ? "asc"
                         : "desc"
                       : null,

@@ -78,11 +78,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "50px",
   },
   card: {
-    marginBottom: "10px",
-    paddingLeft: "5px",
-    paddingRight: "5px",
-    marginLeft: "5px",
-    marginRight: "5px",
+    maxWidth: 800,
+    margin: "auto",
+    textAlign: "center",
+    marginTop: theme.spacing(10),
+    paddingBottom: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
   },
   title: {
     textAlign: "left",
