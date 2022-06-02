@@ -11,6 +11,7 @@ import {
 import { Box, Button, Grid, Typography, AppBar, Toolbar } from "@mui/material";
 import Search from "../utils/Search";
 import { makeStyles } from "@mui/styles";
+import { faWindowMinimize } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme) => ({
   logo: {
@@ -114,6 +115,10 @@ const Header = () => {
     dispatch(cleanLoginMessage());
   };
 
+  const redirectToDashboard = () => {
+    window.location.pathname !== "/" && navigate("/dashboard");
+  };
+
   return (
     <AppBar position="static" className={classes.headerContainer}>
       <Toolbar>
@@ -124,7 +129,7 @@ const Header = () => {
               className={classes.logo}
               alt="Expense tracker"
               src="https://www.elearning-journal.com/wp-content/uploads/2019/08/news_07082019_11.jpg"
-              onClick={() => navigate("/dashboard")}
+              onClick={redirectToDashboard}
             />
           </Grid>
 

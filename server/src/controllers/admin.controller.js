@@ -213,7 +213,7 @@ const getUsers = (req, res) => {
       ? user
           .filter(
             (item) =>
-              item.firstName === req.body.filterTerm.split(" ")[0] &&
+              item.firstName === req.body.filterTerm.split(" ")[0] ||
               item.lastName === req.body.filterTerm.split(" ")[1]
           )
           .slice(req.body.firstValue, req.body.lastValue)

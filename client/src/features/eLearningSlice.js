@@ -61,7 +61,7 @@ export const updateUserData = createAsyncThunk(
   "users/updateUserData",
   async (user) => {
     return await axios
-      .put(`/api/users/${user.params}`, user.data, {
+      .put(`/api/users/${user.param}`, user.data, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",

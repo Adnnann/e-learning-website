@@ -279,12 +279,10 @@ const AllCourses = () => {
       page: 1,
       firstItem: 0,
       lastItem: 11,
-      filterLevel: undefined,
-      filterDuration: undefined,
-      filterTitle: filters.filterTitle ? filters.filterTitle : "",
-      filterMentorName: filters.filterMentorName
-        ? filters.filterMentorName
-        : "",
+      filterLevel: "",
+      filterDuration: "",
+      filterTitle: "",
+      filterMentorName: "",
       filterTerm: undefined,
     };
     dispatch(setCoursesDisplayPage(1));
@@ -292,8 +290,8 @@ const AllCourses = () => {
     setFilters({
       filterByTitle: true,
       filterByMentorName: false,
-      filterTitle: "",
-      filterMentorName: "",
+      filterTitle: "A-Z",
+      filterMentorName: "A-Z",
       filterLevel: "",
       filterDuration: "",
     });
@@ -355,7 +353,7 @@ const AllCourses = () => {
             <SelectComponent
               className={classes.selectFields}
               array={filterItems[index]}
-              selectedValue={filters[filterBy[index]]}
+              selectedValue={filters[filterBy[index]] || ""}
               handleChange={handleChange(filterBy[index])}
             />
           </Grid>

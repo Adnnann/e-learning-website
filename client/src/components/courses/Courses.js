@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import _ from "lodash";
+import _, { filter } from "lodash";
 import {
   enrollInCourse,
   fetchCourses,
@@ -28,6 +28,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  useEventCallback,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -159,11 +160,6 @@ const Courses = () => {
   }, [enrollInCourseStatus]);
 
   const [filters, setFilters] = useState({
-    filterByTitle: true,
-    filterByDuration: false,
-    filterByLevel: false,
-    filterTitle: "",
-    filterMentorName: "",
     filterLevel: "",
     filterDuration: "",
   });
@@ -196,21 +192,21 @@ const Courses = () => {
     setFilters({
       ...filters,
       [name]: event.target.name,
-      filterByLevel: true,
     });
 
     const courses = {
-      filterDuration: checked.slice(5, 10).includes(true)
-        ? filters.filterDuration
-        : undefined,
-      filterLevel: checked.slice(0, 4).includes(true)
-        ? event.target.name
-        : undefined,
+      filterLevel:
+        checked.slice(0, 4).filter(Boolean).length > 0
+          ? event.target.name
+          : undefined,
+      filterDuration:
+        checked.slice(5, 10).filter(Boolean).length > 0
+          ? filters.filterDuration
+          : undefined,
       page: 1,
       firstItem: 0,
       lastItem: 11,
     };
-
     dispatch(setCoursesDisplayPage(1));
     dispatch(fetchCourses(courses));
   };
@@ -230,17 +226,18 @@ const Courses = () => {
     });
 
     const courses = {
-      filterLevel: checked.slice(0, 4).includes(true)
-        ? filters.filterLevel
-        : undefined,
-      filterDuration: checked.slice(4, 10).includes(true)
-        ? event.target.name
-        : undefined,
+      filterLevel:
+        checked.slice(0, 4).filter(Boolean).length > 0
+          ? filters.filterLevel
+          : undefined,
+      filterDuration:
+        checked.slice(5, 10).filter(Boolean).length > 0
+          ? event.target.name
+          : undefined,
       page: 1,
       firstItem: 0,
       lastItem: 11,
     };
-
     dispatch(setCoursesDisplayPage(1));
     dispatch(fetchCourses(courses));
   };
@@ -468,7 +465,12 @@ const Courses = () => {
                         >
                           {item.description}
                         </Typography>
-
+                        <Typography
+                          component={"p"}
+                          className={classes.description}
+                        >
+                          Mentor: {item.mentorId}
+                        </Typography>
                         <Typography
                           component={"p"}
                           className={classes.description}

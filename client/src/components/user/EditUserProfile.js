@@ -97,8 +97,13 @@ const EditProfile = () => {
     });
 
     if (updateUserStatus?.message) {
+      console.log("test");
       dispatch(cleanUploadImageStatus());
       dispatch(cleanUserUpdateMessage());
+
+      if (!userToEdit?._id) {
+        dispatch(fetchUserData(loggedUser.user._id));
+      }
 
       if (loggedUser.user.role === "admin") {
         const users = {
@@ -107,8 +112,10 @@ const EditProfile = () => {
         };
 
         dispatch(fetchUsers(users));
+
         navigate("/users");
       } else {
+        dispatch(setEditUserProfileForm(false));
         navigate("/dashboard");
       }
     }
@@ -130,13 +137,14 @@ const EditProfile = () => {
       },
     };
 
+    console.log(user);
     if (userToEdit?._id) {
       dispatch(updateUserDataByAdmin(user));
     } else {
       dispatch(updateUserData(user));
     }
   };
-
+  console.log(uploadUserImageStatus.imageUrl);
   const cancel = () => {
     if (loggedUser.user.role === "admin") {
       dispatch(cleanUploadImageStatus());
@@ -242,12 +250,12 @@ const EditProfile = () => {
             <Grid item xs={12} md={2} lg={2} xl={2}>
               <img
                 src={
-                  userToEdit.userImage
+                  userToEdit?.userImage
                     ? userToEdit.userImage
+                    : uploadUserImageStatus?.imageUrl
+                    ? uploadUserImageStatus.imageUrl
                     : loggedUser.user.userImage
                     ? loggedUser.user.userImage
-                    : uploadUserImageStatus.imageUrl
-                    ? uploadUserImageStatus.imageUrl
                     : userImagePlaceholder
                 }
                 className={classes.userImagePlaceholder}
