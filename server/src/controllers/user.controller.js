@@ -46,7 +46,6 @@ const read = (req, res) => {
 };
 
 const update = async (req, res, next) => {
-  console.log(req.body);
   let user = req.profile;
   user = _.extend(user, req.body);
 

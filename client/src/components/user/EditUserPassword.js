@@ -59,10 +59,8 @@ const EditUserPassword = () => {
   const dispatch = useDispatch();
   const loggedUser = useSelector(getLoggedUserData);
   const updateUserPasswordStatus = useSelector(getUpdateUserPasswordStatus);
-
-  console.log(updateUserPasswordStatus);
-
   const navigate = useNavigate();
+
   const [values, setValues] = useState({
     oldPassword: "",
     newPassword: "",

@@ -73,7 +73,6 @@ const Login = () => {
     password: "",
   });
 
-  //if user has token (is logged) redirected to protected page
   useEffect(() => {
     if (loggedUserData?.token) {
       dispatch(userToken());
@@ -111,7 +110,6 @@ const Login = () => {
     }
   }, [loggedUserData]);
 
-  // send request to server to login user and in case there are errors collect error
   const clickSubmit = () => {
     const user = {
       email: values.email || undefined,
@@ -120,7 +118,6 @@ const Login = () => {
     dispatch(signinUser(user));
   };
 
-  // get values from input fields
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };

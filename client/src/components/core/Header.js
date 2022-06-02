@@ -11,7 +11,6 @@ import {
 import { Box, Button, Grid, Typography, AppBar, Toolbar } from "@mui/material";
 import Search from "../utils/Search";
 import { makeStyles } from "@mui/styles";
-import { faWindowMinimize } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme) => ({
   logo: {

@@ -6,11 +6,6 @@ const CoursesSchema = new mongoose.Schema({
     trim: true,
     unique: "Title must be unique",
     required: "Course title is required!",
-    // match: [
-    //   /^[a-zA-Z0-9\s]*$/,
-    //   "Only letters and number are allowed for title",
-    // ],
-
     maxlength: [55, "Title must be less than 55 characters"],
   },
   description: {

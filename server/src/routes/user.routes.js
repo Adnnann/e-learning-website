@@ -31,6 +31,7 @@ router
   .delete(userCtrl.remove);
 
 router.route("/api/mentors").get(userCtrl.getAllMentors);
+
 router
   .route("/api/mentorCourses")
   .get(userCtrl.getAllMentors)

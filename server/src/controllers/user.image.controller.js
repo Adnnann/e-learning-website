@@ -4,13 +4,9 @@ import Image from "../models/image.model";
 
 const create = async (req, res, next) => {
   const fileName = req.file.originalname;
-
   const imageId = fileName.split("-")[0];
-
-  // file size threshold
   const fileSizeLimit = 1024 * 1024 * 10;
-  // if no file sent to server report error. This is handled on frontend
-  // but wanted to have additional check
+
   if (!req.file) {
     return res.send({ error: "You forgot to upload file" });
   }
@@ -19,7 +15,7 @@ const create = async (req, res, next) => {
     image: req.file.originalname,
     imageUrl: `http://localhost:5000/images/${req.file.originalname}`,
   });
-  // if file size bigger than threshold remove file
+
   if (req.file.size > fileSizeLimit) {
     fs.fs.unlinkSync(`./${req.file.path}`);
     return res.send({ Error: "Allowed size of image is 10MB" });
@@ -33,8 +29,6 @@ const create = async (req, res, next) => {
         return res.send({ error: "error" });
       }
 
-      // loop through folder images and filter all images that have the same value before
-      // -. Than remove all except last added item
       fs.fs.readdirSync("./images").map((item) => {
         if (item !== fileName && item.includes(imageId)) {
           fs.fs.unlinkSync(`./images/${item}`);
@@ -47,8 +41,6 @@ const create = async (req, res, next) => {
       });
     });
   } else {
-    // Multer is not preventing user to upload message but reports only error.
-    // Code below unlinks file if there is any error (for example wrong file format)
     fs.fs.unlinkSync(`./${req.file.path}`);
     return res.send({ error: "Format of the file must be PNG | JPEG | JPG" });
   }

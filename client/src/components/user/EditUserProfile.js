@@ -13,7 +13,6 @@ import {
   setEditUserProfileForm,
   fetchUserData,
   cleanUploadImageStatus,
-  fetchAllUsers,
   fetchUsers,
   updateUserDataByAdmin,
 } from "../../features/eLearningSlice";
@@ -97,7 +96,6 @@ const EditProfile = () => {
     });
 
     if (updateUserStatus?.message) {
-      console.log("test");
       dispatch(cleanUploadImageStatus());
       dispatch(cleanUserUpdateMessage());
 
@@ -137,14 +135,13 @@ const EditProfile = () => {
       },
     };
 
-    console.log(user);
     if (userToEdit?._id) {
       dispatch(updateUserDataByAdmin(user));
     } else {
       dispatch(updateUserData(user));
     }
   };
-  console.log(uploadUserImageStatus.imageUrl);
+
   const cancel = () => {
     if (loggedUser.user.role === "admin") {
       dispatch(cleanUploadImageStatus());

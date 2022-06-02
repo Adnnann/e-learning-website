@@ -139,8 +139,6 @@ const EditCourse = () => {
 
   const { title, level, description, duration } = courseToEdit;
 
-  console.log(uploadImageStatus.imageUrl);
-
   const [values, setValues] = useState({
     title: title,
     description: description,
@@ -197,7 +195,7 @@ const EditCourse = () => {
 
   const handleUpload = (event) => {
     let formData = new FormData();
-    console.log(courseToEdit.courseImage);
+
     formData.append(
       "userImage",
       event.target.files[0],

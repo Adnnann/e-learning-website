@@ -1,17 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import _ from "lodash";
-import { crossOriginResourcePolicy } from "helmet";
 import User from "../models/user.model";
 import Course from "../models/courses.model";
 import dbErrorHandlers from "./helpers/dbErrorHandlers";
-import errorHandler from "./helpers/dbErrorHandlers";
-import courseController from "./course.controller";
 
 const create = (req, res, next) => {
   const user = new User(req.body);
   user.save((err, result) => {
     if (err) {
-      res.send({ error: errorHandler.getErrorMessage(err) });
+      res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     } else {
       res.send({ message: "Successfully created a new user." });
     }
@@ -51,7 +48,7 @@ const updateUserPassword = async (req, res, next) => {
   user.updated = Date.now();
   user.save((err) => {
     if (err) {
-      return res.send({ error: errorHandler.getErrorMessage(err) });
+      return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
     return res.send({
       message: "Data updated",
@@ -60,7 +57,6 @@ const updateUserPassword = async (req, res, next) => {
   });
 };
 const getCourses = (req, res) => {
-  console.log(req.body);
   Course.find({ status: "active" }, (error, course) => {
     Object.values(req.users);
     let courses = [];
@@ -249,14 +245,13 @@ const removeCourse = async (req, res) => {
 };
 
 const activateUserAccount = async (req, res, next) => {
-  console.log(req.body);
   let user = await User.findById({ _id: req.profile._id });
   user = _.extend(user, req.body);
   user.active = req.body.userStatus;
 
   user.save((err, user) => {
     if (err) {
-      return res.send({ error: errorHandler.getErrorMessage(err) });
+      return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
     return res.send({ message: "Profile activated" });
   });
