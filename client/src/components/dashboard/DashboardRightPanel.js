@@ -8,8 +8,12 @@ const DashboardRightPanel = () => {
 
   return (
     <>
-      {loggedUser.user.role === "student" ? <UserCourses /> : null}
-      {loggedUser.user.role === "mentor" ? <MentorCourses /> : null}
+      {loggedUser?.user && loggedUser.user.role === "student" ? (
+        <UserCourses />
+      ) : null}
+      {loggedUser?.user && loggedUser.user.role === "mentor" ? (
+        <MentorCourses />
+      ) : null}
     </>
   );
 };

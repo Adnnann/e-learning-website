@@ -75,15 +75,17 @@ const Dashboard = () => {
           severity="info"
           className={classes.dashboardTitle}
         >
-          {loggedUser.user.role === "admin"
+          {loggedUser?.user && loggedUser.user.role === "admin"
             ? `Welcome ${loggedUser.user.firstName} ${loggedUser.user.lastName}`
             : null}
-          {loggedUser.user.role !== "admin"
+          {loggedUser?.user && loggedUser.user.role !== "admin"
             ? "Courses - Your Current Courses"
             : null}
-          {loggedUser.user.role === "student" ? "and Progress" : null}
+          {loggedUser?.user && loggedUser.user.role === "student"
+            ? "and Progress"
+            : null}
         </Alert>
-        {filterTerm && loggedUser.user.role === "mentor" ? (
+        {loggedUser?.user && filterTerm && loggedUser.user.role === "mentor" ? (
           mentorCourses.data.length > 1 ? (
             <Typography
               variant="h5"

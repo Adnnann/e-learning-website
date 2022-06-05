@@ -54,6 +54,7 @@ const AllUsers = () => {
         lastItem: 12,
       };
 
+      dispatch(setUsersDisplayPage(1));
       dispatch(fetchUsers(users));
       dispatch(cleanActivateAccountMessage());
     }

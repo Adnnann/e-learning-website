@@ -228,7 +228,8 @@ const getUsers = (req, res) => {
       res.send({
         data: users,
         totalNumOfFilteredUsers: req.body.filterTerm ? 0 : user.length,
-        totalNumOfUsers: user.length,
+        totalNumOfUsers: user.filter((item) => item.active === "activated")
+          .length,
       });
     }
   });

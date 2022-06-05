@@ -11,8 +11,6 @@ import {
   getUsers,
   setEditUserPasswordForm,
   setEditUserProfileForm,
-  setFilter,
-  setFilterTerm,
   signoutUser,
 } from "../../features/eLearningSlice";
 import { Typography } from "@mui/material";
@@ -126,19 +124,23 @@ const DashboardLeftPanel = () => {
   const userButtonsAndIcons = {
     clickEvents: [
       redirectToDashboard,
-      loggedUser.user.role === "student" ? viewAllAvailableCourses : null,
+      loggedUser?.user && loggedUser.user.role === "student"
+        ? viewAllAvailableCourses
+        : null,
       editUser,
       signout,
     ],
     buttons: [
       "Dashboard",
-      loggedUser.user.role === "student" ? "Courses" : null,
+      loggedUser?.user && loggedUser.user.role === "student" ? "Courses" : null,
       "Edit Profile",
       "Logout",
     ],
     icons: [
       faHouse,
-      loggedUser.user.role === "student" ? faChalkboardUser : null,
+      loggedUser?.user && loggedUser.user.role === "student"
+        ? faChalkboardUser
+        : null,
       faGear,
       faRightFromBracket,
     ],
@@ -158,30 +160,32 @@ const DashboardLeftPanel = () => {
         color="primary"
       />
       <Typography className={classes.username}>
-        {`${formatUserData(loggedUser.user.firstName)} ${formatUserData(
-          loggedUser.user.lastName
-        )}`}
+        {loggedUser?.user
+          ? `${formatUserData(loggedUser.user.firstName)} ${formatUserData(
+              loggedUser.user.lastName
+            )}`
+          : null}
       </Typography>
 
       <ButtonGroupWithIcons
         buttons={
-          loggedUser.user.role === "admin"
+          loggedUser?.user && loggedUser.user.role === "admin"
             ? adminButtonsAndIcons.buttons
             : userButtonsAndIcons.buttons.filter(Boolean)
         }
         clickEvents={
-          loggedUser.user.role === "admin"
+          loggedUser?.user && loggedUser.user.role === "admin"
             ? adminButtonsAndIcons.clickEvents
             : userButtonsAndIcons.clickEvents.filter(Boolean)
         }
         icons={
-          loggedUser.user.role === "admin"
+          loggedUser?.user && loggedUser.user.role === "admin"
             ? adminButtonsAndIcons.icons
             : userButtonsAndIcons.icons.filter(Boolean)
         }
       />
 
-      {loggedUser.user.role === "student" ? (
+      {loggedUser?.user && loggedUser.user.role === "student" ? (
         <>
           <Typography variant="h6" className={classes.userInfo}>
             Completed
@@ -199,7 +203,7 @@ const DashboardLeftPanel = () => {
               : "0"}
           </Typography>
         </>
-      ) : loggedUser.user.role === "mentor" ? (
+      ) : loggedUser?.user && loggedUser.user.role === "mentor" ? (
         <>
           <Typography variant="h6" className={classes.userInfo}>
             Total number <br />
@@ -208,7 +212,7 @@ const DashboardLeftPanel = () => {
             {mentorCourses.totalNumOfCourses}
           </Typography>
         </>
-      ) : courses?.data && users?.data ? (
+      ) : loggedUser?.user && courses?.data && users?.data ? (
         <>
           <Typography variant="h6" className={classes.userInfo}>
             Total number of <br />
