@@ -16,7 +16,7 @@ In order to use the app you should change in server/config/config.js url for Atl
 DATABASE=YOUR MONGODB NAME
 PASSWORD=YOUR MONGODB PASSWORD
 
-Default port for connection to the express server is 5000 and default proxy set in package.json in client folder is http://localhost:5000.
+Default port for connection to the express server is 5000 and default proxy set in package.json in client folder is http://localhost:5000/ (do not forget / at the end of string).
 
 User can use seed by running node seed on server folder (running node seed will create dummy users and courses - admin will be paragon@paragon.ba and admin password Paragon202!)
 ## Pagination
