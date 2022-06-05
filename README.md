@@ -22,12 +22,13 @@ User can use seed by running node seed on server folder (running node seed will 
 ## Pagination
 
 For displaying of courses pagination is used. Pagination is done on server side (only 12 courses are returned in each request).
-## Filtering
+## Filtering and sorting
 
 Users can be filtered by admin. Users can be filtered by combination of first and last name. Order of entering first name and last name is not impacting on returned results.
 
 Titles are to be filtered by partial match – all results that include filter term will be displayed
-## Sorting on admin side can be done by title and mentor name.
+
+Sorting on admin side can be done by title and mentor name.
 
 Filtering can be done by title (entering filter term in search field), by level and duration (select option from dropdown menu)
 
