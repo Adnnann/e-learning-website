@@ -58,7 +58,6 @@ const updateUserPassword = async (req, res, next) => {
 };
 const getCourses = (req, res) => {
   Course.find({ status: "active" }, (error, course) => {
-    Object.values(req.users);
     let courses = [];
 
     course.map((item, index) => {
@@ -157,7 +156,7 @@ const getCourses = (req, res) => {
       return res.send({ data: courses, totalNumOfCourses: courses.length });
     }
 
-    if (!req.body.filterLevel && !req.body.filterDuation) {
+    if (!req.body.filterLevel && !req.body.filterDuration) {
       courses = course;
     } else if (req.body.filterLevel === "All levels") {
       if (req.body.filterDuration) {
@@ -209,8 +208,16 @@ const getUsers = (req, res) => {
       ? user
           .filter(
             (item) =>
-              item.firstName === req.body.filterTerm.split(" ")[0] ||
-              item.lastName === req.body.filterTerm.split(" ")[1]
+              (
+                item.firstName.toLowerCase() +
+                " " +
+                item.lastName.toLowerCase()
+              ).includes(req.body.filterTerm) ||
+              (
+                item.lastName.toLowerCase() +
+                " " +
+                item.firstName.toLowerCase()
+              ).includes(req.body.filterTerm)
           )
           .slice(req.body.firstValue, req.body.lastValue)
       : user.slice(req.body.firstValue, req.body.lastValue);
@@ -220,7 +227,8 @@ const getUsers = (req, res) => {
     } else {
       res.send({
         data: users,
-        totalNumOfUsers: req.body.filterTerm ? 0 : user.length,
+        totalNumOfFilteredUsers: req.body.filterTerm ? 0 : user.length,
+        totalNumOfUsers: user.length,
       });
     }
   });

@@ -1,46 +1,41 @@
-# Getting Started with Create React App and Redux
+# Description
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+## Pagination
 
-## Available Scripts
+For displaying of courses pagination is used. Pagination is done on server side (only 12 courses are returned in each request).
 
-In the project directory, you can run:
+## Filtering
 
-### `npm start`
+Users are to be filtered by exact match quesry for lastName or exact match query for firstname.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Titles are to be filtered by partial match – all results that include filter term will be displayed
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Sorting on admin side can be done by title and mentor name.
 
-### `npm test`
+Filtering can be done by title (entering filter term in search field), by level and duration (select option from dropdown menu)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Filters can be removed by clicking remove filters button.
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Admin CRUD
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Admin has all CRUD available (deleting, editing, and adding courses, and deleting and editing users)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Admin also must approve the user before the user is able to log in. Admin can also deactivate the user account. In case if an account is deactivated that information will be displayed to the admin. If the user decides to delete his account admin will have that info on the table (message will be displayed account closed).
 
-### `npm run eject`
+For all deleting soft delete is enabled.
+## Mentor CRUD 
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Mentor can delete and edit their courses and add new ones.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+A mentor can also filter his courses by query term entered in the search field.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Student CRUD
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Students can filter courses by mentor name, level, and duration. Users can also disable filters by by unchecking select filter checkbox
 
-## Learn More
+When the user hovers over the course title modal window is displayed with the button that enables the student to enroll in the course.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Students can also Enroll in courses. All courses in which the student is enrolled have a checkbox completed. In case if student marks the course as the finished course will be removed from the student dashboard.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+

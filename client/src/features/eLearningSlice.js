@@ -135,6 +135,7 @@ export const fetchMentorCourses = createAsyncThunk(
         firstItem: courses.firstItem,
         lastItem: courses.lastItem,
         filterTerm: courses.filterTerm,
+        status: courses.status,
       })
       .then((response) => response.data)
       .catch((error) => error);
@@ -438,7 +439,8 @@ const eLearningSlice = createSlice({
       state.filterTerm = action.payload;
     },
     cleanFilterTerm: (state, action) => {
-      state.filterTerm = {};
+      state.filterTerm = "";
+      state.selectedFilterTerm = "";
     },
     cleanDeleteCourseMessage: (state, payload) => {
       state.deleteCourse = {};

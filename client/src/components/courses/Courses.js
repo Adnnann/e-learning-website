@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import _, { filter } from "lodash";
+import _ from "lodash";
 import {
   enrollInCourse,
   fetchCourses,
@@ -11,6 +11,7 @@ import {
   getCoursesDisplayPage,
   getEnrollInCourseMessage,
   getLoggedUserData,
+  getSelectedFilterTerm,
   setCoursesDisplayPage,
 } from "../../features/eLearningSlice";
 import {
@@ -28,11 +29,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  useEventCallback,
+  Alert,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import CloseIcon from "@mui/icons-material/Close";
 import PaginationComponent from "../utils/Pagination";
 import { makeStyles } from "@mui/styles";
 
@@ -40,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: "50px",
     position: "fixed",
+    [theme.breakpoints.only("xs")]: {
+      overflowY: "clip",
+    },
   },
   filtersToggleButton: {
     marginTop: "50px",
@@ -50,12 +55,19 @@ const useStyles = makeStyles((theme) => ({
       marginTop: "0px",
       width: "220px",
     },
+    [theme.breakpoints.only("md")]: {
+      minWidth: "220px !important",
+    },
   },
   filterLevels: {
     display: "flex",
     flexDirection: "column",
     borderStyle: "solid",
     paddingLeft: "10px",
+    minWidth: "300px !important",
+    [theme.breakpoints.only("md")]: {
+      minWidth: "200px !important",
+    },
   },
   filterDurations: {
     display: "flex",
@@ -63,6 +75,9 @@ const useStyles = makeStyles((theme) => ({
     borderStyle: "solid",
     paddingLeft: "10px",
     marginTop: "20px",
+    [theme.breakpoints.only("md")]: {
+      minWidth: "200px !important",
+    },
   },
   enrolledInCourseMessage: {
     marginTop: "20px",
@@ -86,6 +101,9 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(2),
     paddingRight: theme.spacing(2),
     paddingLeft: theme.spacing(2),
+    [theme.breakpoints.only("md")]: {
+      maxWidth: 600,
+    },
   },
   title: {
     textAlign: "left",
@@ -115,12 +133,18 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "2px",
   },
   image: {
-    minHeight: "240px",
-    minWidth: "240px",
+    width: "240px",
+    height: "220px",
     marginTop: "10px",
     [theme.breakpoints.only("xs")]: {
       marginLeft: "10px",
     },
+  },
+  filterResults: {
+    marginTop: "0",
+    maxWidth: "320px",
+    margin: "0 auto",
+    marginBottom: "20px",
   },
 }));
 
@@ -149,6 +173,7 @@ const Courses = () => {
   const enrollInCourseStatus = useSelector(getEnrollInCourseMessage);
   const navigate = useNavigate();
   const [displayFilters, setDisplayFilters] = useState(false);
+  const filterTerm = useSelector(getSelectedFilterTerm);
 
   useEffect(() => {
     if (enrollInCourseStatus?.message) {
@@ -185,7 +210,7 @@ const Courses = () => {
 
   const handleLevelFilter = (name) => (event) => {
     checked[0] = event.target.name === "Beginner Level" ? !checked[0] : "";
-    checked[1] = event.target.name === "Intermeditate Level" ? !checked[1] : "";
+    checked[1] = event.target.name === "Intermediate Level" ? !checked[1] : "";
     checked[2] = event.target.name === "Advanced Level" ? !checked[2] : "";
     checked[3] = event.target.name === "All levels" ? !checked[3] : "";
 
@@ -205,7 +230,7 @@ const Courses = () => {
           : undefined,
       page: 1,
       firstItem: 0,
-      lastItem: 11,
+      lastItem: 12,
     };
     dispatch(setCoursesDisplayPage(1));
     dispatch(fetchCourses(courses));
@@ -236,14 +261,14 @@ const Courses = () => {
           : undefined,
       page: 1,
       firstItem: 0,
-      lastItem: 11,
+      lastItem: 12,
     };
     dispatch(setCoursesDisplayPage(1));
     dispatch(fetchCourses(courses));
   };
 
   const filterItems = [
-    ["Beginner Level", "Intermeditate Level", "Advanced Level", "All levels"],
+    ["Beginner Level", "Intermediate Level", "Advanced Level", "All levels"],
     [
       "0 - 3 Hours",
       "3 - 6 Hours",
@@ -263,12 +288,16 @@ const Courses = () => {
         ? filters.filterDuration
         : undefined,
       page: value,
-      firstItem: value * 12 - 11,
+      firstItem: value * 12 - 12,
       lastItem: value * 12,
     };
 
     dispatch(setCoursesDisplayPage(value));
     dispatch(fetchCourses(courses));
+  };
+
+  const cancelEnroll = () => {
+    setCourseOverviewModal(false);
   };
 
   return (
@@ -278,7 +307,7 @@ const Courses = () => {
       className={classes.container}
       justifyContent="center"
     >
-      <Grid item xs={12} md={3} lg={3} xl={2}>
+      <Grid item xs={12} md={2} lg={3} xl={2}>
         <Box justifyContent={"center"}>
           <Button
             onClick={() => setDisplayFilters(!displayFilters)}
@@ -309,7 +338,7 @@ const Courses = () => {
                         <Checkbox
                           name={item}
                           onChange={handleLevelFilter("filterLevel")}
-                          checked={checked[index]}
+                          checked={Boolean(checked[index])}
                         />
                       }
                     />
@@ -328,7 +357,7 @@ const Courses = () => {
                         <Checkbox
                           name={item}
                           onChange={handleDurationFilter("filterDuration")}
-                          checked={checked[index + 4]}
+                          checked={Boolean(checked[index + 4])}
                         />
                       }
                     />
@@ -342,6 +371,11 @@ const Courses = () => {
 
       <Grid item xs={12} md={9} lg={7} xl={7}>
         <Dialog open={courseOverviewModal}>
+          <DialogContentText
+            style={{ marginLeft: "auto", marginRight: "20px" }}
+          >
+            <CloseIcon onClick={cancelEnroll} />
+          </DialogContentText>
           {courseOverviewModal &&
           loggedUser.user.enrolledInCourses.includes(courseToDisplay[0]._id) ? (
             <Typography
@@ -398,6 +432,17 @@ const Courses = () => {
 
         {courses?.data ? (
           <Box className={classes.displayCoursesContainer}>
+            {filterTerm !== "" ? (
+              <Alert
+                variant="filled"
+                color="info"
+                severity="info"
+                className={classes.filterResults}
+              >
+                Number of courses related to {filterTerm} is{" "}
+                {courses.data.length}
+              </Alert>
+            ) : null}
             <Grid
               container
               justifyContent={"center"}

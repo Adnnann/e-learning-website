@@ -119,8 +119,8 @@ const MentorCourses = () => {
     if (deleteCourseStatus?.message) {
       const mentorCourses = {
         mentorId: loggedUser.user._id,
-        firstItem: 1,
-        lastItem: 11,
+        firstItem: 0,
+        lastItem: 12,
       };
       dispatch(fetchMentorCourses(mentorCourses));
       dispatch(cleanDeleteCourseMessage());
@@ -131,7 +131,7 @@ const MentorCourses = () => {
   const handlePagination = (event, value) => {
     const mentorCourses = {
       mentorId: loggedUser.user._id,
-      firstItem: value * 12 - 11,
+      firstItem: value * 12 - 12,
       lastItem: value * 12,
     };
 

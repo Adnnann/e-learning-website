@@ -148,7 +148,9 @@ const Dashboard = () => {
             xl={2}
             className={classes.largeScreens}
           >
-            <EditUserDataButtons />
+            {!iPadAirScreen && !iPadMiniScreen && !surfaceDuo ? (
+              <EditUserDataButtons />
+            ) : null}
           </Grid>
         </>
       )}

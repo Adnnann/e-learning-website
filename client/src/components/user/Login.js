@@ -80,8 +80,8 @@ const Login = () => {
       if (loggedUserData.user.role === "mentor") {
         const user = {
           mentorId: loggedUserData.user._id,
-          firstItem: 1,
-          lastItem: 11,
+          firstItem: 0,
+          lastItem: 12,
         };
 
         dispatch(fetchMentorCourses(user));
@@ -90,8 +90,8 @@ const Login = () => {
       }
 
       const courses = {
-        firstValue: 1,
-        lastValue: 12,
+        firstItem: 0,
+        lastItem: 12,
       };
 
       dispatch(fetchCourses(courses));
@@ -101,7 +101,7 @@ const Login = () => {
       } else {
         const users = {
           firstItem: 0,
-          lastItem: 11,
+          lastItem: 12,
         };
 
         dispatch(fetchUsers(users));

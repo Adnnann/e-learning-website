@@ -43,7 +43,7 @@ export default function Search({ changeHandler }) {
       if (event.target.value === "") {
         const users = {
           firstItem: 0,
-          lastItem: 11,
+          lastItem: 12,
           filterTerm: undefined,
         };
 
@@ -54,8 +54,8 @@ export default function Search({ changeHandler }) {
       if (event.keyCode === 13) {
         const users = {
           firstItem: 0,
-          lastItem: 11,
-          filterTerm: event.target.value,
+          lastItem: 12,
+          filterTerm: event.target.value.toLowerCase(),
         };
 
         dispatch(setFilterTerm(filter));
@@ -137,6 +137,7 @@ export default function Search({ changeHandler }) {
           </InputAdornment>
         ),
       }}
+      value={filter}
       variant="standard"
       className={classes.searchInput}
     />

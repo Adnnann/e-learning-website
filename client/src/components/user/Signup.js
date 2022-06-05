@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   submit: {
-    margin: "auto",
+    margin: "auto !important",
     marginBottom: theme.spacing(2),
     [theme.breakpoints.only("xs")]: {
       marginBottom: theme.spacing(0),

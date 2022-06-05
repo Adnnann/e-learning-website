@@ -106,8 +106,8 @@ const EditCourse = () => {
       if (loggedUser.user.role === "mentor") {
         const courses = {
           mentorId: loggedUser.user._id,
-          firstItem: 1,
-          lastItem: 11,
+          firstItem: 0,
+          lastItem: 12,
           page: 1,
         };
         dispatch(cleanCourseUpdatedMessage());
@@ -183,7 +183,7 @@ const EditCourse = () => {
 
   const cancel = () => {
     if (loggedUser.user.role === "admin") {
-      navigate("/courses");
+      navigate("/admin/courses");
     } else {
       navigate("/dashboard");
     }

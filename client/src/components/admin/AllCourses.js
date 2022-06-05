@@ -16,6 +16,7 @@ import {
   getSelectedFilterTerm,
   getLoggedUserData,
   cleanFilterTerm,
+  getFilter,
 } from "../../features/eLearningSlice";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -160,7 +161,7 @@ const AllCourses = () => {
     if (deleteCourseStatus?.message) {
       const courses = {
         page: page,
-        firstItem: page * 12 - 11,
+        firstItem: page * 12 - 12,
         lastItem: page * 12,
       };
       dispatch(fetchCourses(courses));
@@ -173,7 +174,7 @@ const AllCourses = () => {
     const courses = {
       ...filters,
       page: value,
-      firstItem: value * 12 - 11,
+      firstItem: value * 12 - 12,
       lastItem: value * 12,
     };
 
@@ -219,7 +220,7 @@ const AllCourses = () => {
         [name]: event.target.value,
         page: 1,
         firstItem: 0,
-        lastItem: 11,
+        lastItem: 12,
       };
 
       dispatch(setCoursesDisplayPage(1));
@@ -251,7 +252,7 @@ const AllCourses = () => {
   const filterItems = [
     ["A-Z", "Z-A"],
     ["A-Z", "Z-A"],
-    ["Beginner Level", "Intermeditate Level", "Advanced Level", "All levels"],
+    ["Beginner Level", "Intermediate Level", "Advanced Level", "All levels"],
     [
       "0 - 3 Hours",
       "3 - 6 Hours",
@@ -278,7 +279,7 @@ const AllCourses = () => {
     const courses = {
       page: 1,
       firstItem: 0,
-      lastItem: 11,
+      lastItem: 12,
       filterLevel: "",
       filterDuration: "",
       filterTitle: "",
@@ -312,7 +313,9 @@ const AllCourses = () => {
             severity="info"
             className={classes.filterResults}
           >
-            {loggedUser.user.role === "admin" && courses.data.length > 1 ? (
+            {loggedUser.user.role === "admin" &&
+            courses.data.length > 1 &&
+            filterTerm !== "" ? (
               <>
                 {`There are ${courses.data.length} results for the term `}
                 <span className={classes.selectedTerm}>{filterTerm}</span>

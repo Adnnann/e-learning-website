@@ -50,8 +50,8 @@ const AllUsers = () => {
   useEffect(() => {
     if (activateAccountMessage?.message) {
       const users = {
-        firstValue: 1,
-        lastValue: 12,
+        firstItem: 0,
+        lastItem: 12,
       };
 
       dispatch(fetchUsers(users));
@@ -149,7 +149,7 @@ const AllUsers = () => {
         .map((item) => {
           const firstCol = (
             <div>
-              {item.firstName} {item.lastName}
+              {item.firstName}
               <br />
               <span style={{ color: "red" }}>
                 {item.active === "closed" ? "(account closed by user)" : null}
@@ -200,7 +200,7 @@ const AllUsers = () => {
 
   const handlePagination = (event, value) => {
     const users = {
-      firstItem: value * 12 - 11,
+      firstItem: value * 12 - 12,
       lastItem: value * 12,
     };
 
@@ -238,7 +238,7 @@ const AllUsers = () => {
   ];
 
   const filterByTitles = [
-    "Sort By Firstmame",
+    "Sort By Firstname",
     "Sort By Lastname",
     "Filter By Status",
   ];

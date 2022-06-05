@@ -67,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
   },
   userImagePlaceholder: {
     width: 130,
+    marginTop: "20px",
   },
   uploadPhoto: {
     minWidth: "125px",
@@ -106,7 +107,7 @@ const EditProfile = () => {
       if (loggedUser.user.role === "admin") {
         const users = {
           firstItem: 0,
-          lastItem: 11,
+          lastItem: 12,
         };
 
         dispatch(fetchUsers(users));

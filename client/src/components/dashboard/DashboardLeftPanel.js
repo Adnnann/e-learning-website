@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  cleanFilterTerm,
   cleanStore,
   fetchCourses,
   fetchUsers,
@@ -10,6 +11,8 @@ import {
   getUsers,
   setEditUserPasswordForm,
   setEditUserProfileForm,
+  setFilter,
+  setFilterTerm,
   signoutUser,
 } from "../../features/eLearningSlice";
 import { Typography } from "@mui/material";
@@ -65,8 +68,9 @@ const DashboardLeftPanel = () => {
   const displayAllUsers = () => {
     const users = {
       firstItem: 0,
-      lastItem: 11,
+      lastItem: 12,
     };
+    dispatch(cleanFilterTerm());
     dispatch(fetchUsers(users));
     navigate("/users");
   };
@@ -74,14 +78,14 @@ const DashboardLeftPanel = () => {
   const displayAllCourses = () => {
     const courses = {
       firstItem: 0,
-      lastItem: 11,
+      lastItem: 12,
     };
 
     const users = {
       firstItem: 0,
-      lastItem: 11,
+      lastItem: 12,
     };
-
+    dispatch(cleanFilterTerm());
     dispatch(fetchUsers(users));
     dispatch(fetchCourses(courses));
     navigate("/admin/courses");
@@ -89,10 +93,10 @@ const DashboardLeftPanel = () => {
 
   const viewAllAvailableCourses = () => {
     const courses = {
-      firstValue: 1,
+      firstValue: 0,
       lastValue: 12,
     };
-
+    dispatch(cleanFilterTerm());
     dispatch(fetchCourses(courses));
     navigate("/courses");
   };
@@ -210,13 +214,13 @@ const DashboardLeftPanel = () => {
             Total number of <br />
             users
             <br />
-            {users.data.length}
+            {users.totalNumOfUsers}
           </Typography>
           <Typography variant="h6" className={classes.userInfo}>
             Total number of <br />
             courses
             <br />
-            {courses.data.length}
+            {courses.totalNumOfCourses}
           </Typography>
         </>
       ) : null}

@@ -146,7 +146,7 @@ const UserCourses = () => {
                 );
               }
             })
-          : "Loading..."}
+          : null}
       </Grid>
     </Box>
   );

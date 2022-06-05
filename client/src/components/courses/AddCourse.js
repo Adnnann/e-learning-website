@@ -91,15 +91,15 @@ const AddCourse = () => {
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
   const loggedUser = useSelector(getLoggedUserData);
   const classes = useStyles();
-  const page = useSelector(getCoursesDisplayPage);
 
   useEffect(() => {
     if (addCourseStatus?.message) {
       if (loggedUser.user.role === "mentor") {
         const courses = {
+          status: "active",
           mentorId: loggedUser.user._id,
-          firstItem: page === 1 ? 1 : page * 10 - 11,
-          lastItem: page === 1 ? 12 : page * 10,
+          firstItem: 0,
+          lastItem: 12,
         };
         dispatch(incrementNumOfCourses());
         dispatch(fetchMentorCourses(courses));
@@ -114,7 +114,7 @@ const AddCourse = () => {
         filterLevel: "",
         filterDuration: "",
         page: 1,
-        firstValue: 1,
+        firstValue: 0,
         lastValue: 12,
       };
 

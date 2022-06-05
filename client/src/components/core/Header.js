@@ -7,6 +7,10 @@ import {
   getLoggedUserData,
   cleanLoginMessage,
   cleanSignupMessage,
+  setFilter,
+  fetchUsers,
+  fetchCourses,
+  cleanFilterTerm,
 } from "../../features/eLearningSlice";
 import { Box, Button, Grid, Typography, AppBar, Toolbar } from "@mui/material";
 import Search from "../utils/Search";
@@ -115,6 +119,24 @@ const Header = () => {
   };
 
   const redirectToDashboard = () => {
+    dispatch(cleanFilterTerm());
+
+    if (loggedUser.user.role === "admin") {
+      const users = {
+        firstItem: 0,
+        lastItem: 12,
+      };
+
+      dispatch(fetchUsers(users));
+    }
+    const courses = {
+      firstItem: 0,
+      lastItem: 12,
+      filterTerm: undefined,
+    };
+
+    dispatch(fetchCourses(courses));
+    dispatch(setFilter(""));
     window.location.pathname !== "/" && navigate("/dashboard");
   };
 
