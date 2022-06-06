@@ -58,18 +58,6 @@ const update = async (req, res, next) => {
   });
 };
 
-// user.updated = Date.now();
-// user.save((err) => {
-//   if (err) {
-//     return res.send({ error: errorHandler.getErrorMessage(err) });
-//   }
-//   res.send({
-//     message: "Data updated",
-//     data: user,
-//     token: req.cookies.userJwtToken,
-//   });
-// });
-
 const remove = async (req, res, next) => {
   const userProfile = await User.findOne({ _id: req.profile._id });
 
@@ -188,15 +176,13 @@ const getMentorCourses = (req, res) => {
     });
 };
 const getAllMentors = (req, res) => {
-  User.find({})
-    .where({ role: "mentor" })
-    .exec((err, user) => {
-      if (err) {
-        res.send({ err: "error" });
-      } else {
-        res.send({ mentors: user });
-      }
-    });
+  User.find({}).exec((err, user) => {
+    if (err) {
+      res.send({ err: "error" });
+    } else {
+      res.send({ mentors: user });
+    }
+  });
 };
 
 const userByID = (req, res, next, id) => {

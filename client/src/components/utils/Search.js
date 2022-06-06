@@ -7,6 +7,7 @@ import {
   fetchUsers,
   getFilter,
   getLoggedUserData,
+  getStudentFilters,
   setFilter,
   setFilterTerm,
 } from "../../features/eLearningSlice";
@@ -34,10 +35,11 @@ export default function Search({ changeHandler }) {
   const dispatch = useDispatch();
   const filter = useSelector(getFilter);
   const loggedUser = useSelector(getLoggedUserData);
+  const studentFilters = useSelector(getStudentFilters);
 
   const handleKeyPress = (event) => {
     if (
-      window.location.pathname === "/users" &&
+      window.location.pathname === "/admin/users" &&
       loggedUser.user.role === "admin"
     ) {
       if (event.target.value === "") {
@@ -76,7 +78,16 @@ export default function Search({ changeHandler }) {
 
       if (event.keyCode === 13) {
         const courses = {
+          filterLevel: studentFilters?.filterLevel
+            ? studentFilters.filterLevel
+            : undefined,
+          filterDuration: studentFilters?.filterDuration
+            ? studentFilters.filterDuration
+            : undefined,
           filterTerm: filter,
+          firstValue: 0,
+          lastValue: 12,
+          page: 1,
         };
 
         dispatch(setFilterTerm(filter));

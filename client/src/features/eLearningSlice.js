@@ -291,7 +291,10 @@ export const activateAccount = createAsyncThunk(
   "eLearning/activateAccount",
   async (user) => {
     return await axios
-      .put(`/admin/users/${user.param}`, { userStatus: user.userStatus })
+      .put(`/admin/users/${user.param}`, {
+        userStatus: user.userStatus,
+        role: user.role,
+      })
       .then((response) => response.data)
       .catch((error) => error);
   }
@@ -333,6 +336,21 @@ export const fetchMentors = createAsyncThunk(
   }
 );
 
+export const createUser = createAsyncThunk(
+  "eLearning/createUser",
+  async (user) => {
+    return await axios
+      .post(`/admin/createUser`, user, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+
 const initialState = {
   // user data
   singinUserForm: false,
@@ -363,6 +381,8 @@ const initialState = {
   users: {},
   updateCourse: {},
   activateAccount: {},
+  createUser: {},
+  studentFilters: {},
   // courses
   userCourses: {},
   dashboardData: [],
@@ -506,6 +526,12 @@ const eLearningSlice = createSlice({
     incrementNumOfCourses: (state, action) => {
       state.loggedUser.user.courseNum += 1;
     },
+    cleanCreateUserStatus: (state, action) => {
+      state.createUser = {};
+    },
+    setStudentFilters: (state, action) => {
+      state.studentFilters = action.payload;
+    },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
   },
@@ -605,6 +631,9 @@ const eLearningSlice = createSlice({
     [fetchMentorCourses.fulfilled]: (state, { payload }) => {
       return { ...state, mentorCourses: payload };
     },
+    [createUser.fulfilled]: (state, { payload }) => {
+      return { ...state, createUser: payload };
+    },
   },
 });
 
@@ -676,6 +705,8 @@ export const getAllMentors = (state) => state.eLearning.allMentors;
 export const getMentorCourses = (state) => state.eLearning.mentorCourses;
 export const getSelectedFilterTerm = (state) =>
   state.eLearning.selectedFilterTerm;
+export const getCreateUserStatus = (state) => state.eLearning.createUser;
+export const getStudentFilters = (state) => state.eLearning.studentFilters;
 
 export const {
   setSigninUserForm,
@@ -719,6 +750,8 @@ export const {
   setCourseDeleteModal,
   incrementNumOfCourses,
   cleanFilterTerm,
+  cleanCreateUserStatus,
+  setStudentFilters,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

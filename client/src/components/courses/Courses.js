@@ -12,7 +12,9 @@ import {
   getEnrollInCourseMessage,
   getLoggedUserData,
   getSelectedFilterTerm,
+  getStudentFilters,
   setCoursesDisplayPage,
+  setStudentFilters,
 } from "../../features/eLearningSlice";
 import {
   Typography,
@@ -82,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
   enrolledInCourseMessage: {
     marginTop: "20px",
     color: "red",
-    marginBottom: "0px",
+    marginBottom: "20px ",
     textAlign: "center",
   },
   displayCoursesContainer: {
@@ -97,10 +99,8 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 800,
     margin: "auto",
     textAlign: "center",
-    marginTop: theme.spacing(10),
-    paddingBottom: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
+    marginTop: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
     [theme.breakpoints.only("md")]: {
       maxWidth: 600,
     },
@@ -117,7 +117,7 @@ const useStyles = makeStyles((theme) => ({
   description: {
     textAlign: "left",
     marginLeft: "10px",
-    marginBottom: "50px !important",
+    marginBottom: "20px !important",
   },
   duration: {
     textAlign: "left",
@@ -146,6 +146,11 @@ const useStyles = makeStyles((theme) => ({
     margin: "0 auto",
     marginBottom: "20px",
   },
+  enrollButton: {
+    marginBottom: "10px !important",
+    marginLeft: "2px !important",
+    marginRight: "2px !important",
+  },
 }));
 
 const Courses = () => {
@@ -153,6 +158,7 @@ const Courses = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const loggedUser = useSelector(getLoggedUserData);
+  const studentFilters = useSelector(getStudentFilters);
   const [checked, setChecked] = useState([
     false,
     false,
@@ -167,7 +173,6 @@ const Courses = () => {
   ]);
 
   const [courseOverviewModal, setCourseOverviewModal] = useState(false);
-
   const [courseToDisplay, setCourseToDisplay] = useState([]);
   const page = useSelector(getCoursesDisplayPage);
   const enrollInCourseStatus = useSelector(getEnrollInCourseMessage);
@@ -220,18 +225,20 @@ const Courses = () => {
     });
 
     const courses = {
+      filterTerm: filterTerm ? filterTerm : undefined,
       filterLevel:
         checked.slice(0, 4).filter(Boolean).length > 0
           ? event.target.name
           : undefined,
       filterDuration:
-        checked.slice(5, 10).filter(Boolean).length > 0
+        checked.slice(4, 10).filter(Boolean).length > 0
           ? filters.filterDuration
           : undefined,
       page: 1,
       firstItem: 0,
       lastItem: 12,
     };
+    dispatch(setStudentFilters(courses));
     dispatch(setCoursesDisplayPage(1));
     dispatch(fetchCourses(courses));
   };
@@ -251,18 +258,20 @@ const Courses = () => {
     });
 
     const courses = {
+      filterTerm: filterTerm ? filterTerm : undefined,
       filterLevel:
         checked.slice(0, 4).filter(Boolean).length > 0
           ? filters.filterLevel
           : undefined,
       filterDuration:
-        checked.slice(5, 10).filter(Boolean).length > 0
+        checked.slice(4, 10).filter(Boolean).length > 0
           ? event.target.name
           : undefined,
       page: 1,
       firstItem: 0,
       lastItem: 12,
     };
+    dispatch(setStudentFilters(courses));
     dispatch(setCoursesDisplayPage(1));
     dispatch(fetchCourses(courses));
   };
@@ -301,245 +310,260 @@ const Courses = () => {
   };
 
   return (
-    <Grid
-      container
-      spacing={2}
-      className={classes.container}
-      justifyContent="center"
-    >
-      <Grid item xs={12} md={2} lg={3} xl={2}>
-        <Box justifyContent={"center"}>
-          <Button
-            onClick={() => setDisplayFilters(!displayFilters)}
-            className={classes.filtersToggleButton}
-            startIcon={<FilterListIcon />}
-            endIcon={
-              displayFilters ? (
-                <KeyboardArrowDownIcon />
-              ) : (
-                <KeyboardArrowUpIcon />
-              )
-            }
-            color={"info"}
-            variant="contained"
-          >
-            Filters
-          </Button>
-        </Box>
-        {displayFilters ? (
-          <>
-            <Box justifyContent={"center"} className={classes.filterLevels}>
-              {filterItems[0].map((item, index) => {
-                return (
-                  <FormControl key={item}>
-                    <FormControlLabel
-                      label={item}
-                      control={
-                        <Checkbox
-                          name={item}
-                          onChange={handleLevelFilter("filterLevel")}
-                          checked={Boolean(checked[index])}
-                        />
-                      }
-                    />
-                  </FormControl>
-                );
-              })}
-            </Box>
-
-            <Box justifyContent={"center"} className={classes.filterDurations}>
-              {filterItems[1].map((item, index) => {
-                return (
-                  <FormControl key={item}>
-                    <FormControlLabel
-                      label={item}
-                      control={
-                        <Checkbox
-                          name={item}
-                          onChange={handleDurationFilter("filterDuration")}
-                          checked={Boolean(checked[index + 4])}
-                        />
-                      }
-                    />
-                  </FormControl>
-                );
-              })}
-            </Box>
-          </>
-        ) : null}
-      </Grid>
-
-      <Grid item xs={12} md={9} lg={7} xl={7}>
-        <Dialog open={courseOverviewModal}>
-          <DialogContentText
-            style={{ marginLeft: "auto", marginRight: "20px" }}
-          >
-            <CloseIcon onClick={cancelEnroll} />
-          </DialogContentText>
-          {courseOverviewModal &&
-          loggedUser.user.enrolledInCourses.includes(courseToDisplay[0]._id) ? (
-            <Typography
-              component={"p"}
-              className={classes.enrolledInCourseMessage}
+    <>
+      <Grid
+        container
+        spacing={2}
+        className={classes.container}
+        justifyContent="center"
+      >
+        <Grid item xs={12} md={2} lg={3} xl={2}>
+          <Box justifyContent={"center"}>
+            <Button
+              onClick={() => setDisplayFilters(!displayFilters)}
+              className={classes.filtersToggleButton}
+              startIcon={<FilterListIcon />}
+              endIcon={
+                displayFilters ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowUpIcon />
+                )
+              }
+              color={"info"}
+              variant="contained"
             >
-              You are already enrolled into this course
-            </Typography>
-          ) : null}
-          <DialogTitle>
-            {courseToDisplay[0]?.title ? courseToDisplay[0].title : null}
-          </DialogTitle>
-          <DialogContent>
-            {courseToDisplay[0]?.description
-              ? courseToDisplay[0].description.split(".").map((item) => {
+              Filters
+            </Button>
+          </Box>
+          {displayFilters ? (
+            <>
+              <Box justifyContent={"center"} className={classes.filterLevels}>
+                {filterItems[0].map((item, index) => {
                   return (
-                    <DialogContentText key={item}>
-                      {item !== "" ? `> ${item}` : null}
-                    </DialogContentText>
+                    <FormControl key={item}>
+                      <FormControlLabel
+                        label={item}
+                        control={
+                          <Checkbox
+                            name={item}
+                            onChange={handleLevelFilter("filterLevel")}
+                            checked={Boolean(checked[index])}
+                          />
+                        }
+                      />
+                    </FormControl>
                   );
-                })
-              : null}
-          </DialogContent>
-          <DialogActions>
+                })}
+              </Box>
+
+              <Box
+                justifyContent={"center"}
+                className={classes.filterDurations}
+              >
+                {filterItems[1].map((item, index) => {
+                  return (
+                    <FormControl key={item}>
+                      <FormControlLabel
+                        label={item}
+                        control={
+                          <Checkbox
+                            name={item}
+                            onChange={handleDurationFilter("filterDuration")}
+                            checked={Boolean(checked[index + 4])}
+                          />
+                        }
+                      />
+                    </FormControl>
+                  );
+                })}
+              </Box>
+            </>
+          ) : null}
+        </Grid>
+
+        <Grid item xs={12} md={9} lg={7} xl={7}>
+          {courses?.data ? (
+            <Box className={classes.displayCoursesContainer}>
+              {filterTerm !== "" ? (
+                <Alert
+                  variant="filled"
+                  color="info"
+                  severity="info"
+                  className={classes.filterResults}
+                >
+                  Number of courses related to {filterTerm} is{" "}
+                  {courses.data.length}
+                </Alert>
+              ) : null}
+              <Grid
+                container
+                justifyContent={"center"}
+                className={classes.paginationContainer}
+              >
+                {courses?.totalNumOfCourses &&
+                Math.ceil(courses.totalNumOfCourses / 12) > 1 ? (
+                  <PaginationComponent
+                    page={page}
+                    handleChange={handlePagination}
+                    numberOfPages={Math.ceil(courses.totalNumOfCourses / 12)}
+                    numberOfItems={Object.keys(courses.data).length}
+                  />
+                ) : null}
+              </Grid>
+
+              {_.chain(Object.values(courses.data))
+
+                .map((item) => (
+                  <Card className={classes.card} key={item.title}>
+                    <Grid container>
+                      <Grid
+                        item
+                        xs={12}
+                        md={4}
+                        lg={4}
+                        xl={4}
+                        flexDirection="column"
+                      >
+                        <CardMedia
+                          className={classes.image}
+                          component={"img"}
+                          src={
+                            "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
+                          }
+                        ></CardMedia>
+                      </Grid>
+                      <Grid
+                        item
+                        xs={12}
+                        md={8}
+                        lg={8}
+                        xl={8}
+                        className={classes.cardText}
+                      >
+                        <DialogContent>
+                          <Typography variant="h4" className={classes.title}>
+                            <span onMouseEnter={() => showModal(item.title)}>
+                              {item.title}
+                            </span>
+                            <span
+                              className={classes.enrolledInCourseCardMessage}
+                            >
+                              {loggedUser.user.enrolledInCourses.includes(
+                                item._id
+                              )
+                                ? `(enrolled)`
+                                : null}
+                            </span>
+                          </Typography>
+
+                          <Typography
+                            component={"p"}
+                            className={classes.description}
+                          >
+                            {item.description}
+                          </Typography>
+                          <Typography
+                            component={"p"}
+                            className={classes.description}
+                          >
+                            Mentor: {item.mentorId}
+                          </Typography>
+                          <Typography
+                            component={"p"}
+                            className={classes.description}
+                          >
+                            <span
+                              style={{ fontWeight: "bold", marginTop: "20px" }}
+                            >
+                              {`Duration: ${item.duration} ||`}
+
+                              {` Level: ${item.level}`}
+                            </span>
+                          </Typography>
+                        </DialogContent>
+                      </Grid>
+                    </Grid>
+                  </Card>
+                ))
+                .value()}
+            </Box>
+          ) : (
+            "Loading..."
+          )}
+        </Grid>
+      </Grid>
+      <Dialog open={courseOverviewModal}>
+        <span
+          style={{ marginLeft: "auto", marginRight: "10px", marginTop: "5px" }}
+        >
+          <CloseIcon onClick={cancelEnroll} />
+        </span>
+        <Grid container>
+          <Grid item xs={12} md={12} lg={12} xl={12}>
             {courseOverviewModal &&
             loggedUser.user.enrolledInCourses.includes(
               courseToDisplay[0]._id
             ) ? (
-              <>
-                <br />
-                <Button
-                  fullWidth
-                  color="primary"
-                  autoFocus="autoFocus"
-                  variant="contained"
-                  onClick={() => setCourseOverviewModal(false)}
-                >
-                  Return back
-                </Button>
-              </>
+              <Typography
+                component={"p"}
+                className={classes.enrolledInCourseMessage}
+              >
+                You are already enrolled into this course
+              </Typography>
+            ) : null}
+          </Grid>
+          <Grid item xs={12} md={12} lg={12} xl={12}>
+            <DialogTitle style={{ width: "400px" }}>
+              {courseToDisplay[0]?.title ? courseToDisplay[0].title : null}
+            </DialogTitle>
+
+            <DialogContent>
+              {courseToDisplay[0]?.description
+                ? courseToDisplay[0].description.split(".").map((item) => {
+                    return (
+                      <DialogContentText key={item}>
+                        {item !== "" ? `> ${item}` : null}
+                      </DialogContentText>
+                    );
+                  })
+                : null}
+            </DialogContent>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={12}
+            lg={12}
+            xl={12}
+            className={classes.enrollButton}
+          >
+            {courseOverviewModal &&
+            loggedUser.user.enrolledInCourses.includes(
+              courseToDisplay[0]._id
+            ) ? (
+              <Button
+                fullWidth
+                color="primary"
+                variant="contained"
+                onClick={() => setCourseOverviewModal(false)}
+              >
+                Return back
+              </Button>
             ) : (
               <Button
                 fullWidth
                 color="primary"
-                autoFocus="autoFocus"
                 variant="contained"
                 onClick={enroll}
               >
                 Enroll
               </Button>
             )}
-          </DialogActions>
-        </Dialog>
-
-        {courses?.data ? (
-          <Box className={classes.displayCoursesContainer}>
-            {filterTerm !== "" ? (
-              <Alert
-                variant="filled"
-                color="info"
-                severity="info"
-                className={classes.filterResults}
-              >
-                Number of courses related to {filterTerm} is{" "}
-                {courses.data.length}
-              </Alert>
-            ) : null}
-            <Grid
-              container
-              justifyContent={"center"}
-              className={classes.paginationContainer}
-            >
-              {courses?.totalNumOfCourses &&
-              Math.ceil(courses.totalNumOfCourses / 12) > 1 ? (
-                <PaginationComponent
-                  page={page}
-                  handleChange={handlePagination}
-                  numberOfPages={Math.ceil(courses.totalNumOfCourses / 12)}
-                  numberOfItems={Object.keys(courses.data).length}
-                />
-              ) : null}
-            </Grid>
-
-            {_.chain(Object.values(courses.data))
-
-              .map((item) => (
-                <Card className={classes.card} key={item.title}>
-                  <Grid container>
-                    <Grid
-                      item
-                      xs={12}
-                      md={4}
-                      lg={4}
-                      xl={4}
-                      flexDirection="column"
-                    >
-                      <CardMedia
-                        className={classes.image}
-                        component={"img"}
-                        src={
-                          "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
-                        }
-                      ></CardMedia>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      md={8}
-                      lg={8}
-                      xl={8}
-                      className={classes.cardText}
-                    >
-                      <DialogContent>
-                        <Typography
-                          onMouseEnter={() => showModal(item.title)}
-                          variant="h4"
-                          className={classes.title}
-                        >
-                          {item.title}
-                          <span className={classes.enrolledInCourseCardMessage}>
-                            {loggedUser.user.enrolledInCourses.includes(
-                              item._id
-                            )
-                              ? `(enrolled)`
-                              : null}
-                          </span>
-                        </Typography>
-
-                        <Typography
-                          component={"p"}
-                          className={classes.description}
-                        >
-                          {item.description}
-                        </Typography>
-                        <Typography
-                          component={"p"}
-                          className={classes.description}
-                        >
-                          Mentor: {item.mentorId}
-                        </Typography>
-                        <Typography
-                          component={"p"}
-                          className={classes.description}
-                        >
-                          <span
-                            style={{ fontWeight: "bold", marginTop: "20px" }}
-                          >
-                            {`Duration: ${item.duration} ||`}
-
-                            {` Level: ${item.level}`}
-                          </span>
-                        </Typography>
-                      </DialogContent>
-                    </Grid>
-                  </Grid>
-                </Card>
-              ))
-              .value()}
-          </Box>
-        ) : (
-          "Loading..."
-        )}
-      </Grid>
-    </Grid>
+          </Grid>
+        </Grid>
+      </Dialog>
+    </>
   );
 };
 

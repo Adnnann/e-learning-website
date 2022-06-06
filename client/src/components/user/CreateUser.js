@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setSignupUserForm,
   setSigninUserForm,
-  signupUser,
-  getSignedUser,
   cleanSignupMessage,
+  createUser,
+  getCreateUserStatus,
+  cleanCreateUserStatus,
+  fetchUsers,
+  setUsersDisplayPage,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -15,13 +19,6 @@ import {
   Typography,
   Icon,
   Grid,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Checkbox,
-  useMediaQuery,
 } from "@mui/material";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
 import { makeStyles } from "@mui/styles";
@@ -100,14 +97,24 @@ const useStyles = makeStyles((theme) => ({
     minWidth: "320px",
   },
 }));
-const Signup = () => {
+const CreateUser = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const signedUser = useSelector(getSignedUser);
+  const navigate = useNavigate();
+  const createUserStatus = useSelector(getCreateUserStatus);
 
-  const iPadAirScreen = useMediaQuery("(width:820px)");
-  const iPadMiniScreen = useMediaQuery("(width:768px)");
-  const surfaceDuo = useMediaQuery("(width:912px)");
+  useEffect(() => {
+    if (createUserStatus?.message) {
+      dispatch(cleanCreateUserStatus());
+      const users = {
+        firstItem: 0,
+        lastItem: 12,
+      };
+      dispatch(setUsersDisplayPage(1));
+      dispatch(fetchUsers(users));
+      navigate("/admin/users");
+    }
+  }, [createUserStatus]);
 
   const [values, setValues] = useState({
     firstName: "",
@@ -122,17 +129,6 @@ const Signup = () => {
 
   const handleChange = (name) => (event) => {
     let course = {};
-
-    if (name === "mentorAccount") {
-      course = {
-        role: event.target.value === "mentor" ? "student" : "mentor",
-      };
-
-      return setValues({
-        ...values,
-        ...course,
-      });
-    }
 
     course = {
       [name]: event.target.value,
@@ -169,7 +165,7 @@ const Signup = () => {
       setValues({ ...values, error: "" });
     }
 
-    dispatch(signupUser(user));
+    dispatch(createUser(user));
   };
   const redirectToSignin = () => {
     dispatch(setSignupUserForm(false));
@@ -196,86 +192,51 @@ const Signup = () => {
   const types = ["text", "text", "text", "password", "password"];
 
   return (
-    <>
-      <Card className={classes.card}>
-        <Grid container justifyContent="center">
-          <CardContent>
-            <h1>Sign Up</h1>
-            <Grid item xs={12} md={12} lg={12} xl={12}>
-              <TextFieldsGenerator
-                array={signupData}
-                handleChange={handleChange}
-                values={values}
-                value={signupData}
-                labels={labels}
-                className={classes.textFields}
-                types={types}
-              />
+    <Card className={classes.card}>
+      <Grid container justifyContent="center">
+        <CardContent>
+          <h1>Create User</h1>
+          <Grid item xs={12} md={12} lg={12} xl={12}>
+            <TextFieldsGenerator
+              array={signupData}
+              handleChange={handleChange}
+              values={values}
+              value={signupData}
+              labels={labels}
+              className={classes.textFields}
+              types={types}
+            />
 
-              {values.error ? (
+            {values.error ? (
+              <Typography component="p" color="error">
+                <Icon color="error" className={classes.error}></Icon>
+                {values.error}
+              </Typography>
+            ) : (
+              createUserStatus?.error && (
                 <Typography component="p" color="error">
                   <Icon color="error" className={classes.error}></Icon>
-                  {values.error}
+                  {createUserStatus.error}
                 </Typography>
-              ) : (
-                signedUser?.error && (
-                  <Typography component="p" color="error">
-                    <Icon color="error" className={classes.error}></Icon>
-                    {signedUser.error}
-                  </Typography>
-                )
-              )}
-            </Grid>
-          </CardContent>
-          <Grid item xs={12} md={12} lg={12} xl={12}>
-            <CardActions>
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={clickSubmit}
-                className={classes.submit}
-              >
-                Submit
-              </Button>
-            </CardActions>
+              )
+            )}
           </Grid>
-
-          <CardActions className={classes.largeScreens}>
-            <Typography component="p" className={classes.hasAccount}>
-              Already have an account?
-            </Typography>
-
-            <Typography
-              component="p"
+        </CardContent>
+        <Grid item xs={12} md={12} lg={12} xl={12}>
+          <CardActions>
+            <Button
               color="primary"
-              className={classes.signin}
-              onClick={redirectToSignin}
+              variant="contained"
+              onClick={clickSubmit}
+              className={classes.submit}
             >
-              LOGIN
-            </Typography>
+              Submit
+            </Button>
           </CardActions>
         </Grid>
-      </Card>
-
-      <Dialog open={signedUser?.message ? true : false}>
-        <DialogTitle>New Account</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            New account successfully created.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            color="primary"
-            autoFocus="autoFocus"
-            onClick={redirectToSignin}
-          >
-            Sign In
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+      </Grid>
+    </Card>
   );
 };
 
-export default Signup;
+export default CreateUser;

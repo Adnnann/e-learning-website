@@ -66,11 +66,14 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: "20px",
   },
   card: {
-    borderStyle: "solid",
-    borderWidth: "1px",
-    marginBottom: "10px",
-    paddingLeft: "5px",
-    paddingRight: "5px",
+    maxWidth: 800,
+    margin: "auto",
+    textAlign: "center",
+    marginTop: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
+    [theme.breakpoints.only("md")]: {
+      maxWidth: 600,
+    },
   },
   cardContainer: {
     marginBottom: "20px",
@@ -184,85 +187,90 @@ const MentorCourses = () => {
                 />
               ) : null}
             </Grid>
-          </Grid>
 
-          {mentorCourses?.data ? (
-            <Box className={classes.mentorCoursesContainer}>
-              {_.chain(Object.values(mentorCourses.data))
+            {mentorCourses?.data ? (
+              <Box className={classes.mentorCoursesContainer}>
+                {_.chain(Object.values(mentorCourses.data))
 
-                .map((item, index) => (
-                  <Card key={index} className={classes.card}>
-                    <Grid
-                      container
-                      justifyContent={"space-around"}
-                      className={classes.cardContainer}
-                    >
-                      <Grid item xs={12} md={3} lg={3} xl={3}>
-                        <CardMedia
-                          className={classes.cardImage}
-                          component={"img"}
-                          src={
-                            item.courseImage ||
-                            "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
-                          }
-                        ></CardMedia>
-                      </Grid>
-
+                  .map((item, index) => (
+                    <Card key={index} className={classes.card}>
                       <Grid
-                        item
-                        xs={12}
-                        md={6}
-                        lg={6}
-                        xl={6}
-                        className={classes.cardText}
+                        container
+                        justifyContent={"space-around"}
+                        className={classes.cardContainer}
                       >
-                        <Typography variant="h5" className={classes.cardTitle}>
-                          {item.title}
-                        </Typography>
+                        <Grid item xs={12} md={3} lg={3} xl={3}>
+                          <CardMedia
+                            className={classes.cardImage}
+                            component={"img"}
+                            src={
+                              item.courseImage ||
+                              "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
+                            }
+                          ></CardMedia>
+                        </Grid>
 
-                        <Typography
-                          component={"p"}
-                          className={classes.description}
+                        <Grid
+                          item
+                          xs={12}
+                          md={6}
+                          lg={6}
+                          xl={6}
+                          className={classes.cardText}
                         >
-                          {item.description}
-                        </Typography>
+                          <Typography
+                            variant="h5"
+                            className={classes.cardTitle}
+                          >
+                            {item.title}
+                          </Typography>
 
-                        <span className={classes.durationAndLevelTextContainer}>
-                          {`Level: ${item.level} ||`}
+                          <Typography
+                            component={"p"}
+                            className={classes.description}
+                          >
+                            {item.description}
+                          </Typography>
 
-                          {` Duration: ${item.duration}`}
-                        </span>
+                          <span
+                            className={classes.durationAndLevelTextContainer}
+                          >
+                            {`Level: ${item.level} ||`}
+
+                            {` Duration: ${item.duration}`}
+                          </span>
+                        </Grid>
+
+                        <Grid item xs={12} md={2} xl={2} lg={2}>
+                          <Tooltip
+                            title="Edit course"
+                            className={classes.editCourse}
+                          >
+                            <EditOutlinedIcon
+                              fontSize="small"
+                              onClick={() => edit(item._id)}
+                            />
+                          </Tooltip>
+
+                          <Tooltip
+                            title="Delete course"
+                            className={classes.deleteCourse}
+                          >
+                            <DeleteOutlineOutlinedIcon
+                              onClick={() => remove(item._id)}
+                              fontSize="small"
+                            />
+                          </Tooltip>
+                        </Grid>
                       </Grid>
-
-                      <Grid item xs={12} md={2} xl={2} lg={2}>
-                        <Tooltip
-                          title="Edit course"
-                          className={classes.editCourse}
-                        >
-                          <EditOutlinedIcon
-                            fontSize="small"
-                            onClick={() => edit(item._id)}
-                          />
-                        </Tooltip>
-
-                        <Tooltip
-                          title="Delete course"
-                          className={classes.deleteCourse}
-                        >
-                          <DeleteOutlineOutlinedIcon
-                            onClick={() => remove(item._id)}
-                            fontSize="small"
-                          />
-                        </Tooltip>
-                      </Grid>
-                    </Grid>
-                  </Card>
-                ))
-                .value()}
-            </Box>
-          ) : (
-            "Loading..."
-          )}
+                    </Card>
+                  ))
+                  .value()}
+              </Box>
+            ) : (
+              "Loading..."
+            )}
+          </Grid>
         </Grid>
       </Grid>
       <Dialog open={courseDeleteModalStatus}>

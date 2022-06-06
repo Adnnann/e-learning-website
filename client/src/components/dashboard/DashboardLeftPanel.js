@@ -70,7 +70,7 @@ const DashboardLeftPanel = () => {
     };
     dispatch(cleanFilterTerm());
     dispatch(fetchUsers(users));
-    navigate("/users");
+    navigate("/admin/users");
   };
 
   const displayAllCourses = () => {

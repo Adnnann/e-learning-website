@@ -223,13 +223,11 @@ const getUsers = (req, res) => {
       : user.slice(req.body.firstValue, req.body.lastValue);
 
     if (error) {
-      res.send({ error: dbErrorHandlers(error) });
+      return res.send({ error: dbErrorHandlers(error) });
     } else {
-      res.send({
+      return res.send({
         data: users,
-        totalNumOfFilteredUsers: req.body.filterTerm ? 0 : user.length,
-        totalNumOfUsers: user.filter((item) => item.active === "activated")
-          .length,
+        totalNumOfUsers: req.body.filterTerm ? users.length : user.length,
       });
     }
   });
@@ -254,15 +252,15 @@ const removeCourse = async (req, res) => {
 };
 
 const activateUserAccount = async (req, res, next) => {
-  let user = await User.findById({ _id: req.profile._id });
-  user = _.extend(user, req.body);
-  user.active = req.body.userStatus;
-
-  user.save((err, user) => {
-    if (err) {
+  await User.findOneAndUpdate(
+    { _id: req.profile.id },
+    { active: req.body.userStatus, role: req.body.role }
+  ).exec((err, user) => {
+    if (user) {
+      return res.send({ message: "Profile activated" });
+    } else {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
-    return res.send({ message: "Profile activated" });
   });
 };
 
@@ -273,6 +271,17 @@ const courseByID = (req, res, next, id) => {
     }
     req.course = course;
     next();
+  });
+};
+
+const createUser = (req, res, next) => {
+  const user = new User(req.body);
+  user.save((err, result) => {
+    if (err) {
+      res.send({ error: dbErrorHandlers.getErrorMessage(err) });
+    } else {
+      res.send({ message: "Successfuly created a new user." });
+    }
   });
 };
 
@@ -296,5 +305,6 @@ export default {
   getAllUsers,
   activateUserAccount,
   courseByID,
+  createUser,
   userByID,
 };

@@ -93,8 +93,8 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "10px !important",
   },
   searchField: {
-    marginTop: "40px",
-    [theme.breakpoints.only("xl")]: {
+    marginTop: window.location.pathname === "/" ? "120px" : "0px",
+    [theme.breakpoints.only("md")]: {
       marginTop: "120px",
     },
   },
@@ -157,7 +157,15 @@ const Header = () => {
           {loggedUser?.user ? (
             <>
               <Grid item xs={12} md={3} lg={3} xl={3} className={classes.title}>
-                <Typography variant="h5">Student Dashboard</Typography>
+                <Typography variant="h5">
+                  {loggedUser.user.role === "admin"
+                    ? "Admin Dashboard"
+                    : loggedUser.user.role === "mentor"
+                    ? "Mentor Dashboard"
+                    : loggedUser.user.role === "student"
+                    ? "Student Dashboard"
+                    : null}
+                </Typography>
               </Grid>
               <Grid
                 item

@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(2),
     marginBottom: "20px",
     marginLeft: theme.spacing(2),
+    height: "320px",
   },
   title: {
     textAlign: "left",
@@ -47,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "10px",
     marginBottom: "20px",
     fontStyle: "italic",
+    marginTop: "20px !important",
   },
   displayCoursesContainer: {
     maxHeight: "60vh",
@@ -76,7 +78,7 @@ const UserCourses = () => {
         courseId:
           loggedUser.user.enrolledInCourses[
             loggedUser.user.enrolledInCourses.length - 1
-          ]._id,
+          ],
         completedCourses: loggedUser.user.completedCourses,
       };
       dispatch(fetchUserCourses(user));
@@ -98,49 +100,73 @@ const UserCourses = () => {
   return (
     <Box className={classes.displayCoursesContainer}>
       <Grid container>
-        {userCourses?.data
+        {userCourses?.data && allMentors?.mentors
           ? userCourses.data.map((item) => {
+              console.log(
+                allMentors.mentors.filter(
+                  (mentor) => mentor._id === item.mentorId
+                ).length > 0
+                  ? allMentors.mentors.filter(
+                      (mentor) => mentor._id === item.mentorId
+                    )[0].firstName
+                  : null
+              );
               if (!loggedUser.user.completedCourses.includes(item._id)) {
                 return (
                   <Grid item xs={12} md={4} lg={3} xl={2} key={item.title}>
                     <Card className={classes.card}>
-                      <CardMedia
-                        component={"img"}
-                        src={
-                          "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
-                        }
-                      ></CardMedia>
-
-                      <Typography variant="h5" className={classes.title}>
-                        {item.title}
-                      </Typography>
-
-                      <Typography
-                        component={"p"}
-                        className={classes.mentorName}
-                      >
-                        Mentor:{" "}
-                        {`${
-                          allMentors.mentors.filter(
-                            (user) => user._id === item.mentorId
-                          )[0].firstName
-                        } ${
-                          allMentors.mentors.filter(
-                            (user) => user._id === item.mentorId
-                          )[0].lastName
-                        }`}
-                      </Typography>
-
-                      <CardActions>
-                        <FormControl>
-                          <FormControlLabel
-                            label="Completed"
-                            control={
-                              <Checkbox onClick={() => complete(item._id)} />
+                      <Grid container>
+                        <Grid item xs={12} md={12} xl={12} lg={12}>
+                          <CardMedia
+                            component={"img"}
+                            src={
+                              "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
                             }
-                          />
-                        </FormControl>
-                      </CardActions>
+                          ></CardMedia>
+                        </Grid>
+                        <Grid item xs={12} md={12} lg={12} xl={12}>
+                          <Typography variant="h5" className={classes.title}>
+                            {item.title}
+                          </Typography>{" "}
+                          {allMentors.mentors.filter(
+                            (mentor) => mentor._id === item.mentorId
+                          ).length > 0 &&
+                          allMentors.mentors.filter(
+                            (mentor) => mentor._id === item.mentorId
+                          ).length > 0 ? (
+                            <Typography
+                              component={"p"}
+                              className={classes.mentorName}
+                            >
+                              Mentor:{" "}
+                              {`${
+                                allMentors.mentors.filter(
+                                  (mentor) => mentor._id === item.mentorId
+                                )[0].firstName
+                              } `}
+                              {
+                                allMentors.mentors.filter(
+                                  (mentor) => mentor._id === item.mentorId
+                                )[0].lastName
+                              }
+                            </Typography>
+                          ) : null}
+                        </Grid>
+                        <Grid item xs={12} md={12} lg={12} xl={12}>
+                          <CardActions>
+                            <FormControl>
+                              <FormControlLabel
+                                label="Completed"
+                                control={
+                                  <Checkbox
+                                    onClick={() => complete(item._id)}
+                                  />
+                                }
+                              />
+                            </FormControl>
+                          </CardActions>
+                        </Grid>
+                      </Grid>
                     </Card>
                   </Grid>
                 );

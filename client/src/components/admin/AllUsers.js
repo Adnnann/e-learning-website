@@ -12,13 +12,16 @@ import {
   activateAccount,
   getActivateAccountMessage,
   cleanActivateAccountMessage,
+  setSignupUserForm,
+  getSignupUserFormStatus,
 } from "../../features/eLearningSlice";
-import { Grid, Checkbox, Tooltip } from "@mui/material";
+import { Grid, Checkbox, Tooltip, Button } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import TableComponents from "../utils/Table";
 import SelectComponent from "../utils/SelectComponent";
 import PaginationComponent from "../utils/Pagination";
 import { makeStyles } from "@mui/styles";
+import Signup from "../user/Signup";
 
 const useStyles = makeStyles((theme) => ({
   selectFields: {
@@ -35,6 +38,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "10px",
     marginLeft: "10px !important",
   },
+  addUsersButtonContainer: {
+    paddingTop: "20px !important",
+    paddingRight: "20px",
+  },
 }));
 
 const AllUsers = () => {
@@ -45,16 +52,17 @@ const AllUsers = () => {
   const page = useSelector(getUsersDisplayPage);
   const loggedUser = useSelector(getLoggedUserData);
   const activateAccountMessage = useSelector(getActivateAccountMessage);
+
   const rows = [];
 
   useEffect(() => {
     if (activateAccountMessage?.message) {
       const users = {
-        firstItem: 0,
-        lastItem: 12,
+        firstItem: page === 1 ? 0 : page * 12 - 12,
+        lastItem: page === 1 ? 12 : page * 12,
       };
 
-      dispatch(setUsersDisplayPage(1));
+      dispatch(setUsersDisplayPage(page));
       dispatch(fetchUsers(users));
       dispatch(cleanActivateAccountMessage());
     }
@@ -163,19 +171,38 @@ const AllUsers = () => {
           const secondCol = <div>{item.lastName}</div>;
           const thirdCol = <div>{item.email}</div>;
           const fourthCol = (
-            <span>
-              <Tooltip title="Activate or deactivate account">
-                <Checkbox
-                  onChange={() => activateUserAccount(item._id, item.active)}
-                  checked={item.active === "activated" ? true : false}
-                />
-              </Tooltip>
-              {item.role === "mentor"
-                ? "isMentor"
-                : item.role === "student"
-                ? "isStudent"
-                : "admin"}
-            </span>
+            <>
+              <span>
+                <Tooltip title="Activate student account">
+                  <Checkbox
+                    onChange={() =>
+                      activateStudentAccount(item._id, item.active, item.role)
+                    }
+                    checked={
+                      item.active === "activated" && item.role === "student"
+                        ? true
+                        : false
+                    }
+                  />
+                </Tooltip>
+                isStudent
+              </span>
+              <span>
+                <Tooltip title="Activate mentor account">
+                  <Checkbox
+                    onChange={() =>
+                      activateMentorAccount(item._id, item.active, item.role)
+                    }
+                    checked={
+                      item.active === "activated" && item.role === "mentor"
+                        ? true
+                        : false
+                    }
+                  />
+                </Tooltip>
+                isMentor
+              </span>
+            </>
           );
           const fifthCol = (
             <Tooltip title="Edit user data">
@@ -246,10 +273,26 @@ const AllUsers = () => {
 
   const filterBy = ["sortFirstname", "sortLastname", "filterStatus"];
 
-  const activateUserAccount = (id, status) => {
+  const activateStudentAccount = (id, status, role) => {
     const user = {
       param: id,
-      userStatus: status === "activated" ? "deactivated" : "activated",
+      role: "student",
+      userStatus:
+        status === "activated" && role === "student"
+          ? "deactivated"
+          : "activated",
+    };
+    dispatch(activateAccount(user));
+  };
+
+  const activateMentorAccount = (id, status, role) => {
+    const user = {
+      param: id,
+      role: "mentor",
+      userStatus:
+        status === "activated" && role === "mentor"
+          ? "deactivated"
+          : "activated",
     };
     dispatch(activateAccount(user));
   };
@@ -257,6 +300,19 @@ const AllUsers = () => {
   return (
     <>
       <Grid container justifyContent={"center"} style={{ overflow: "hidden" }}>
+        <Grid
+          container
+          justifyContent={"flex-end"}
+          className={classes.addUsersButtonContainer}
+        >
+          <Button
+            variant="contained"
+            onClick={() => navigate("/admin/createUser")}
+            className={classes.addCourseButton}
+          >
+            Add user
+          </Button>
+        </Grid>
         {Object.keys(users).length !== 0 &&
           Object.values(filterItems).map((item, index) => {
             return (

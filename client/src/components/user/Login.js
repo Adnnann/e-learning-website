@@ -11,6 +11,8 @@ import {
   fetchCourses,
   fetchMentorCourses,
   fetchUsers,
+  fetchUserCourses,
+  fetchMentors,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -65,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Login = () => {
   const classes = useStyles();
-  const loggedUserData = useSelector(getLoggedUserData);
+  const loggedUser = useSelector(getLoggedUserData);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [values, setValues] = useState({
@@ -74,12 +76,33 @@ const Login = () => {
   });
 
   useEffect(() => {
-    if (loggedUserData?.token) {
+    if (loggedUser?.token) {
       dispatch(userToken());
 
-      if (loggedUserData.user.role === "mentor") {
+      if (loggedUser.user.role === "student") {
+        const courses = {
+          firstItem: 0,
+          lastItem: 12,
+        };
         const user = {
-          mentorId: loggedUserData.user._id,
+          userCourses: loggedUser.user.enrolledInCourses,
+          param: loggedUser.user._id,
+          id: loggedUser.user._id,
+          courseId:
+            loggedUser.user.enrolledInCourses[
+              loggedUser.user.enrolledInCourses.length - 1
+            ],
+          completedCourses: loggedUser.user.completedCourses,
+        };
+        dispatch(fetchUserCourses(user));
+        dispatch(fetchMentors());
+        dispatch(fetchCourses(courses));
+        navigate("/dashboard");
+      }
+
+      if (loggedUser.user.role === "mentor") {
+        const user = {
+          mentorId: loggedUser.user._id,
           firstItem: 0,
           lastItem: 12,
         };
@@ -96,9 +119,7 @@ const Login = () => {
 
       dispatch(fetchCourses(courses));
 
-      if (loggedUserData.user.role !== "admin") {
-        navigate("/courses");
-      } else {
+      if (loggedUser.user.role === "admin") {
         const users = {
           firstItem: 0,
           lastItem: 12,
@@ -108,7 +129,7 @@ const Login = () => {
         navigate("/dashboard");
       }
     }
-  }, [loggedUserData]);
+  }, [loggedUser]);
 
   const clickSubmit = () => {
     const user = {
@@ -160,10 +181,10 @@ const Login = () => {
             <br />
             {
               //display error returned from server
-              Object.keys(loggedUserData).length !== 0 && (
+              Object.keys(loggedUser).length !== 0 && (
                 <Typography component="p" color="error">
                   <Icon color="error" className={classes.error}></Icon>
-                  {loggedUserData.error}
+                  {loggedUser.error}
                 </Typography>
               )
             }
