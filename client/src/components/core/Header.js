@@ -14,6 +14,8 @@ import {
   setEditUserPasswordForm,
   setEditUserProfileForm,
   setDeleteAccountModal,
+  setCloseAccountForm,
+  setCloseAccountModal,
 } from "../../features/eLearningSlice";
 import { Box, Button, Grid, Typography, AppBar, Toolbar } from "@mui/material";
 import Search from "../utils/Search";
@@ -130,9 +132,10 @@ const Header = () => {
     dispatch(fetchCourses(courses));
     dispatch(setFilter(""));
 
-    dispatch(setEditUserPasswordForm(false));
     dispatch(setEditUserProfileForm(false));
-    dispatch(setDeleteAccountModal(false));
+    dispatch(setEditUserPasswordForm(false));
+    dispatch(setCloseAccountForm(false));
+    dispatch(setCloseAccountModal(false));
 
     window.location.pathname !== "/" && navigate("/dashboard");
   };
