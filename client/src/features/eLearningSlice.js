@@ -500,6 +500,9 @@ const eLearningSlice = createSlice({
         (item) => item._id === action.payload
       )[0];
     },
+    setLoggedUserToEdit: (state, action) => {
+      state.userToEdit = action.payload;
+    },
     cleanUploadImageStatus: (state, action) => {
       state.uploadImage = {};
     },
@@ -768,6 +771,7 @@ export const {
   setAdminFilters,
   setMentorFilters,
   cleanUserFetchDataStatus,
+  setLoggedUserToEdit,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

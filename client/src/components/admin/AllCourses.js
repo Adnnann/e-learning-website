@@ -292,7 +292,7 @@ const AllCourses = () => {
       filterMentorName: "",
       filterTerm: undefined,
     };
-    dispatch(setFilterTerm(""));
+
     dispatch(setCoursesDisplayPage(1));
     dispatch(fetchCourses(courses));
     dispatch(setFilter(""));
@@ -305,6 +305,7 @@ const AllCourses = () => {
       filterLevel: "",
       filterDuration: "",
     });
+    dispatch(setFilterTerm(""));
   };
 
   return (

@@ -91,16 +91,16 @@ const EditProfile = () => {
   });
   useEffect(() => {
     setValues({
-      firstName: userToEdit.firstName || loggedUser.user.firstName,
-      lastName: userToEdit.lastName || loggedUser.user.lastName,
-      email: userToEdit.email || loggedUser.user.email,
+      firstName: userToEdit.firstName,
+      lastName: userToEdit.lastName,
+      email: userToEdit.email,
     });
 
     if (updateUserStatus?.message) {
       dispatch(cleanUploadImageStatus());
       dispatch(cleanUserUpdateMessage());
 
-      if (!userToEdit?._id) {
+      if (userToEdit._id === loggedUser.user._id) {
         dispatch(fetchUserData(loggedUser.user._id));
       }
 
@@ -109,9 +109,13 @@ const EditProfile = () => {
           firstItem: 0,
           lastItem: 12,
         };
-
-        dispatch(fetchUsers(users));
-        navigate("/admin/users");
+        if (userToEdit._id === loggedUser.user._id) {
+          dispatch(setEditUserProfileForm(false));
+          navigate("/dashboard");
+        } else {
+          dispatch(fetchUsers(users));
+          navigate("/admin/users");
+        }
       } else {
         dispatch(setEditUserProfileForm(false));
         navigate("/dashboard");
@@ -125,7 +129,7 @@ const EditProfile = () => {
 
   const clickSubmit = () => {
     const user = {
-      param: userToEdit._id || loggedUser.user._id,
+      param: userToEdit._id,
       data: {
         firstName: values.firstName || undefined,
         lastName: values.lastName || undefined,
@@ -135,7 +139,7 @@ const EditProfile = () => {
       },
     };
 
-    if (userToEdit?._id) {
+    if (userToEdit._id !== loggedUser.user._id) {
       dispatch(updateUserDataByAdmin(user));
     } else {
       dispatch(updateUserData(user));
@@ -162,7 +166,7 @@ const EditProfile = () => {
     formData.append(
       "userImage",
       event.target.files[0],
-      `userImage${loggedUser.user._id}-${Date.now()}.${
+      `userImage${userToEdit._id}-${Date.now()}.${
         event.target.files[0].name.split(".")[1]
       }`
     );
@@ -251,8 +255,6 @@ const EditProfile = () => {
                     ? uploadUserImageStatus.imageUrl
                     : userToEdit.userImage
                     ? userToEdit.userImage
-                    : loggedUser.user.userImage
-                    ? loggedUser.user.userImage
                     : userImagePlaceholder
                 }
                 className={classes.userImagePlaceholder}

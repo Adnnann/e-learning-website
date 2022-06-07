@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 110,
   },
   cancel: {
-    marginLeft: "10px",
+    marginLeft: "10px !important",
     marginBottom: theme.spacing(2),
     minWidth: 110,
   },
@@ -120,6 +120,8 @@ const EditUserPassword = () => {
   };
 
   const cancel = () => {
+    dispatch(clearUpdatePassword());
+    dispatch(setEditUserPasswordForm(false));
     navigate("/dashboard");
   };
 

@@ -12,9 +12,15 @@ const signin = async (req, res) => {
     if (user && user.active === "inactive") {
       return res.send({ error: "You account has not been activated yet." });
     }
-    if (user && user.active === "Closed") {
+    if (user && user.active === "closed") {
       return res.send({
         error: "You have deleted your account. Please sign up again.",
+      });
+    }
+    if (user && user.active === "deactivated") {
+      return res.send({
+        error:
+          "Your account has been deactivated. Contact admin to reactivate your account",
       });
     }
     if (err || !user) {

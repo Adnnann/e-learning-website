@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   cleanStore,
+  setCloseAccountForm,
   setCloseAccountModal,
+  setDeleteAccountModal,
   setEditUserPasswordForm,
   setEditUserProfileForm,
   signoutUser,
@@ -56,10 +58,14 @@ const EditUserDataButtons = () => {
 
   const editProfile = () => {
     dispatch(setEditUserProfileForm(true));
+    dispatch(setCloseAccountModal(false));
     dispatch(setEditUserPasswordForm(false));
+    dispatch(setCloseAccountForm(false));
   };
 
   const editPassword = () => {
+    dispatch(setCloseAccountForm(false));
+    dispatch(setCloseAccountModal(false));
     dispatch(setEditUserProfileForm(false));
     dispatch(setEditUserPasswordForm(true));
   };

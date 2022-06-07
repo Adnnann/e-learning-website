@@ -532,7 +532,7 @@ const Courses = () => {
           </Grid>
           <Grid item xs={12} md={12} lg={12} xl={12}>
             <DialogTitle style={{ width: "400px" }}>
-              {courseToDisplay[0]?.title ? courseToDisplay[0].title : null}
+              What will you learn
             </DialogTitle>
 
             <DialogContent>
@@ -568,14 +568,25 @@ const Courses = () => {
                 Return back
               </Button>
             ) : (
-              <Button
-                fullWidth
-                color="primary"
-                variant="contained"
-                onClick={enroll}
-              >
-                Enroll
-              </Button>
+              <>
+                <Button
+                  fullWidth
+                  color="primary"
+                  variant="contained"
+                  style={{ marginBottom: "10px" }}
+                  onClick={() => setCourseOverviewModal(false)}
+                >
+                  Return back
+                </Button>
+                <Button
+                  fullWidth
+                  color="primary"
+                  variant="contained"
+                  onClick={enroll}
+                >
+                  Enroll
+                </Button>
+              </>
             )}
           </Grid>
         </Grid>

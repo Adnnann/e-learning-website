@@ -44,6 +44,7 @@ const DeleteAccountModal = () => {
 
   const cancel = () => {
     dispatch(setCloseAccountModal(false));
+    dispatch(setCloseAccountForm(false));
   };
 
   const handleClose = () => dispatch(setCloseAccountModal(false));

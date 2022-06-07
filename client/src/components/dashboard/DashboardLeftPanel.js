@@ -9,8 +9,13 @@ import {
   getLoggedUserData,
   getMentorCourses,
   getUsers,
+  setCloseAccountForm,
+  setCloseAccountModal,
+  setDeleteAccountModal,
   setEditUserPasswordForm,
   setEditUserProfileForm,
+  setLoggedUserToEdit,
+  setUserToEdit,
   signoutUser,
 } from "../../features/eLearningSlice";
 import { Typography } from "@mui/material";
@@ -60,10 +65,16 @@ const DashboardLeftPanel = () => {
   const redirectToDashboard = () => {
     dispatch(setEditUserProfileForm(false));
     dispatch(setEditUserPasswordForm(false));
+    dispatch(setCloseAccountModal(false));
+    dispatch(setCloseAccountForm(false));
     navigate("/dashboard");
   };
 
   const displayAllUsers = () => {
+    dispatch(setEditUserProfileForm(false));
+    dispatch(setEditUserPasswordForm(false));
+    dispatch(setCloseAccountModal(false));
+    dispatch(setCloseAccountForm(false));
     const users = {
       firstItem: 0,
       lastItem: 12,
@@ -74,6 +85,10 @@ const DashboardLeftPanel = () => {
   };
 
   const displayAllCourses = () => {
+    dispatch(setEditUserProfileForm(false));
+    dispatch(setEditUserPasswordForm(false));
+    dispatch(setCloseAccountModal(false));
+    dispatch(setCloseAccountForm(false));
     const courses = {
       firstItem: 0,
       lastItem: 12,
@@ -90,6 +105,10 @@ const DashboardLeftPanel = () => {
   };
 
   const viewAllAvailableCourses = () => {
+    dispatch(setEditUserProfileForm(false));
+    dispatch(setEditUserPasswordForm(false));
+    dispatch(setCloseAccountModal(false));
+    dispatch(setCloseAccountForm(false));
     const courses = {
       firstValue: 0,
       lastValue: 12,
@@ -100,6 +119,7 @@ const DashboardLeftPanel = () => {
   };
 
   const editUser = () => {
+    dispatch(setLoggedUserToEdit(loggedUser.user));
     dispatch(setEditUserProfileForm(true));
   };
 

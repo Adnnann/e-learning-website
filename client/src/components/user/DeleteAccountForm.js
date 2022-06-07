@@ -7,6 +7,7 @@ import {
   closeAccount,
   cleanStore,
   getCloseAccountStatus,
+  setCloseAccountForm,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -43,11 +44,12 @@ const useStyles = makeStyles((theme) => ({
   save: {
     marginBottom: theme.spacing(2),
     minWidth: 110,
+    marginRight: "10px !important",
   },
   cancel: {
-    marginLeft: "10px",
     marginBottom: theme.spacing(2),
     minWidth: 110,
+    marginLeft: "10px !important",
   },
   buttonContainer: {
     margin: "0 auto",
@@ -101,6 +103,7 @@ const CloseAccountForm = () => {
   };
 
   const cancel = () => {
+    dispatch(setCloseAccountForm(false));
     navigate("/dashboard");
   };
 

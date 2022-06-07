@@ -14,15 +14,21 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: "First name is required",
     trim: true,
-    maxlength: [15, "First name must be less than 15 characters"],
-    match: [/^[A-Za-z\s]+$/, "Only letters are allowed in first name"],
+    maxlength: [30, "First name must be less than 15 characters"],
+    match: [
+      /^[a-zA-Z0-9\s]+$/,
+      "Special characters are not allowed in first name",
+    ],
   },
   lastName: {
     type: String,
     required: "Last name is required",
     trim: true,
-    maxlength: [20, "Last name must be less than 20 characters"],
-    match: [/^[A-Za-z\s]+$/, "Only letters are allowed in last name"],
+    maxlength: [30, "Last name must be less than 20 characters"],
+    match: [
+      /^[a-zA-Z0-9\s]+$/,
+      "Special characters are not allowed in last name",
+    ],
   },
   email: {
     type: String,
