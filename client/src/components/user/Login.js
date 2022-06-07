@@ -23,7 +23,8 @@ import {
   Typography,
   Icon,
   Grid,
-} from "@material-ui/core/";
+  useMediaQuery,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -57,11 +58,22 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     marginBottom: theme.spacing(2),
-    margin: "0 auto",
+    margin: "0 auto !important",
   },
   signup: {
-    margin: "auto",
+    margin: "0 auto !important",
     marginBottom: theme.spacing(1),
+    marginLeft: "10px !important",
+  },
+  noaccount: {
+    marginLeft: "60px",
+    [theme.breakpoints.only("xs")]: {
+      marginLeft: "40px !important",
+    },
+  },
+  noAccountContainer: {
+    display: "inline-flex",
+    margin: "0 auto",
   },
 }));
 
@@ -74,6 +86,10 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const iPadAirScreen = useMediaQuery("(width:820px)");
+  const iPadMiniScreen = useMediaQuery("(width:768px)");
+  const surfaceDuo = useMediaQuery("(width:912px)");
 
   useEffect(() => {
     if (loggedUser?.token) {
@@ -204,20 +220,22 @@ const Login = () => {
         </Grid>
         <br />
         <Grid container justifyContent="center">
-          <Grid item xs={12} md={12} lg={6} xl={6}>
+          <Grid item xs={12} md={6} lg={6} xl={6}>
             <CardActions>
-              <Typography component="p" className={classes.noaccount}>
-                No account?
-              </Typography>
+              <span className={classes.noAccountContainer}>
+                <Typography component="p" className={classes.noaccount}>
+                  No account?
+                </Typography>
 
-              <Typography
-                component="p"
-                color="primary"
-                className={classes.signup}
-                onClick={redirectToSignup}
-              >
-                SIGN UP
-              </Typography>
+                <Typography
+                  component="p"
+                  color="primary"
+                  className={classes.signup}
+                  onClick={redirectToSignup}
+                >
+                  SIGN UP
+                </Typography>
+              </span>
             </CardActions>
           </Grid>
         </Grid>

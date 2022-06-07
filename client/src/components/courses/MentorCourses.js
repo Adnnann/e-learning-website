@@ -54,7 +54,8 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "50px",
     [theme.breakpoints.only("xs")]: {
       margin: "0 auto",
-      marginTop: "10px",
+      marginTop: "20px !important",
+      marginRight: "10px !important",
     },
   },
   warningIcon: {
