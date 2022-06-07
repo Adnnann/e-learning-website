@@ -5,8 +5,10 @@ import {
   fetchMentorCourses,
   fetchUserCourses,
   fetchUsers,
+  getAdminFilters,
   getFilter,
   getLoggedUserData,
+  getMentorFilters,
   getStudentFilters,
   setFilter,
   setFilterTerm,
@@ -37,6 +39,7 @@ export default function Search({ changeHandler }) {
   const filter = useSelector(getFilter);
   const loggedUser = useSelector(getLoggedUserData);
   const studentFilters = useSelector(getStudentFilters);
+  const adminFilters = useSelector(getAdminFilters);
 
   const handleKeyPress = (event) => {
     if (
@@ -71,8 +74,22 @@ export default function Search({ changeHandler }) {
     ) {
       if (event.target.value === "") {
         const courses = {
+          filterLevel: studentFilters?.filterLevel
+            ? studentFilters.filterLevel
+            : adminFilters?.filterLevel
+            ? adminFilters.filterLevel
+            : undefined,
+          filterDuration: studentFilters?.filterDuration
+            ? studentFilters.filterDuration
+            : adminFilters?.filterDuration
+            ? adminFilters.filterDuration
+            : undefined,
           filterTerm: "",
+          firstValue: 0,
+          lastValue: 12,
+          page: 1,
         };
+
         dispatch(setFilterTerm(""));
         return dispatch(fetchCourses(courses));
       }
@@ -81,9 +98,13 @@ export default function Search({ changeHandler }) {
         const courses = {
           filterLevel: studentFilters?.filterLevel
             ? studentFilters.filterLevel
+            : adminFilters?.filterLevel
+            ? adminFilters.filterLevel
             : undefined,
           filterDuration: studentFilters?.filterDuration
             ? studentFilters.filterDuration
+            : adminFilters?.filterDuration
+            ? adminFilters.filterDuration
             : undefined,
           filterTerm: filter,
           firstValue: 0,

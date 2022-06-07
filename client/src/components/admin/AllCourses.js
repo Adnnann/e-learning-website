@@ -17,6 +17,9 @@ import {
   getLoggedUserData,
   cleanFilterTerm,
   getFilter,
+  setAdminFilters,
+  getAdminFilters,
+  setFilter,
 } from "../../features/eLearningSlice";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -154,6 +157,7 @@ const AllCourses = () => {
   const deleteCourseStatus = useSelector(getDeleteCourseMessage);
   const courseDeleteModalStatus = useSelector(getCourseDeleteModalStatus);
   const loggedUser = useSelector(getLoggedUserData);
+  const adminFilters = useSelector(getAdminFilters);
 
   const rows = [];
 
@@ -222,7 +226,7 @@ const AllCourses = () => {
         firstItem: 0,
         lastItem: 12,
       };
-
+      dispatch(setAdminFilters(courses));
       dispatch(setCoursesDisplayPage(1));
       dispatch(fetchCourses(courses));
 
@@ -288,6 +292,8 @@ const AllCourses = () => {
     };
     dispatch(setCoursesDisplayPage(1));
     dispatch(fetchCourses(courses));
+    dispatch(setFilter(""));
+    dispatch(setAdminFilters(courses));
     setFilters({
       filterByTitle: true,
       filterByMentorName: false,
@@ -313,9 +319,7 @@ const AllCourses = () => {
             severity="info"
             className={classes.filterResults}
           >
-            {loggedUser.user.role === "admin" &&
-            courses.data.length > 1 &&
-            filterTerm !== "" ? (
+            {loggedUser.user.role === "admin" && courses.data.length > 1 ? (
               <>
                 {`There are ${courses.data.length} results for the term `}
                 <span className={classes.selectedTerm}>{filterTerm}</span>

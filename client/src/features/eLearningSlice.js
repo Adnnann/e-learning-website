@@ -383,6 +383,8 @@ const initialState = {
   activateAccount: {},
   createUser: {},
   studentFilters: {},
+  mentorFilters: {},
+  adminFilters: {},
   // courses
   userCourses: {},
   dashboardData: [],
@@ -531,6 +533,12 @@ const eLearningSlice = createSlice({
     },
     setStudentFilters: (state, action) => {
       state.studentFilters = action.payload;
+    },
+    setMentorFilters: (state, action) => {
+      state.mentorFilters = action.payload;
+    },
+    setAdminFilters: (state, action) => {
+      state.adminFilters = action.payload;
     },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
@@ -707,6 +715,8 @@ export const getSelectedFilterTerm = (state) =>
   state.eLearning.selectedFilterTerm;
 export const getCreateUserStatus = (state) => state.eLearning.createUser;
 export const getStudentFilters = (state) => state.eLearning.studentFilters;
+export const getMentorFilters = (state) => state.eLearning.mentorFilters;
+export const getAdminFilters = (state) => state.eLearning.adminFilters;
 
 export const {
   setSigninUserForm,
@@ -752,6 +762,8 @@ export const {
   cleanFilterTerm,
   cleanCreateUserStatus,
   setStudentFilters,
+  setAdminFilters,
+  setMentorFilters,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;
