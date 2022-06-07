@@ -1,15 +1,12 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   cleanCompletedCourseMessage,
-  cleanEnrollInCourseMessage,
+  cleanUserFetchDataStatus,
   completeCourse,
-  fetchUserCourses,
   fetchUserData,
   getAllMentors,
   getCompletedCourseMessage,
-  getEnrollInCourseMessage,
   getLoggedUserData,
   getUserCourses,
 } from "../../features/eLearningSlice";
@@ -41,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     textAlign: "left",
     marginLeft: "10px",
-    marginBottom: "20px",
+    marginBottom: "20px !important",
   },
   mentorName: {
     textAlign: "left",
@@ -58,37 +55,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UserCourses = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const classes = useStyles();
   const userCourses = useSelector(getUserCourses);
   const loggedUser = useSelector(getLoggedUserData);
   const allMentors = useSelector(getAllMentors);
   const completedCourseMessage = useSelector(getCompletedCourseMessage);
-  const enrollInCourseStatus = useSelector(getEnrollInCourseMessage);
 
   useEffect(() => {
-    if (enrollInCourseStatus?.message) {
-      dispatch(cleanEnrollInCourseMessage());
-
-      const user = {
-        userCourses: loggedUser.user.enrolledInCourses,
-        param: loggedUser.user._id,
-        id: loggedUser.user._id,
-        courseId:
-          loggedUser.user.enrolledInCourses[
-            loggedUser.user.enrolledInCourses.length - 1
-          ],
-        completedCourses: loggedUser.user.completedCourses,
-      };
-
-      dispatch(fetchUserCourses(user));
-    }
     if (completedCourseMessage?.message) {
       dispatch(cleanCompletedCourseMessage());
       dispatch(fetchUserData(loggedUser.user._id));
     }
-  }, [completedCourseMessage, enrollInCourseStatus]);
+
+    if (loggedUser?.message) {
+      dispatch(cleanUserFetchDataStatus());
+    }
+  }, [completedCourseMessage, loggedUser]);
 
   const complete = (id) => {
     const user = {

@@ -10,6 +10,7 @@ import {
   getLoggedUserData,
   getMentorFilters,
   getStudentFilters,
+  setCoursesDisplayPage,
   setFilter,
   setFilterTerm,
 } from "../../features/eLearningSlice";
@@ -52,7 +53,7 @@ export default function Search({ changeHandler }) {
           lastItem: 12,
           filterTerm: undefined,
         };
-
+        dispatch(setCoursesDisplayPage(1));
         dispatch(setFilterTerm(filter));
         return dispatch(fetchUsers(users));
       }
@@ -85,11 +86,11 @@ export default function Search({ changeHandler }) {
             ? adminFilters.filterDuration
             : undefined,
           filterTerm: "",
-          firstValue: 0,
-          lastValue: 12,
+          firstItem: 0,
+          lastItem: 12,
           page: 1,
         };
-
+        dispatch(setCoursesDisplayPage(1));
         dispatch(setFilterTerm(""));
         return dispatch(fetchCourses(courses));
       }
@@ -107,8 +108,8 @@ export default function Search({ changeHandler }) {
             ? adminFilters.filterDuration
             : undefined,
           filterTerm: filter,
-          firstValue: 0,
-          lastValue: 12,
+          firstItem: 0,
+          lastItem: 12,
           page: 1,
         };
 
@@ -125,6 +126,7 @@ export default function Search({ changeHandler }) {
           mentorId: loggedUser.user._id,
           filterTerm: "",
         };
+        dispatch(setCoursesDisplayPage(1));
         dispatch(setFilterTerm(""));
         return dispatch(fetchMentorCourses(courses));
       }
@@ -149,7 +151,7 @@ export default function Search({ changeHandler }) {
           completedCourses: loggedUser.user.completedCourses,
           filterTerm: "",
         };
-
+        dispatch(setCoursesDisplayPage(1));
         dispatch(setFilterTerm(""));
         return dispatch(fetchUserCourses(user));
       }

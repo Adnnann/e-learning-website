@@ -111,8 +111,7 @@ const EditProfile = () => {
         };
 
         dispatch(fetchUsers(users));
-
-        navigate("/users");
+        navigate("/admin/users");
       } else {
         dispatch(setEditUserProfileForm(false));
         navigate("/dashboard");
@@ -146,7 +145,7 @@ const EditProfile = () => {
   const cancel = () => {
     if (loggedUser.user.role === "admin") {
       dispatch(cleanUploadImageStatus());
-      navigate("/users");
+      navigate("/admin/users");
     } else {
       dispatch(cleanUploadImageStatus());
       dispatch(setEditUserProfileForm(false));
@@ -248,10 +247,10 @@ const EditProfile = () => {
             <Grid item xs={12} md={2} lg={2} xl={2}>
               <img
                 src={
-                  userToEdit?.userImage
-                    ? userToEdit.userImage
-                    : uploadUserImageStatus?.imageUrl
+                  uploadUserImageStatus.imageUrl
                     ? uploadUserImageStatus.imageUrl
+                    : userToEdit.userImage
+                    ? userToEdit.userImage
                     : loggedUser.user.userImage
                     ? loggedUser.user.userImage
                     : userImagePlaceholder

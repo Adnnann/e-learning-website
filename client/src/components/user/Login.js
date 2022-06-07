@@ -87,10 +87,6 @@ const Login = () => {
     password: "",
   });
 
-  const iPadAirScreen = useMediaQuery("(width:820px)");
-  const iPadMiniScreen = useMediaQuery("(width:768px)");
-  const surfaceDuo = useMediaQuery("(width:912px)");
-
   useEffect(() => {
     if (loggedUser?.token) {
       dispatch(userToken());

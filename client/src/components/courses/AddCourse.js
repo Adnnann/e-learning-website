@@ -13,6 +13,7 @@ import {
   fetchMentorCourses,
   incrementNumOfCourses,
   getCoursesDisplayPage,
+  setCoursesDisplayPage,
 } from "../../features/eLearningSlice";
 import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
@@ -101,6 +102,7 @@ const AddCourse = () => {
           firstItem: 0,
           lastItem: 12,
         };
+        dispatch(setCoursesDisplayPage(1));
         dispatch(incrementNumOfCourses());
         dispatch(fetchMentorCourses(courses));
         dispatch(cleanAddCourseMessage());
@@ -114,10 +116,10 @@ const AddCourse = () => {
         filterLevel: "",
         filterDuration: "",
         page: 1,
-        firstValue: 0,
-        lastValue: 12,
+        firstItem: 0,
+        lastItem: 12,
       };
-
+      dispatch(setCoursesDisplayPage(1));
       dispatch(fetchCourses(course));
       dispatch(cleanAddCourseMessage());
       dispatch(cleanUploadImageStatus());

@@ -457,6 +457,9 @@ const eLearningSlice = createSlice({
     cleanCourseUpdatedMessage: (state, action) => {
       state.updateCourse = {};
     },
+    cleanUserFetchDataStatus: (state, action) => {
+      delete state.loggedUser["message"];
+    },
     setFilter: (state, action) => {
       state.filterTerm = action.payload;
     },
@@ -764,6 +767,7 @@ export const {
   setStudentFilters,
   setAdminFilters,
   setMentorFilters,
+  cleanUserFetchDataStatus,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

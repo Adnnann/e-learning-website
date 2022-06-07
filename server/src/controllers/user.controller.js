@@ -41,6 +41,7 @@ const read = (req, res) => {
         enrolledInCourses: user.enrolledInCourses,
         completedCourses: user.completedCourses,
       },
+      message: "User found",
     });
   });
 };

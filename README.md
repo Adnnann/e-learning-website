@@ -2,6 +2,8 @@
 
 This app is my implementation of eLearning platform. App enables user to log in as student, mentor or admin. On web platform user can go through all available courses and if user is signed in as student he can enroll in course. To get the option to enroll in course user has to hover over course title, and then modal will be displayed with button to enroll in course.
 
+Click on the logo in left top corner of the app will redirect user to dashboard. 
+
 ## Login and sign up
 
 User can either sign up for the account or log in with existing account.

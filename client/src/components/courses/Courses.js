@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import {
+  cleanEnrollInCourseMessage,
+  cleanUserFetchDataStatus,
   enrollInCourse,
   fetchCourses,
   fetchMentors,
+  fetchUserCourses,
   fetchUserData,
   getCourses,
   getCoursesDisplayPage,
@@ -183,11 +186,27 @@ const Courses = () => {
   useEffect(() => {
     if (enrollInCourseStatus?.message) {
       dispatch(fetchMentors());
-      dispatch(fetchUserData(loggedUser.user._id));
+      dispatch(cleanEnrollInCourseMessage());
       dispatch(setCoursesDisplayPage(1));
+    }
+
+    if (loggedUser?.message) {
+      const user = {
+        userCourses: loggedUser.user.enrolledInCourses,
+        param: loggedUser.user._id,
+        id: loggedUser.user._id,
+        courseId:
+          loggedUser.user.enrolledInCourses[
+            loggedUser.user.enrolledInCourses.length - 1
+          ],
+        completedCourses: loggedUser.user.completedCourses,
+      };
+
+      dispatch(fetchUserCourses(user));
+      dispatch(cleanUserFetchDataStatus());
       navigate("/dashboard");
     }
-  }, [enrollInCourseStatus]);
+  }, [enrollInCourseStatus, loggedUser]);
 
   const [filters, setFilters] = useState({
     filterLevel: "",
@@ -441,8 +460,7 @@ const Courses = () => {
                       >
                         <DialogContent>
                           <Typography variant="h4" className={classes.title}>
-                            <span /*onMouseEnter={() => showModal(item.title)}*/
-                            >
+                            <span onMouseEnter={() => showModal(item.title)}>
                               {item.title}
                             </span>
                             <span

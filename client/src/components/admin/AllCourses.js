@@ -20,6 +20,7 @@ import {
   setAdminFilters,
   getAdminFilters,
   setFilter,
+  setFilterTerm,
 } from "../../features/eLearningSlice";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -178,6 +179,7 @@ const AllCourses = () => {
     const courses = {
       ...filters,
       page: value,
+      filterTerm: filterTerm || undefined,
       firstItem: value * 12 - 12,
       lastItem: value * 12,
     };
@@ -290,6 +292,7 @@ const AllCourses = () => {
       filterMentorName: "",
       filterTerm: undefined,
     };
+    dispatch(setFilterTerm(""));
     dispatch(setCoursesDisplayPage(1));
     dispatch(fetchCourses(courses));
     dispatch(setFilter(""));
