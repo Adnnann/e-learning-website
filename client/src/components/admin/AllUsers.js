@@ -81,13 +81,13 @@ const AllUsers = () => {
     {
       id: "firstName",
       label: "First Name",
-      minWidth: 120,
+      minWidth: 100,
       align: "center",
     },
     {
       id: "lastName",
       label: "Last Name",
-      maxWidth: 220,
+      minWidth: 100,
       align: "center",
     },
     {
@@ -100,7 +100,7 @@ const AllUsers = () => {
     {
       id: "role",
       label: "Role",
-      minWidth: 100,
+      minWidth: 120,
       align: "left",
       format: (value) => value.toLocaleString("en-US"),
     },
@@ -108,7 +108,7 @@ const AllUsers = () => {
       id: "edit",
       label: null,
       minWidth: 60,
-      align: "left",
+      align: "center",
       format: (value) => value.toLocaleString("en-US"),
     },
   ];
@@ -172,7 +172,7 @@ const AllUsers = () => {
           const thirdCol = <div>{item.email}</div>;
           const fourthCol = (
             <>
-              <span>
+              <span style={{ fontSize: "10px" }}>
                 <Tooltip title="Activate student account">
                   <Checkbox
                     onChange={() =>
@@ -187,7 +187,8 @@ const AllUsers = () => {
                 </Tooltip>
                 isStudent
               </span>
-              <span>
+              <br />
+              <span style={{ fontSize: "10px" }}>
                 <Tooltip title="Activate mentor account">
                   <Checkbox
                     onChange={() =>
