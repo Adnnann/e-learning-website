@@ -81,6 +81,7 @@ const UserCourses = () => {
           ],
         completedCourses: loggedUser.user.completedCourses,
       };
+
       dispatch(fetchUserCourses(user));
     }
     if (completedCourseMessage?.message) {
@@ -125,10 +126,7 @@ const UserCourses = () => {
                           allMentors.mentors.filter(
                             (mentor) => mentor._id === item.mentorId
                           ).length > 0 ? (
-                            <Typography
-                              component={"p"}
-                              className={classes.mentorName}
-                            >
+                            <Typography component={"p"}>
                               Mentor:{" "}
                               {`${
                                 allMentors.mentors.filter(
