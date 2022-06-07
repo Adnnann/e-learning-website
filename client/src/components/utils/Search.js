@@ -22,10 +22,11 @@ const useStyles = makeStyles((theme) => ({
     borderColor: "grey",
     borderRadius: "15px",
     paddingLeft: "5px",
-    width: "90%",
     backgroundColor: "white",
+    marginLeft: "10px !important",
+    marginTop: "60px !important",
     [theme.breakpoints.only("xs")]: {
-      width: "90%",
+      marginTop: "10px !important",
     },
   },
 }));
@@ -139,6 +140,7 @@ export default function Search({ changeHandler }) {
 
   return (
     <TextField
+      fullWidth
       onChange={handleChange}
       onKeyDown={handleKeyPress}
       InputProps={{

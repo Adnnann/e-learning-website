@@ -87,7 +87,7 @@ const UserCourses = () => {
       dispatch(cleanCompletedCourseMessage());
       dispatch(fetchUserData(loggedUser.user._id));
     }
-  }, [completedCourseMessage]);
+  }, [completedCourseMessage, enrollInCourseStatus]);
 
   const complete = (id) => {
     const user = {
@@ -102,15 +102,6 @@ const UserCourses = () => {
       <Grid container>
         {userCourses?.data && allMentors?.mentors
           ? userCourses.data.map((item) => {
-              console.log(
-                allMentors.mentors.filter(
-                  (mentor) => mentor._id === item.mentorId
-                ).length > 0
-                  ? allMentors.mentors.filter(
-                      (mentor) => mentor._id === item.mentorId
-                    )[0].firstName
-                  : null
-              );
               if (!loggedUser.user.completedCourses.includes(item._id)) {
                 return (
                   <Grid item xs={12} md={4} lg={3} xl={2} key={item.title}>

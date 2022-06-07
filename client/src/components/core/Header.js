@@ -11,6 +11,9 @@ import {
   fetchUsers,
   fetchCourses,
   cleanFilterTerm,
+  setEditUserPasswordForm,
+  setEditUserProfileForm,
+  setDeleteAccountModal,
 } from "../../features/eLearningSlice";
 import { Box, Button, Grid, Typography, AppBar, Toolbar } from "@mui/material";
 import Search from "../utils/Search";
@@ -44,19 +47,11 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: "20px",
   },
   title: {
-    textAlign: "left",
-    marginTop: "40px !important",
-    [theme.breakpoints.up("xs")]: {
-      marginLeft: "20px !important",
-    },
-    [theme.breakpoints.only("xl")]: {
-      marginTop: "120px !important",
+    marginTop: "60px !important",
+    [theme.breakpoints.only("xs")]: {
+      marginTop: "10px !important",
     },
     [theme.breakpoints.up("md")]: {
-      textAlign: "right",
-      marginLeft: "60px",
-    },
-    [theme.breakpoints.up("lg")]: {
       textAlign: "right",
     },
   },
@@ -66,12 +61,6 @@ const useStyles = makeStyles((theme) => ({
   searchFieldContainer: {
     [theme.breakpoints.up("md")]: {
       marginTop: "120px",
-    },
-  },
-  buttons: {
-    marginTop: "40px !important",
-    [theme.breakpoints.up("xl")]: {
-      marginTop: "120px !important",
     },
   },
   searchFieldContainerSignedUser: {
@@ -86,16 +75,19 @@ const useStyles = makeStyles((theme) => ({
   },
   loginButton: {
     textTransform: "none !important",
-    marginLeft: "10px",
+    marginLeft: "30px !important",
+    marginTop: "60px !important",
+    [theme.breakpoints.only("xs")]: {
+      marginLeft: "0px !important",
+      marginTop: "10px !important",
+    },
   },
   signupButton: {
     textTransform: "none !important",
     marginLeft: "10px !important",
-  },
-  searchField: {
-    marginTop: window.location.pathname === "/" ? "120px" : "0px",
-    [theme.breakpoints.only("md")]: {
-      marginTop: "120px",
+    marginTop: "60px !important",
+    [theme.breakpoints.only("xs")]: {
+      marginTop: "10px !important",
     },
   },
 }));
@@ -137,6 +129,11 @@ const Header = () => {
 
     dispatch(fetchCourses(courses));
     dispatch(setFilter(""));
+
+    dispatch(setEditUserPasswordForm(false));
+    dispatch(setEditUserProfileForm(false));
+    dispatch(setDeleteAccountModal(false));
+
     window.location.pathname !== "/" && navigate("/dashboard");
   };
 
@@ -156,52 +153,29 @@ const Header = () => {
 
           {loggedUser?.user ? (
             <>
-              <Grid item xs={12} md={3} lg={3} xl={3} className={classes.title}>
-                <Typography variant="h5">
-                  {loggedUser.user.role === "admin"
-                    ? "Admin Dashboard"
-                    : loggedUser.user.role === "mentor"
-                    ? "Mentor Dashboard"
-                    : loggedUser.user.role === "student"
-                    ? "Student Dashboard"
-                    : null}
-                </Typography>
+              <Grid item xs={12} md={3} lg={3} xl={3}>
+                {window.location.pathname.includes("dashboard") ? (
+                  <Typography variant="h5" className={classes.title}>
+                    {loggedUser.user.role === "admin"
+                      ? "Admin Dashboard"
+                      : loggedUser.user.role === "mentor"
+                      ? "Mentor Dashboard"
+                      : loggedUser.user.role === "student"
+                      ? "Student Dashboard"
+                      : null}
+                  </Typography>
+                ) : null}
               </Grid>
-              <Grid
-                item
-                xs={12}
-                md={6}
-                lg={6}
-                xl={6}
-                className={classes.searchFieldContainer}
-              >
-                <div className={classes.searchField}>
-                  <Search />
-                </div>
+              <Grid item xs={12} md={6} lg={6} xl={6}>
+                <Search />
               </Grid>
             </>
           ) : (
             <>
-              <Grid
-                item
-                xs={12}
-                md={6}
-                lg={6}
-                xl={6}
-                className={classes.searchFieldContainerSignedUser}
-              >
-                <div className={classes.searchField}>
-                  <Search />
-                </div>
+              <Grid item xs={12} md={6} lg={6} xl={6}>
+                <Search />
               </Grid>
-              <Grid
-                item
-                xs={12}
-                md={3}
-                lg={3}
-                xl={3}
-                className={classes.buttons}
-              >
+              <Grid item xs={12} md={3} lg={3} xl={3}>
                 <Button
                   variant="contained"
                   color="info"
