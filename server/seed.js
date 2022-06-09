@@ -57,7 +57,7 @@ const users = [
   {
     firstName: "Marina",
     lastName: "Ovcina",
-    email: "luka.ovcina@test.com",
+    email: "marina.ovcina@test.com",
     password: "12345678",
     role: "mentor",
   },
