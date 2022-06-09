@@ -25,6 +25,7 @@ import {
   fetchMentors,
   fetchMentorCourses,
   cleanStore,
+  getSignedOutUserStatus,
 } from "../../features/eLearningSlice";
 import { Box, Button, Grid, Typography, AppBar, Toolbar } from "@mui/material";
 import Search from "../utils/Search";
@@ -109,75 +110,46 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const loggedUser = useSelector(getLoggedUserData);
+  const signoutUserStatus = useSelector(getSignedOutUserStatus);
 
   const token = useSelector(getUserToken);
 
+  const routes = [
+    "/dashboard",
+    "/admin/users",
+    "/admin/courses",
+    "/editCourse",
+    "/editProfile",
+    "/addCourse",
+    "/courses",
+    "/admin/createUser",
+    "/unathorizedUser",
+  ];
+
   useEffect(() => {
-    if (token === "Request failed with status code 401") {
+    if (!routes.includes(window.location.pathname)) {
       navigate("/");
-      dispatch(setSigninUserForm(true));
-      return;
     }
-
-    if (
-      Object.keys(loggedUser).length === 0 &&
-      token !== "Request failed with status code 401"
-    ) {
-      dispatch(userToken());
-      dispatch(setSigninUserForm(true));
+    if (token.length > 0 && token !== "user reloged") {
+      console.log(token);
+      navigate("/unathorizedUser");
+      dispatch(cleanStore());
     }
-
-    if (token?.message && Object.keys(loggedUser).length === 0) {
-      dispatch(reLoginUser(jwtDecode(token.message)._id));
-    }
-
-    if (loggedUser?.relogin) {
-      if (loggedUser.user.role === "student") {
-        const user = {
-          userCourses: loggedUser.user.enrolledInCourses,
-          param: loggedUser.user._id,
-          id: loggedUser.user._id,
-          courseId:
-            loggedUser.user.enrolledInCourses[
-              loggedUser.user.enrolledInCourses.length - 1
-            ],
-          completedCourses: loggedUser.user.completedCourses,
-        };
-        dispatch(fetchMentors());
-        dispatch(fetchUserCourses(user));
-      } else if (loggedUser.user.role === "admin") {
-        const users = {
-          firstItem: 0,
-          lastItem: 12,
-        };
-
-        const courses = {
-          firstItem: 0,
-          lastItem: 12,
-        };
-
-        dispatch(fetchUsers(users));
-        dispatch(fetchCourses(courses));
-      } else {
-        const user = {
-          mentorId: loggedUser.user._id,
-          firstItem: 0,
-          lastItem: 12,
-        };
-
-        dispatch(fetchMentorCourses(user));
-      }
-      dispatch(cleanReloginStatus());
-    }
-  }, [loggedUser, token]);
+  }, [token]);
 
   const login = () => {
+    if (window.location !== "/") {
+      navigate("/");
+    }
     dispatch(setSignupUserForm(false));
     dispatch(setSigninUserForm(true));
     dispatch(cleanSignupMessage());
   };
 
   const signup = () => {
+    if (window.location !== "/") {
+      navigate("/");
+    }
     dispatch(setSigninUserForm(false));
     dispatch(setSignupUserForm(true));
     dispatch(cleanLoginMessage());
@@ -186,7 +158,7 @@ const Header = () => {
   const redirectToDashboard = () => {
     dispatch(cleanFilterTerm());
 
-    if (loggedUser.user.role === "admin") {
+    if (loggedUser?.user && loggedUser.user.role === "admin") {
       const users = {
         firstItem: 0,
         lastItem: 12,

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import jwtDecode from "jwt-decode";
 import {
   uploadImage,
   fetchCourses,
@@ -16,6 +17,11 @@ import {
   setCoursesDisplayPage,
   getUsers,
   getAdminFilters,
+  cleanReloginStatus,
+  reLoginUser,
+  setUserToken,
+  getUserToken,
+  userToken,
 } from "../../features/eLearningSlice";
 import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
@@ -96,6 +102,7 @@ const AddCourse = () => {
   const loggedUser = useSelector(getLoggedUserData);
   const classes = useStyles();
   const allUsers = useSelector(getUsers);
+  const token = useSelector(getUserToken);
   const allMentors =
     Object.keys(allUsers).length !== 0
       ? allUsers.data.filter((item) => item.role === "mentor")
@@ -109,6 +116,19 @@ const AddCourse = () => {
   }
 
   useEffect(() => {
+    if (Object.keys(loggedUser).length === 0 && !token?.message) {
+      dispatch(userToken());
+    }
+
+    if (token?.message) {
+      dispatch(reLoginUser(jwtDecode(token.message)._id));
+      dispatch(setUserToken("user reloged"));
+    }
+
+    if (loggedUser?.reloged) {
+      dispatch(cleanReloginStatus());
+    }
+
     if (addCourseStatus?.message) {
       if (loggedUser.user.role === "mentor") {
         const courses = {
@@ -145,7 +165,7 @@ const AddCourse = () => {
         navigate("/courses");
       }
     }
-  }, [addCourseStatus]);
+  }, [addCourseStatus, token, loggedUser]);
 
   const [values, setValues] = useState({
     title: "",

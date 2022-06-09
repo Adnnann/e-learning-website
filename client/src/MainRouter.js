@@ -10,6 +10,7 @@ import EditProfile from "./components/user/EditUserProfile";
 import AddCourse from "./components/courses/AddCourse";
 import Courses from "./components/courses/Courses";
 import CreateUser from "./components/user/CreateUser";
+import UnathorizedUser from "./components/utils/UnathorizedUser";
 
 function MainRouter() {
   return (
@@ -26,6 +27,7 @@ function MainRouter() {
         <Route path="/addCourse" element={<AddCourse />}></Route>
         <Route path="/courses" element={<Courses />}></Route>
         <Route path="/admin/createUser" element={<CreateUser />}></Route>
+        <Route path="/unathorizedUser" element={<UnathorizedUser />}></Route>
       </Routes>
     </Router>
   );

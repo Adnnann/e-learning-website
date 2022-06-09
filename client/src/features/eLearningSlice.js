@@ -559,6 +559,9 @@ const eLearningSlice = createSlice({
     cleanReloginStatus: (state, action) => {
       delete state.loggedUser["relogin"];
     },
+    setUserToken: (state, action) => {
+      state.userToken = action.payload;
+    },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
   },
@@ -714,6 +717,7 @@ export const getCoursesOverviewLevel = (state) =>
   state.eLearning.transactionsOverviewLevel;
 export const getCourseToEdit = (state) => state.eLearning.courseToEdit;
 export const getCreateCourseMessage = (state) => state.eLearning.addCourse;
+export const getSignedOutUserStatus = (state) => state.eLearning.signedOut;
 
 export const getCourseOverviewModal = (state) =>
   state.eLearning.courseOverviewModal;
@@ -789,6 +793,7 @@ export const {
   cleanUserFetchDataStatus,
   setLoggedUserToEdit,
   cleanReloginStatus,
+  setUserToken,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import jwtDecode from "jwt-decode";
 import {
   setSignupUserForm,
   setSigninUserForm,
@@ -10,6 +11,12 @@ import {
   cleanCreateUserStatus,
   fetchUsers,
   setUsersDisplayPage,
+  userToken,
+  getUserToken,
+  getLoggedUserData,
+  reLoginUser,
+  setUserToken,
+  cleanReloginStatus,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -102,8 +109,23 @@ const CreateUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const createUserStatus = useSelector(getCreateUserStatus);
+  const token = useSelector(getUserToken);
+  const loggedUser = useSelector(getLoggedUserData);
 
   useEffect(() => {
+    if (Object.keys(loggedUser).length === 0 && !token?.message) {
+      dispatch(userToken());
+    }
+
+    if (token?.message && Object.keys(loggedUser).length === 0) {
+      dispatch(reLoginUser(jwtDecode(token.message)._id));
+      dispatch(setUserToken("user reloged"));
+    }
+
+    if (loggedUser?.relogin) {
+      dispatch(cleanReloginStatus());
+    }
+
     if (createUserStatus?.message) {
       dispatch(cleanCreateUserStatus());
       const users = {
@@ -114,7 +136,7 @@ const CreateUser = () => {
       dispatch(fetchUsers(users));
       navigate("/admin/users");
     }
-  }, [createUserStatus]);
+  }, [createUserStatus, loggedUser, token]);
 
   const [values, setValues] = useState({
     firstName: "",

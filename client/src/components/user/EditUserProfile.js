@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
+import jwtDecode from "jwt-decode";
 import {
   updateUserData,
   getUserToken,
@@ -15,6 +16,11 @@ import {
   cleanUploadImageStatus,
   fetchUsers,
   updateUserDataByAdmin,
+  reLoginUser,
+  setUserToken,
+  setUserToEdit,
+  cleanReloginStatus,
+  userToken,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -90,10 +96,14 @@ const EditProfile = () => {
     error: "",
   });
   useEffect(() => {
+    if (Object.keys(loggedUser).length === 0) {
+      navigate("/dashboard");
+    }
+
     setValues({
+      email: userToEdit.email,
       firstName: userToEdit.firstName,
       lastName: userToEdit.lastName,
-      email: userToEdit.email,
     });
 
     if (updateUserStatus?.message) {
@@ -121,7 +131,7 @@ const EditProfile = () => {
         navigate("/dashboard");
       }
     }
-  }, [updateUserStatus]);
+  }, [updateUserStatus, loggedUser]);
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
@@ -175,7 +185,7 @@ const EditProfile = () => {
 
   return (
     <>
-      {loggedUser.user.firstName ? (
+      {loggedUser?.user && loggedUser.user.firstName ? (
         <Card className={classes.card}>
           <input
             type="file"
@@ -188,6 +198,7 @@ const EditProfile = () => {
               <CardContent>
                 <TextField
                   id="firstName"
+                  label="First name"
                   className={classes.textField}
                   value={values.firstName ? values.firstName : ""}
                   onChange={handleChange("firstName")}
@@ -197,6 +208,7 @@ const EditProfile = () => {
 
                 <TextField
                   id="lastName"
+                  label="Last name"
                   className={classes.textField}
                   value={values.lastName ? values.lastName : ""}
                   onChange={handleChange("lastName")}
@@ -206,6 +218,7 @@ const EditProfile = () => {
 
                 <TextField
                   id="email"
+                  label="Email"
                   className={classes.textField}
                   value={values.email ? values.email : ""}
                   onChange={handleChange("email")}
@@ -253,7 +266,7 @@ const EditProfile = () => {
                 src={
                   uploadUserImageStatus.imageUrl
                     ? uploadUserImageStatus.imageUrl
-                    : userToEdit.userImage
+                    : userToEdit?.userImage
                     ? userToEdit.userImage
                     : userImagePlaceholder
                 }

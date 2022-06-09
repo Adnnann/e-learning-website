@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import jwtDecode from "jwt-decode";
 import {
   cleanCompletedCourseMessage,
+  cleanReloginStatus,
   cleanUserFetchDataStatus,
   completeCourse,
+  fetchMentors,
   fetchUserCourses,
   fetchUserData,
   getAllMentors,
@@ -13,6 +15,7 @@ import {
   getUserCourses,
   getUserToken,
   reLoginUser,
+  setUserToken,
   userToken,
 } from "../../features/eLearningSlice";
 import {
@@ -69,6 +72,34 @@ const UserCourses = () => {
   const token = useSelector(getUserToken);
 
   useEffect(() => {
+    if (Object.keys(userCourses).length === 0 && !token?.message) {
+      dispatch(userToken());
+    }
+
+    if (token?.message) {
+      dispatch(reLoginUser(jwtDecode(token.message)._id));
+      dispatch(setUserToken("user reloged"));
+    }
+
+    if (loggedUser?.relogin) {
+      if (loggedUser?.user && loggedUser.user.role === "student") {
+        const user = {
+          userCourses: loggedUser.user.enrolledInCourses,
+          param: loggedUser.user._id,
+          id: loggedUser.user._id,
+          courseId:
+            loggedUser.user.enrolledInCourses[
+              loggedUser.user.enrolledInCourses.length - 1
+            ],
+          completedCourses: loggedUser.user.completedCourses,
+        };
+
+        dispatch(fetchUserCourses(user));
+        dispatch(fetchMentors());
+        dispatch(cleanReloginStatus());
+      }
+    }
+
     if (completedCourseMessage?.message) {
       dispatch(cleanCompletedCourseMessage());
       dispatch(fetchUserData(loggedUser.user._id));
@@ -89,7 +120,7 @@ const UserCourses = () => {
       dispatch(fetchUserCourses(user));
       dispatch(cleanUserFetchDataStatus());
     }
-  }, [completedCourseMessage, loggedUser]);
+  }, [completedCourseMessage, loggedUser, token]);
 
   const complete = (id) => {
     const user = {

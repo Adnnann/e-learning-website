@@ -5,6 +5,7 @@ import _ from "lodash";
 import jwtDecode from "jwt-decode";
 import {
   cleanEnrollInCourseMessage,
+  cleanReloginStatus,
   cleanUserFetchDataStatus,
   enrollInCourse,
   fetchCourses,
@@ -21,6 +22,7 @@ import {
   reLoginUser,
   setCoursesDisplayPage,
   setStudentFilters,
+  setUserToken,
   userToken,
 } from "../../features/eLearningSlice";
 import {
@@ -189,6 +191,40 @@ const Courses = () => {
   const token = useSelector(getUserToken);
 
   useEffect(() => {
+    if (Object.keys(courses).length === 0 && !token?.message) {
+      dispatch(userToken());
+    }
+
+    if (token?.message) {
+      console.log("yes");
+      dispatch(reLoginUser(jwtDecode(token.message)._id));
+      dispatch(setUserToken("user reloged"));
+    }
+
+    if (loggedUser?.relogin) {
+      if (loggedUser?.user && loggedUser.user.role === "student") {
+        const user = {
+          userCourses: loggedUser.user.enrolledInCourses,
+          param: loggedUser.user._id,
+          id: loggedUser.user._id,
+          courseId:
+            loggedUser.user.enrolledInCourses[
+              loggedUser.user.enrolledInCourses.length - 1
+            ],
+          completedCourses: loggedUser.user.completedCourses,
+        };
+
+        dispatch(fetchMentors());
+
+        const courses = {
+          firstItem: 0,
+          lastItem: 12,
+        };
+
+        dispatch(fetchCourses(courses));
+        dispatch(cleanReloginStatus());
+      }
+    }
     if (enrollInCourseStatus?.message) {
       dispatch(fetchMentors());
       dispatch(cleanEnrollInCourseMessage());
@@ -220,7 +256,7 @@ const Courses = () => {
       dispatch(cleanUserFetchDataStatus());
       navigate("/dashboard");
     }
-  }, [enrollInCourseStatus, loggedUser]);
+  }, [enrollInCourseStatus, loggedUser, token]);
 
   const [filters, setFilters] = useState({
     filterLevel: "",

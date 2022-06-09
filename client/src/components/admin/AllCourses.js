@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
+import jwtDecode from "jwt-decode";
 import {
   fetchCourses,
   getCourses,
@@ -21,6 +22,11 @@ import {
   getAdminFilters,
   setFilter,
   setFilterTerm,
+  cleanReloginStatus,
+  getUserToken,
+  reLoginUser,
+  userToken,
+  setUserToken,
 } from "../../features/eLearningSlice";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -165,11 +171,32 @@ const AllCourses = () => {
   const deleteCourseStatus = useSelector(getDeleteCourseMessage);
   const courseDeleteModalStatus = useSelector(getCourseDeleteModalStatus);
   const loggedUser = useSelector(getLoggedUserData);
-  const adminFilters = useSelector(getAdminFilters);
+  const token = useSelector(getUserToken);
 
   const rows = [];
 
   useEffect(() => {
+    if (Object.keys(courses).length === 0 && !token?.message) {
+      dispatch(userToken());
+    }
+
+    if (token?.message && Object.keys(loggedUser).length === 0) {
+      dispatch(reLoginUser(jwtDecode(token.message)._id));
+      dispatch(setUserToken("user reloged"));
+    }
+
+    if (loggedUser?.relogin) {
+      if (loggedUser?.user && loggedUser.user.role === "admin") {
+        const courses = {
+          firstItem: 0,
+          lastItem: 12,
+        };
+
+        dispatch(fetchCourses(courses));
+        dispatch(cleanReloginStatus());
+      }
+    }
+
     if (deleteCourseStatus?.message) {
       const courses = {
         page: page,
@@ -180,7 +207,7 @@ const AllCourses = () => {
       dispatch(setCourseDeleteModal(false));
       dispatch(cleanDeleteCourseMessage());
     }
-  }, [deleteCourseStatus]);
+  }, [deleteCourseStatus, loggedUser, token]);
 
   const handlePagination = (event, value) => {
     const courses = {

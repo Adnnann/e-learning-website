@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
+import jwtDecode from "jwt-decode";
 import {
   getLoggedUserData,
   getUsers,
@@ -14,6 +15,11 @@ import {
   cleanActivateAccountMessage,
   setSignupUserForm,
   getSignupUserFormStatus,
+  cleanReloginStatus,
+  setUserToken,
+  reLoginUser,
+  userToken,
+  getUserToken,
 } from "../../features/eLearningSlice";
 import { Grid, Checkbox, Tooltip, Button } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -52,10 +58,32 @@ const AllUsers = () => {
   const page = useSelector(getUsersDisplayPage);
   const loggedUser = useSelector(getLoggedUserData);
   const activateAccountMessage = useSelector(getActivateAccountMessage);
+  const token = useSelector(getUserToken);
 
   const rows = [];
 
   useEffect(() => {
+    if (Object.keys(users).length === 0 && !token?.message) {
+      dispatch(userToken());
+    }
+
+    if (token?.message && Object.keys(loggedUser).length === 0) {
+      dispatch(reLoginUser(jwtDecode(token.message)._id));
+      dispatch(setUserToken("user reloged"));
+    }
+
+    if (loggedUser?.relogin) {
+      if (loggedUser?.user && loggedUser.user.role === "admin") {
+        const users = {
+          firstItem: 0,
+          lastItem: 12,
+        };
+
+        dispatch(fetchUsers(users));
+        dispatch(cleanReloginStatus());
+      }
+    }
+
     if (activateAccountMessage?.message) {
       const users = {
         firstItem: page === 1 ? 0 : page * 12 - 12,
@@ -66,7 +94,7 @@ const AllUsers = () => {
       dispatch(fetchUsers(users));
       dispatch(cleanActivateAccountMessage());
     }
-  }, [activateAccountMessage]);
+  }, [activateAccountMessage, loggedUser, token]);
 
   const [filters, setFilters] = useState({
     sortByFirstname: false,

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
+import jwtDecode from "jwt-decode";
 import {
   fetchMentorCourses,
   getCoursesDisplayPage,
@@ -14,6 +15,11 @@ import {
   cleanDeleteCourseMessage,
   getCourseDeleteModalStatus,
   setCourseDeleteModal,
+  cleanReloginStatus,
+  getUserToken,
+  reLoginUser,
+  userToken,
+  setUserToken,
 } from "../../features/eLearningSlice";
 import {
   Typography,
@@ -118,8 +124,31 @@ const MentorCourses = () => {
   const mentorCourses = useSelector(getMentorCourses);
   const courseDeleteModalStatus = useSelector(getCourseDeleteModalStatus);
   const deleteCourseStatus = useSelector(getDeleteCourseMessage);
+  const token = useSelector(getUserToken);
 
   useEffect(() => {
+    if (Object.keys(mentorCourses).length === 0 && !token?.message) {
+      dispatch(userToken());
+    }
+
+    if (token?.message && Object.keys(loggedUser).length === 0) {
+      dispatch(reLoginUser(jwtDecode(token.message)._id));
+      dispatch(setUserToken("user reloged"));
+    }
+
+    if (loggedUser?.relogin) {
+      if (loggedUser?.user && loggedUser.user.role === "mentor") {
+        const user = {
+          mentorId: loggedUser.user._id,
+          firstItem: 0,
+          lastItem: 12,
+        };
+
+        dispatch(fetchMentorCourses(user));
+        dispatch(cleanReloginStatus());
+      }
+    }
+
     if (deleteCourseStatus?.message) {
       const mentorCourses = {
         mentorId: loggedUser.user._id,
