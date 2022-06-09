@@ -115,6 +115,7 @@ const Header = () => {
   useEffect(() => {
     if (token === "Request failed with status code 401") {
       navigate("/");
+      dispatch(setSigninUserForm(true));
       return;
     }
 
@@ -123,6 +124,7 @@ const Header = () => {
       token !== "Request failed with status code 401"
     ) {
       dispatch(userToken());
+      dispatch(setSigninUserForm(true));
     }
 
     if (token?.message && Object.keys(loggedUser).length === 0) {
