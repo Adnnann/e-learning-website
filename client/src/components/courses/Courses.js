@@ -480,7 +480,8 @@ const Courses = () => {
                             <span
                               className={classes.enrolledInCourseCardMessage}
                             >
-                              {loggedUser.user.enrolledInCourses.includes(
+                              {loggedUser?.user &&
+                              loggedUser.user.enrolledInCourses.includes(
                                 item._id
                               )
                                 ? `(enrolled)`
