@@ -1,11 +1,14 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
+  fetchUserData,
   getCloseAccountFormStatus,
   getEditUserFormStatus,
   getEditUserPasswordFormStatus,
   getLoggedUserData,
   getMentorCourses,
   getSelectedFilterTerm,
+  getUserToken,
+  userToken,
 } from "../../features/eLearningSlice";
 import { Typography, useMediaQuery, Alert, Grid } from "@mui/material";
 import CloseAccountForm from "../user/DeleteAccountForm";
@@ -16,6 +19,7 @@ import DashboardLeftPanel from "./DashboardLeftPanel";
 import DashboardRightPanel from "./DashboardRightPanel";
 import EditUserPassword from "../user/EditUserPassword";
 import { makeStyles } from "@mui/styles";
+import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
   largeScreens: {
@@ -55,12 +59,14 @@ const useStyles = makeStyles((theme) => ({
 
 const Dashboard = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const editUserProfile = useSelector(getEditUserFormStatus);
   const editUserPassword = useSelector(getEditUserPasswordFormStatus);
   const closeAccount = useSelector(getCloseAccountFormStatus);
   const filterTerm = useSelector(getSelectedFilterTerm);
   const mentorCourses = useSelector(getMentorCourses);
   const loggedUser = useSelector(getLoggedUserData);
+  const token = useSelector(getUserToken);
 
   const iPadAirScreen = useMediaQuery("(width:820px)");
   const iPadMiniScreen = useMediaQuery("(width:768px)");

@@ -1,14 +1,19 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import jwtDecode from "jwt-decode";
 import {
   cleanCompletedCourseMessage,
   cleanUserFetchDataStatus,
   completeCourse,
+  fetchUserCourses,
   fetchUserData,
   getAllMentors,
   getCompletedCourseMessage,
   getLoggedUserData,
   getUserCourses,
+  getUserToken,
+  reLoginUser,
+  userToken,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -61,6 +66,7 @@ const UserCourses = () => {
   const loggedUser = useSelector(getLoggedUserData);
   const allMentors = useSelector(getAllMentors);
   const completedCourseMessage = useSelector(getCompletedCourseMessage);
+  const token = useSelector(getUserToken);
 
   useEffect(() => {
     if (completedCourseMessage?.message) {
@@ -69,6 +75,18 @@ const UserCourses = () => {
     }
 
     if (loggedUser?.message) {
+      const user = {
+        userCourses: loggedUser.user.enrolledInCourses,
+        param: loggedUser.user._id,
+        id: loggedUser.user._id,
+        courseId:
+          loggedUser.user.enrolledInCourses[
+            loggedUser.user.enrolledInCourses.length - 1
+          ],
+        completedCourses: loggedUser.user.completedCourses,
+      };
+
+      dispatch(fetchUserCourses(user));
       dispatch(cleanUserFetchDataStatus());
     }
   }, [completedCourseMessage, loggedUser]);
@@ -94,9 +112,7 @@ const UserCourses = () => {
                         <Grid item xs={12} md={12} xl={12} lg={12}>
                           <CardMedia
                             component={"img"}
-                            src={
-                              "https://media.istockphoto.com/photos/hot-air-balloons-flying-over-the-botan-canyon-in-turkey-picture-id1297349747?b=1&k=20&m=1297349747&s=170667a&w=0&h=oH31fJty_4xWl_JQ4OIQWZKP8C6ji9Mz7L4XmEnbqRU="
-                            }
+                            src={item.courseImage}
                           ></CardMedia>
                         </Grid>
                         <Grid item xs={12} md={12} lg={12} xl={12}>

@@ -197,6 +197,7 @@ const getCourses = (req, res) => {
       return res.send({
         data: courses.slice(req.body.firstValue, req.body.lastValue),
         totalNumOfCourses: courses.length,
+        num0fUnfilteredCourses: course.length,
       });
     }
   });

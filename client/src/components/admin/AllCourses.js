@@ -86,15 +86,22 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 800,
     margin: "auto",
     textAlign: "center",
-    marginTop: theme.spacing(10),
-    paddingBottom: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
+    marginTop: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
+    [theme.breakpoints.only("md")]: {
+      maxWidth: 600,
+    },
   },
   cardContainer: {
     marginBottom: "20px",
   },
-  cardImage: { marginTop: "5px", width: "240px", height: "220px" },
+  cardImage: {
+    marginTop: "5px",
+    maxWidth: "220px",
+    maxHeight: "220px",
+    marginRight: "20px",
+    marginLeft: "20px",
+  },
   cardText: { paddingLeft: "10px" },
   cardTitle: {
     fontWeight: "900 !important",

@@ -30,6 +30,8 @@ router
   .put(userCtrl.update)
   .delete(userCtrl.remove);
 
+router.route("/api/users/relogin/:userId").get(userCtrl.reLoginUser);
+
 router.route("/api/mentors").get(userCtrl.getAllMentors);
 
 router

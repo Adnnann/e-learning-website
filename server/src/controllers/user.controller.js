@@ -17,6 +17,37 @@ const create = (req, res, next) => {
   });
 };
 
+const reLoginUser = async (req, res) => {
+  const courseNum = await Course.find({}).exec();
+  User.findOne({ _id: req.profile.id }, (err, user) => {
+    const token = jwt.sign(
+      {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+      config.secret
+    );
+
+    return res.send({
+      token,
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        userImage: user.userImage,
+        enrolledInCourses: user.enrolledInCourses,
+        completedCourses: user.completedCourses,
+      },
+      courseNum: user.role !== "student" ? courseNum.length : null,
+      relogin: true,
+    });
+  });
+};
+
 const read = (req, res) => {
   User.findOne({ _id: req.profile.id }, (err, user) => {
     const token = jwt.sign(
@@ -41,7 +72,7 @@ const read = (req, res) => {
         enrolledInCourses: user.enrolledInCourses,
         completedCourses: user.completedCourses,
       },
-      message: "User found",
+      message: "User found!",
     });
   });
 };
@@ -207,5 +238,6 @@ export default {
   getUserCourses,
   getAllMentors,
   getMentorCourses,
+  reLoginUser,
   userByID,
 };

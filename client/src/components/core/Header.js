@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import jwtDecode from "jwt-decode";
 import {
   setSigninUserForm,
   setSignupUserForm,
@@ -16,10 +17,18 @@ import {
   setDeleteAccountModal,
   setCloseAccountForm,
   setCloseAccountModal,
+  userToken,
+  reLoginUser,
+  getUserToken,
+  fetchUserCourses,
+  cleanReloginStatus,
+  fetchMentors,
+  fetchMentorCourses,
 } from "../../features/eLearningSlice";
 import { Box, Button, Grid, Typography, AppBar, Toolbar } from "@mui/material";
 import Search from "../utils/Search";
 import { makeStyles } from "@mui/styles";
+import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
   logo: {
@@ -99,6 +108,61 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const loggedUser = useSelector(getLoggedUserData);
+
+  const token = useSelector(getUserToken);
+
+  useEffect(() => {
+    if (Object.keys(loggedUser).length === 0) {
+      dispatch(userToken());
+    }
+
+    if (token === "Request failed with status code 401") {
+      navigate("/");
+    }
+
+    if (token?.message && Object.keys(loggedUser).length === 0) {
+      dispatch(reLoginUser(jwtDecode(token.message)._id));
+    }
+
+    if (loggedUser?.relogin) {
+      if (loggedUser.user.role === "student") {
+        const user = {
+          userCourses: loggedUser.user.enrolledInCourses,
+          param: loggedUser.user._id,
+          id: loggedUser.user._id,
+          courseId:
+            loggedUser.user.enrolledInCourses[
+              loggedUser.user.enrolledInCourses.length - 1
+            ],
+          completedCourses: loggedUser.user.completedCourses,
+        };
+        dispatch(fetchMentors());
+        dispatch(fetchUserCourses(user));
+      } else if (loggedUser.user.role === "admin") {
+        const users = {
+          firstItem: 0,
+          lastItem: 12,
+        };
+
+        const courses = {
+          firstItem: 0,
+          lastItem: 12,
+        };
+
+        dispatch(fetchUsers(users));
+        dispatch(fetchCourses(courses));
+      } else {
+        const user = {
+          mentorId: loggedUser.user._id,
+          firstItem: 0,
+          lastItem: 12,
+        };
+
+        dispatch(fetchMentorCourses(user));
+      }
+      dispatch(cleanReloginStatus());
+    }
+  }, [loggedUser, token]);
 
   const login = () => {
     dispatch(setSignupUserForm(false));

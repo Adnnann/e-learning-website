@@ -55,8 +55,8 @@ const signin = async (req, res) => {
         userImage: user.userImage,
         enrolledInCourses: user.enrolledInCourses,
         completedCourses: user.completedCourses,
-        courseNum: user.role !== "student" ? courseNum.length : null,
       },
+      courseNum: user.role !== "student" ? courseNum.length : null,
     });
   });
 };

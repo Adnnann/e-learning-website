@@ -110,8 +110,8 @@ const DashboardLeftPanel = () => {
     dispatch(setCloseAccountModal(false));
     dispatch(setCloseAccountForm(false));
     const courses = {
-      firstValue: 0,
-      lastValue: 12,
+      firstItem: 0,
+      lastItem: 12,
     };
     dispatch(cleanFilterTerm());
     dispatch(fetchCourses(courses));

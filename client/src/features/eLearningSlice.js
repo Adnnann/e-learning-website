@@ -57,6 +57,16 @@ export const fetchUserData = createAsyncThunk(
   }
 );
 
+export const reLoginUser = createAsyncThunk(
+  "eLearning/loggedUser",
+  async (id) => {
+    return await axios
+      .get(`/api/users/relogin/${id}`)
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+
 export const updateUserData = createAsyncThunk(
   "users/updateUserData",
   async (user) => {
@@ -532,7 +542,7 @@ const eLearningSlice = createSlice({
       state.courseDeleteModal = action.payload;
     },
     incrementNumOfCourses: (state, action) => {
-      state.loggedUser.user.courseNum += 1;
+      state.loggedUser.courseNum += 1;
     },
     cleanCreateUserStatus: (state, action) => {
       state.createUser = {};
@@ -545,6 +555,9 @@ const eLearningSlice = createSlice({
     },
     setAdminFilters: (state, action) => {
       state.adminFilters = action.payload;
+    },
+    cleanReloginStatus: (state, action) => {
+      delete state.loggedUser["relogin"];
     },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
@@ -647,6 +660,9 @@ const eLearningSlice = createSlice({
     },
     [createUser.fulfilled]: (state, { payload }) => {
       return { ...state, createUser: payload };
+    },
+    [reLoginUser.fulfilled]: (state, { payload }) => {
+      return { ...state, loggedUser: payload };
     },
   },
 });
@@ -772,6 +788,7 @@ export const {
   setMentorFilters,
   cleanUserFetchDataStatus,
   setLoggedUserToEdit,
+  cleanReloginStatus,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

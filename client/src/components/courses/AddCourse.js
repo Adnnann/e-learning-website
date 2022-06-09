@@ -14,6 +14,8 @@ import {
   incrementNumOfCourses,
   getCoursesDisplayPage,
   setCoursesDisplayPage,
+  getUsers,
+  getAdminFilters,
 } from "../../features/eLearningSlice";
 import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
@@ -58,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
     height: 130,
     marginTop: "40px",
     marginBottom: "20px",
+    margin: "0 auto",
   },
   uploadPhoto: {
     minWidth: "125px",
@@ -92,6 +95,18 @@ const AddCourse = () => {
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
   const loggedUser = useSelector(getLoggedUserData);
   const classes = useStyles();
+  const allUsers = useSelector(getUsers);
+  const allMentors =
+    Object.keys(allUsers).length !== 0
+      ? allUsers.data.filter((item) => item.role === "mentor")
+      : null;
+
+  let mentors = [];
+  if (Object.keys(allUsers).length !== 0) {
+    Object.values(allMentors).map((item) => {
+      mentors.push(item.firstName + " " + item.lastName);
+    });
+  }
 
   useEffect(() => {
     if (addCourseStatus?.message) {
@@ -119,6 +134,7 @@ const AddCourse = () => {
         firstItem: 0,
         lastItem: 12,
       };
+      dispatch(incrementNumOfCourses());
       dispatch(setCoursesDisplayPage(1));
       dispatch(fetchCourses(course));
       dispatch(cleanAddCourseMessage());
@@ -136,6 +152,7 @@ const AddCourse = () => {
     description: "",
     level: "",
     duration: "",
+    mentor: "",
     error: "",
   });
 
@@ -164,8 +181,23 @@ const AddCourse = () => {
   const labels = ["Title", "Description"];
 
   const clickSubmit = () => {
+    if (values.mentor === "" && loggedUser.user.role === "admin") {
+      setValues({
+        ...values,
+        error: "You have to assign a mentor for the course",
+      });
+      return;
+    }
+
     const course = {
-      mentorId: loggedUser.user._id,
+      mentorId:
+        loggedUser.user.role === "admin"
+          ? allMentors.filter(
+              (item) =>
+                item.firstName === values.mentor.split(" ")[0] &&
+                item.lastName === values.mentor.split(" ")[1]
+            )[0]._id
+          : loggedUser.user._id,
       courseImage: uploadImageStatus.imageUrl,
       ...values,
     };
@@ -199,7 +231,7 @@ const AddCourse = () => {
     formData.append(
       "userImage",
       event.target.files[0],
-      `courseImage${loggedUser.user.courseNum}-${Date.now()}.${
+      `courseImage${loggedUser.courseNum}-${Date.now()}.${
         event.target.files[0].name.split(".")[1]
       }`
     );
@@ -257,6 +289,19 @@ const AddCourse = () => {
             handleChange={handleChange("duration")}
             className={classes.selectFields}
           />
+
+          {loggedUser?.user && loggedUser.user.role === "admin" ? (
+            <>
+              <p className={classes.durationSelectFieldLabel}>Mentor</p>
+              <SelectComponent
+                selectedValue={values.mentor}
+                array={mentors}
+                handleChange={handleChange("mentor")}
+                className={classes.selectFields}
+              />
+            </>
+          ) : null}
+
           <CardMedia
             className={classes.userImagePlaceholder}
             src={

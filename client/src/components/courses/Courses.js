@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
+import jwtDecode from "jwt-decode";
 import {
   cleanEnrollInCourseMessage,
   cleanUserFetchDataStatus,
@@ -16,8 +17,11 @@ import {
   getLoggedUserData,
   getSelectedFilterTerm,
   getStudentFilters,
+  getUserToken,
+  reLoginUser,
   setCoursesDisplayPage,
   setStudentFilters,
+  userToken,
 } from "../../features/eLearningSlice";
 import {
   Typography,
@@ -182,12 +186,22 @@ const Courses = () => {
   const navigate = useNavigate();
   const [displayFilters, setDisplayFilters] = useState(false);
   const filterTerm = useSelector(getSelectedFilterTerm);
+  const token = useSelector(getUserToken);
 
   useEffect(() => {
     if (enrollInCourseStatus?.message) {
       dispatch(fetchMentors());
       dispatch(cleanEnrollInCourseMessage());
       dispatch(setCoursesDisplayPage(1));
+    }
+
+    if (Object.keys(courses).length === 0) {
+      const courses = {
+        firstItem: 0,
+        lastItem: 12,
+      };
+
+      dispatch(fetchCourses(courses));
     }
 
     if (loggedUser?.message) {
