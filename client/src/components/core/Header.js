@@ -32,6 +32,7 @@ import {
   setStoreStatus,
   getStoreStatus,
   signoutUser,
+  setClearSignoutUserMessage,
 } from "../../features/eLearningSlice";
 import { Box, Button, Grid, Typography, AppBar, Toolbar } from "@mui/material";
 import Search from "../utils/Search";
@@ -199,6 +200,8 @@ const Header = () => {
   ]);
 
   const login = () => {
+    dispatch(setClearSignoutUserMessage());
+
     if (window.location !== "/") {
       navigate("/");
     }
@@ -208,6 +211,7 @@ const Header = () => {
   };
 
   const signup = () => {
+    dispatch(setClearSignoutUserMessage());
     if (window.location !== "/") {
       navigate("/");
     }

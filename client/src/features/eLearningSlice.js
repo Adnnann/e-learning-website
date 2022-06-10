@@ -569,6 +569,9 @@ const eLearningSlice = createSlice({
     setStoreStatus: (state, action) => {
       state.storeStatus = action.payload;
     },
+    setClearSignoutUserMessage: (state, action) => {
+      state.loggedUser = {};
+    },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
   },
@@ -804,6 +807,7 @@ export const {
   setUserToken,
   setLoggedUserStatus,
   setStoreStatus,
+  setClearSignoutUserMessage,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

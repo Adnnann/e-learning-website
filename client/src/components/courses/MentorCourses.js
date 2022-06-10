@@ -127,7 +127,16 @@ const MentorCourses = () => {
   const token = useSelector(getUserToken);
 
   useEffect(() => {
-    if (Object.keys(mentorCourses).length === 0 && !token?.message) {
+    if (token === "Request failed with status code 401") {
+      navigate("/");
+    }
+
+    if (
+      token?.message &&
+      Object.keys(loggedUser).length === 0 &&
+      token.length !== 12 &&
+      token !== "user reloged"
+    ) {
       dispatch(userToken());
     }
 
