@@ -52,6 +52,8 @@ Students can filter courses by mentor name, level, and duration. Users can also 
 
 Students can also Enroll in courses. All courses in which the student is enrolled have a checkbox completed. In case if student marks the course as the finished course will be removed from the student dashboard.
 
+## Seed
 
+Running command node seed on the server will add eight users and 101 courses in database for testing purposes. Only the admin can access his account after seeding the db, and after the admin logs in, he must approve access to the app for mentors and users.
 
 
