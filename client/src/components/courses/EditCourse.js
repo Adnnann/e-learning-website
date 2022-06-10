@@ -12,6 +12,10 @@ import {
   cleanUploadImageStatus,
   getLoggedUserData,
   fetchMentorCourses,
+  userToken,
+  getUserToken,
+  reLoginUser,
+  setUserToken,
 } from "../../features/eLearningSlice";
 import {
   Button,
@@ -99,9 +103,14 @@ const EditCourse = () => {
   const updateCourseStatus = useSelector(getUpdateCourseStatus);
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
   const loggedUser = useSelector(getLoggedUserData);
+  const token = useSelector(getUserToken);
   const classes = useStyles();
 
   useEffect(() => {
+    if (Object.keys(loggedUser).length === 0) {
+      navigate("/dashboard");
+    }
+
     if (updateCourseStatus?.message) {
       if (loggedUser.user.role === "mentor") {
         const courses = {
@@ -230,7 +239,7 @@ const EditCourse = () => {
           />
           Level
           <SelectComponent
-            selectedValue={values.level}
+            selectedValue={values.level || ""}
             array={levels}
             handleChange={handleChange("level")}
             className={classes.selectFields}
@@ -261,7 +270,7 @@ const EditCourse = () => {
         <Grid item xs={12} md={6} lg={6} xl={6}>
           <p className={classes.durationLabel}>Duration</p>
           <SelectComponent
-            selectedValue={values.duration}
+            selectedValue={values.duration || ""}
             array={durations}
             handleChange={handleChange("duration")}
             className={classes.selectFields}

@@ -27,6 +27,7 @@ import {
   reLoginUser,
   userToken,
   setUserToken,
+  cleanStore,
 } from "../../features/eLearningSlice";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -176,12 +177,22 @@ const AllCourses = () => {
   const rows = [];
 
   useEffect(() => {
-    if (Object.keys(courses).length === 0 && !token?.message) {
+    if (token === "Request failed with status code 401") {
+      navigate("/");
+    }
+
+    if (
+      token?.message &&
+      Object.keys(loggedUser).length === 0 &&
+      token.length !== 12 &&
+      token !== "user reloged"
+    ) {
       dispatch(userToken());
     }
 
     if (token?.message && Object.keys(loggedUser).length === 0) {
       dispatch(reLoginUser(jwtDecode(token.message)._id));
+
       dispatch(setUserToken("user reloged"));
     }
 

@@ -20,6 +20,7 @@ import {
   reLoginUser,
   userToken,
   getUserToken,
+  cleanStore,
 } from "../../features/eLearningSlice";
 import { Grid, Checkbox, Tooltip, Button } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -63,7 +64,15 @@ const AllUsers = () => {
   const rows = [];
 
   useEffect(() => {
-    if (Object.keys(users).length === 0 && !token?.message) {
+    if (token === "Request failed with status code 401") {
+      navigate("/");
+    }
+    if (
+      token?.message &&
+      Object.keys(loggedUser).length === 0 &&
+      token.length !== 12 &&
+      token !== "user reloged"
+    ) {
       dispatch(userToken());
     }
 
@@ -80,6 +89,7 @@ const AllUsers = () => {
         };
 
         dispatch(fetchUsers(users));
+
         dispatch(cleanReloginStatus());
       }
     }

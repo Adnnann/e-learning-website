@@ -8,6 +8,7 @@ import {
   setDeleteAccountModal,
   setEditUserPasswordForm,
   setEditUserProfileForm,
+  setLoggedUserStatus,
   signoutUser,
 } from "../../features/eLearningSlice";
 import { Button, ButtonGroup } from "@mui/material";
@@ -52,7 +53,7 @@ const EditUserDataButtons = () => {
 
   const signout = () => {
     dispatch(signoutUser());
-    dispatch(cleanStore());
+    dispatch(setLoggedUserStatus());
     navigate("/");
   };
 

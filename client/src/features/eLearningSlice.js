@@ -413,6 +413,7 @@ const initialState = {
   mentorCourses: {},
   selectedFilterTerm: "",
   courseDeleteModal: false,
+  store: {},
 };
 
 const eLearningSlice = createSlice({
@@ -561,6 +562,12 @@ const eLearningSlice = createSlice({
     },
     setUserToken: (state, action) => {
       state.userToken = action.payload;
+    },
+    setLoggedUserStatus: (state, action) => {
+      state.loggedUser = "signout";
+    },
+    setStoreStatus: (state, action) => {
+      state.storeStatus = action.payload;
     },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
@@ -729,6 +736,7 @@ export const getCompletedCourseMessage = (state) =>
   state.eLearning.completedCourse;
 export const getCourseDeleteModalStatus = (state) =>
   state.eLearning.courseDeleteModal;
+export const getStoreStatus = (state) => state.eLearning.storeStatus;
 
 // admin
 export const getUsers = (state) => state.eLearning.users;
@@ -794,6 +802,8 @@ export const {
   setLoggedUserToEdit,
   cleanReloginStatus,
   setUserToken,
+  setLoggedUserStatus,
+  setStoreStatus,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;

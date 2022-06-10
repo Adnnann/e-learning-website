@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import jwtDecode from "jwt-decode";
 import {
   cleanFilterTerm,
+  cleanReloginStatus,
   cleanStore,
   fetchCourses,
   fetchUsers,
@@ -9,14 +11,17 @@ import {
   getLoggedUserData,
   getMentorCourses,
   getUsers,
+  getUserToken,
+  reLoginUser,
   setCloseAccountForm,
   setCloseAccountModal,
-  setDeleteAccountModal,
   setEditUserPasswordForm,
   setEditUserProfileForm,
+  setLoggedUserStatus,
   setLoggedUserToEdit,
-  setUserToEdit,
+  setUserToken,
   signoutUser,
+  userToken,
 } from "../../features/eLearningSlice";
 import { Typography } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -31,6 +36,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import ButtonGroupWithIcons from "./LeftSidePanelButtons";
 import { makeStyles } from "@mui/styles";
+import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
   userIcon: {
@@ -59,6 +65,7 @@ const DashboardLeftPanel = () => {
   const mentorCourses = useSelector(getMentorCourses);
   const users = useSelector(getUsers);
   const courses = useSelector(getCourses);
+  const token = useSelector(getUserToken);
 
   const loggedUser = useSelector(getLoggedUserData);
 
@@ -125,7 +132,7 @@ const DashboardLeftPanel = () => {
 
   const signout = () => {
     dispatch(signoutUser());
-    dispatch(cleanStore());
+    dispatch(setLoggedUserStatus());
     navigate("/");
   };
 

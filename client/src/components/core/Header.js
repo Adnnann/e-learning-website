@@ -26,6 +26,12 @@ import {
   fetchMentorCourses,
   cleanStore,
   getSignedOutUserStatus,
+  setUserToken,
+  getCourses,
+  getUsers,
+  setStoreStatus,
+  getStoreStatus,
+  signoutUser,
 } from "../../features/eLearningSlice";
 import { Box, Button, Grid, Typography, AppBar, Toolbar } from "@mui/material";
 import Search from "../utils/Search";
@@ -111,6 +117,10 @@ const Header = () => {
   const navigate = useNavigate();
   const loggedUser = useSelector(getLoggedUserData);
   const signoutUserStatus = useSelector(getSignedOutUserStatus);
+  const courses = useSelector(getCourses);
+  const users = useSelector(getUsers);
+  const storeStatus = useSelector(getStoreStatus);
+  const signedOutUserStatus = useSelector(getSignedOutUserStatus);
 
   const token = useSelector(getUserToken);
 
@@ -127,15 +137,66 @@ const Header = () => {
   ];
 
   useEffect(() => {
+    if (token === "Request failed with status code 401") {
+      navigate("/");
+      dispatch(setStoreStatus({ message: "cleaned" }));
+    }
+
+    if (loggedUser === "signout") {
+      dispatch(cleanStore());
+      dispatch(setStoreStatus({ message: "cleaned" }));
+    }
+    if (
+      Object.keys(loggedUser).length === 0 &&
+      !token?.message &&
+      token.length !== 12
+    ) {
+      dispatch(userToken());
+    }
+
+    if (
+      token?.message &&
+      Object.keys(loggedUser).length === 0 &&
+      token.length !== 12 &&
+      token !== "user reloged" &&
+      loggedUser !== "signout"
+    ) {
+      dispatch(reLoginUser(jwtDecode(token.message)._id));
+
+      dispatch(setUserToken("user reloged"));
+    }
+    if (loggedUser?.relogin) {
+      if (loggedUser.user.role === "admin" && Object.keys(users).length === 0) {
+        const users = {
+          firstItem: 0,
+          lastItem: 12,
+        };
+
+        dispatch(fetchUsers(users));
+      }
+
+      if (
+        loggedUser.user.role === "admin" &&
+        Object.keys(courses).length === 0
+      ) {
+        const courses = {
+          firstItem: 0,
+          lastItem: 12,
+        };
+        dispatch(fetchCourses(courses));
+      }
+      dispatch(cleanReloginStatus());
+    }
     if (!routes.includes(window.location.pathname)) {
       navigate("/");
     }
-    if (token.length > 0 && token !== "user reloged") {
-      console.log(token);
-      navigate("/unathorizedUser");
-      dispatch(cleanStore());
-    }
-  }, [token]);
+  }, [
+    token,
+    signoutUserStatus,
+    loggedUser,
+    token,
+    signedOutUserStatus.message,
+  ]);
 
   const login = () => {
     if (window.location !== "/") {
@@ -156,31 +217,33 @@ const Header = () => {
   };
 
   const redirectToDashboard = () => {
-    dispatch(cleanFilterTerm());
+    if (loggedUser?.user) {
+      dispatch(cleanFilterTerm());
 
-    if (loggedUser?.user && loggedUser.user.role === "admin") {
-      const users = {
+      if (loggedUser?.user && loggedUser.user.role === "admin") {
+        const users = {
+          firstItem: 0,
+          lastItem: 12,
+        };
+
+        dispatch(fetchUsers(users));
+      }
+      const courses = {
         firstItem: 0,
         lastItem: 12,
+        filterTerm: undefined,
       };
 
-      dispatch(fetchUsers(users));
+      dispatch(fetchCourses(courses));
+      dispatch(setFilter(""));
+
+      dispatch(setEditUserProfileForm(false));
+      dispatch(setEditUserPasswordForm(false));
+      dispatch(setCloseAccountForm(false));
+      dispatch(setCloseAccountModal(false));
+
+      window.location.pathname !== "/" && navigate("/dashboard");
     }
-    const courses = {
-      firstItem: 0,
-      lastItem: 12,
-      filterTerm: undefined,
-    };
-
-    dispatch(fetchCourses(courses));
-    dispatch(setFilter(""));
-
-    dispatch(setEditUserProfileForm(false));
-    dispatch(setEditUserPasswordForm(false));
-    dispatch(setCloseAccountForm(false));
-    dispatch(setCloseAccountModal(false));
-
-    window.location.pathname !== "/" && navigate("/dashboard");
   };
 
   return (
@@ -197,15 +260,18 @@ const Header = () => {
             />
           </Grid>
 
-          {loggedUser?.user ? (
+          {loggedUser?.user && !signedOutUserStatus?.message ? (
             <>
               <Grid item xs={12} md={3} lg={3} xl={3}>
                 <Typography variant="h5" className={classes.title}>
-                  {loggedUser.user.role === "admin"
+                  {loggedUser.user.role === "admin" &&
+                  !signedOutUserStatus?.message
                     ? "Admin Dashboard"
-                    : loggedUser.user.role === "mentor"
+                    : loggedUser.user.role === "mentor" &&
+                      !signedOutUserStatus?.message
                     ? "Mentor Dashboard"
-                    : loggedUser.user.role === "student"
+                    : loggedUser.user.role === "student" &&
+                      !signedOutUserStatus?.message
                     ? "Student Dashboard"
                     : null}
                 </Typography>

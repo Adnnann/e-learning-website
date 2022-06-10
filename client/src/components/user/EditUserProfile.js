@@ -16,11 +16,6 @@ import {
   cleanUploadImageStatus,
   fetchUsers,
   updateUserDataByAdmin,
-  reLoginUser,
-  setUserToken,
-  setUserToEdit,
-  cleanReloginStatus,
-  userToken,
 } from "../../features/eLearningSlice";
 import {
   Card,

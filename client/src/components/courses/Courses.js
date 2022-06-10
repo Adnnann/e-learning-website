@@ -191,12 +191,17 @@ const Courses = () => {
   const token = useSelector(getUserToken);
 
   useEffect(() => {
-    if (Object.keys(courses).length === 0 && !token?.message) {
+    if (
+      token?.message &&
+      Object.keys(loggedUser).length === 0 &&
+      token.length !== 12 &&
+      token !== "user reloged" &&
+      loggedUser !== "signout"
+    ) {
       dispatch(userToken());
     }
 
     if (token?.message) {
-      console.log("yes");
       dispatch(reLoginUser(jwtDecode(token.message)._id));
       dispatch(setUserToken("user reloged"));
     }

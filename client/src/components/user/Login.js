@@ -90,7 +90,6 @@ const Login = () => {
   useEffect(() => {
     if (loggedUser?.token) {
       dispatch(userToken());
-
       if (loggedUser.user.role === "student") {
         const courses = {
           firstItem: 0,

@@ -78,35 +78,6 @@ const Dashboard = () => {
   const iPadMiniScreen = useMediaQuery("(width:768px)");
   const surfaceDuo = useMediaQuery("(width:912px)");
 
-  useEffect(() => {
-    if (Object.keys(loggedUser).length === 0 && !token?.message) {
-      dispatch(userToken());
-    }
-
-    if (token?.message && Object.keys(loggedUser).length === 0) {
-      dispatch(reLoginUser(jwtDecode(token.message)._id));
-      dispatch(setUserToken("user reloged"));
-      console.log("yes");
-    }
-
-    if (loggedUser?.relogin) {
-      if (loggedUser.user.role === "admin") {
-        const users = {
-          firstItem: 0,
-          lastItem: 12,
-        };
-        const courses = {
-          firstItem: 0,
-          lastItem: 12,
-        };
-
-        dispatch(fetchUsers(users));
-        dispatch(fetchCourses(courses));
-      }
-      dispatch(cleanReloginStatus());
-    }
-  }, [loggedUser, token]);
-
   return (
     <Grid container>
       <Grid item xs={12} md={12} lg={12} xl={12}>
