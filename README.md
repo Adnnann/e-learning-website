@@ -54,6 +54,6 @@ Students can also Enroll in courses. All courses in which the student is enrolle
 
 ## Seed
 
-Running command node seed on the server will add eight users and 101 courses in database for testing purposes. Only the admin can access his account after seeding the db, and after the admin logs in, he must approve access to the app for mentors and users.
+Running command <code>node seed</code> on the server will add eight users and 101 courses in database for testing purposes. Only the admin can access his account after seeding the db, and after the admin logs in, he must approve access to the app for mentors and users.
 
 
