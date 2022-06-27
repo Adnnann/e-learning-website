@@ -54,6 +54,7 @@ const EditUserDataButtons = () => {
   const signout = () => {
     dispatch(signoutUser());
     dispatch(setLoggedUserStatus());
+    window.location.reload()
     navigate("/");
   };
 

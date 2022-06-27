@@ -264,7 +264,7 @@ const Header = () => {
             />
           </Grid>
 
-          {loggedUser?.user && !signedOutUserStatus?.message ? (
+          {(loggedUser?.user && !signedOutUserStatus?.message) && (
             <>
               <Grid item xs={12} md={3} lg={3} xl={3}>
                 <Typography variant="h5" className={classes.title}>
@@ -284,8 +284,11 @@ const Header = () => {
                 <Search />
               </Grid>
             </>
-          ) : (
-            <>
+          ) }
+
+{
+           !loggedUser.user && 
+           <>
               <Grid item xs={12} md={6} lg={6} xl={6}>
                 <Search />
               </Grid>
@@ -309,7 +312,7 @@ const Header = () => {
                 </Button>
               </Grid>
             </>
-          )}
+}
         </Grid>
       </Toolbar>
     </AppBar>
