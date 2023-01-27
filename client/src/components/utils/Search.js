@@ -13,6 +13,7 @@ import {
   setCoursesDisplayPage,
   setFilter,
   setFilterTerm,
+  setStudentFilters,
 } from "../../features/eLearningSlice";
 import { TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -72,21 +73,15 @@ export default function Search({ changeHandler }) {
     ) {
       if (event.target.value === "") {
         const courses = {
-          filterLevel: studentFilters?.filterLevel
-            ? studentFilters.filterLevel
-            : adminFilters?.filterLevel
-            ? adminFilters.filterLevel
-            : undefined,
-          filterDuration: studentFilters?.filterDuration
-            ? studentFilters.filterDuration
-            : adminFilters?.filterDuration
-            ? adminFilters.filterDuration
-            : undefined,
+          filterLevel: "",
+          filterDuration: "",
           filterTerm: "",
           firstItem: 0,
           lastItem: 12,
           page: 1,
         };
+
+        dispatch(setStudentFilters(courses));
         dispatch(setCoursesDisplayPage(1));
         dispatch(setFilterTerm(""));
         return dispatch(fetchCourses(courses));
@@ -137,7 +132,7 @@ export default function Search({ changeHandler }) {
         return dispatch(fetchMentorCourses(courses));
       }
     } else if (
-      window.location.pathname === "/dashboard" &&
+      window.location.pathname === "/courses" &&
       loggedUser.user.role === "student"
     ) {
       if (event.target.value === "") {
@@ -148,6 +143,7 @@ export default function Search({ changeHandler }) {
           completedCourses: loggedUser.user.completedCourses,
           filterTerm: "",
         };
+
         dispatch(setCoursesDisplayPage(1));
         dispatch(setFilterTerm(""));
         return dispatch(fetchUserCourses(user));

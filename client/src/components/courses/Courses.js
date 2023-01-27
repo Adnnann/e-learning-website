@@ -24,6 +24,10 @@ import {
   setStudentFilters,
   setUserToken,
   userToken,
+  getSelectedDurationFilter,
+  getSelectedLevelFilter,
+  setLevelFilter,
+  setDurationFilter,
 } from "../../features/eLearningSlice";
 import {
   Typography,
@@ -182,19 +186,8 @@ const Courses = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const loggedUser = useSelector(getLoggedUserData);
-  const studentFilters = useSelector(getStudentFilters);
-  const [checked, setChecked] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const levelFilter = useSelector(getSelectedLevelFilter);
+  const durationFilter = useSelector(getSelectedDurationFilter);
 
   const [courseOverviewModal, setCourseOverviewModal] = useState(false);
   const [courseToDisplay, setCourseToDisplay] = useState([]);
@@ -298,10 +291,14 @@ const Courses = () => {
   };
 
   const handleLevelFilter = (name) => (event) => {
-    checked[0] = event.target.name === "Beginner Level" ? !checked[0] : "";
-    checked[1] = event.target.name === "Intermediate Level" ? !checked[1] : "";
-    checked[2] = event.target.name === "Advanced Level" ? !checked[2] : "";
-    checked[3] = event.target.name === "All levels" ? !checked[3] : "";
+    const levels = [
+      "Beginner Level",
+      "Intermediate Level",
+      "Advanced Level",
+      "All levels",
+    ];
+
+    dispatch(setLevelFilter(levels.indexOf(event.target.name)));
 
     setFilters({
       ...filters,
@@ -311,11 +308,9 @@ const Courses = () => {
     const courses = {
       filterTerm: filterTerm ? filterTerm : undefined,
       filterLevel:
-        checked.slice(0, 4).filter(Boolean).length > 0
-          ? event.target.name
-          : undefined,
+        levelFilter.filter(Boolean).length > 0 ? event.target.name : undefined,
       filterDuration:
-        checked.slice(4, 10).filter(Boolean).length > 0
+        durationFilter.filter(Boolean).length > 0
           ? filters.filterDuration
           : undefined,
       page: 1,
@@ -328,12 +323,16 @@ const Courses = () => {
   };
 
   const handleDurationFilter = (name) => (event) => {
-    checked[4] = event.target.name === "0 - 3 Hours" ? !checked[4] : "";
-    checked[5] = event.target.name === "3 - 6 Hours" ? !checked[5] : "";
-    checked[6] = event.target.name === "6 - 12 Hours" ? !checked[6] : "";
-    checked[7] = event.target.name === "1 - 2 Days" ? !checked[7] : "";
-    checked[8] = event.target.name === "2 - 5 Days" ? !checked[8] : "";
-    checked[9] = event.target.name === "5 - 15 Days" ? !checked[9] : "";
+    let arr = [
+      "0 - 3 Hours",
+      "3 - 6 Hours",
+      "6 - 12 Hours",
+      "1 - 2 Days",
+      "2 - 5 Days",
+      "5 - 15 Days",
+    ];
+
+    dispatch(setDurationFilter(arr.indexOf(event.target.name)));
 
     setFilters({
       ...filters,
@@ -344,11 +343,11 @@ const Courses = () => {
     const courses = {
       filterTerm: filterTerm ? filterTerm : undefined,
       filterLevel:
-        checked.slice(0, 4).filter(Boolean).length > 0
+        levelFilter.filter(Boolean).length > 0
           ? filters.filterLevel
           : undefined,
       filterDuration:
-        checked.slice(4, 10).filter(Boolean).length > 0
+        durationFilter.filter(Boolean).length > 0
           ? event.target.name
           : undefined,
       page: 1,
@@ -374,10 +373,8 @@ const Courses = () => {
 
   const handlePagination = (event, value) => {
     const courses = {
-      filterLevel: checked.slice(0, 4).includes(true)
-        ? filters.filterLevel
-        : undefined,
-      filterDuration: checked.slice(4, 10).includes(true)
+      filterLevel: levelFilter.includes(true) ? filters.filterLevel : undefined,
+      filterDuration: durationFilter.includes(true)
         ? filters.filterDuration
         : undefined,
       page: value,
@@ -412,7 +409,35 @@ const Courses = () => {
               severity="info"
               className={classes.filterResults}
             >
-              Number of courses related to {filterTerm} is {courses.data.length}
+              Number of available courses is courses for requested search term{" "}
+              <span
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  textDecoration: "underline",
+                }}
+              >
+                {filterTerm}
+              </span>
+              is {courses.data.length}.
+              <br />
+              {filters?.filterLevel && filters.filterLevel.length > 0
+                ? `Level: `
+                : null}
+              {filters?.filterLevel && filters.filterLevel.length > 0 ? (
+                <span style={{ fontWeight: "bold" }}>
+                  {filters.filterLevel.split(" ")[0]}
+                </span>
+              ) : null}{" "}
+              <br />
+              {filters?.filterDuration && filters.filterDuration.length > 0
+                ? `Duration: `
+                : null}
+              {filters?.filterDuration && filters.filterDuration.length > 0 ? (
+                <span style={{ fontWeight: "bold" }}>
+                  {filters.filterDuration}
+                </span>
+              ) : null}
             </Alert>
           ) : null}
         </Grid>
@@ -466,7 +491,7 @@ const Courses = () => {
                             <Checkbox
                               name={item}
                               onChange={handleLevelFilter("filterLevel")}
-                              checked={Boolean(checked[index])}
+                              checked={Boolean(levelFilter[index])}
                             />
                           }
                         />
@@ -490,7 +515,7 @@ const Courses = () => {
                             <Checkbox
                               name={item}
                               onChange={handleDurationFilter("filterDuration")}
-                              checked={Boolean(checked[index + 4])}
+                              checked={Boolean(durationFilter[index])}
                             />
                           }
                         />

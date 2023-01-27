@@ -414,6 +414,8 @@ const initialState = {
   selectedFilterTerm: "",
   courseDeleteModal: false,
   store: {},
+  selectedLevelFilter: Array(4).fill(false),
+  selectedDurationFilter: Array(6).fill(false),
 };
 
 const eLearningSlice = createSlice({
@@ -571,6 +573,18 @@ const eLearningSlice = createSlice({
     },
     setClearSignoutUserMessage: (state, action) => {
       state.loggedUser = {};
+    },
+    setLevelFilter: (state, action) => {
+      let arr = Array(4).fill(false);
+      state.selectedLevelFilter = arr;
+      state.selectedLevelFilter[action.payload] =
+        !state.selectedLevelFilter[action.payload];
+    },
+    setDurationFilter: (state, action) => {
+      let arr = Array(6).fill(false);
+      state.selectedDurationFilter = arr;
+      state.selectedDurationFilter[action.payload] =
+        !state.selectedDurationFilter[action.payload];
     },
     //reset store state after logout or delete of account
     cleanStore: () => initialState,
@@ -754,6 +768,10 @@ export const getCreateUserStatus = (state) => state.eLearning.createUser;
 export const getStudentFilters = (state) => state.eLearning.studentFilters;
 export const getMentorFilters = (state) => state.eLearning.mentorFilters;
 export const getAdminFilters = (state) => state.eLearning.adminFilters;
+export const getSelectedLevelFilter = (state) =>
+  state.eLearning.selectedLevelFilter;
+export const getSelectedDurationFilter = (state) =>
+  state.eLearning.selectedDurationFilter;
 
 export const {
   setSigninUserForm,
@@ -808,6 +826,8 @@ export const {
   setLoggedUserStatus,
   setStoreStatus,
   setClearSignoutUserMessage,
+  setLevelFilter,
+  setDurationFilter,
 } = eLearningSlice.actions;
 
 export default eLearningSlice.reducer;
