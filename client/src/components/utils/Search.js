@@ -20,14 +20,11 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   searchInput: {
-    borderStyle: "solid",
-    borderWidth: "1px",
-    borderColor: "grey",
-    borderRadius: "15px",
+    width: "90% !important",
+    borderRadius: "25px",
     paddingLeft: "5px",
     backgroundColor: "white",
-    marginLeft: "10px !important",
-    marginTop: "60px !important",
+    marginTop: "12px !important",
     [theme.breakpoints.only("xs")]: {
       marginTop: "10px !important",
     },

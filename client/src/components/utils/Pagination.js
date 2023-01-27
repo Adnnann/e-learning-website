@@ -7,13 +7,11 @@ export default function PaginationComponent({
   className,
 }) {
   return (
-    <div className={className}>
-      <Pagination
-        key={page}
-        count={numberOfPages}
-        page={page}
-        onChange={handleChange}
-      />
-    </div>
+    <Pagination
+      key={page}
+      count={numberOfPages}
+      page={page}
+      onChange={handleChange}
+    />
   );
 }
